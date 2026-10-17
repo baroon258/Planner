@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" class="dark">
+<html lang="fa" dir="rtl" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0b0f19">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>دستیار هوشمند برنامه‌ریزی | AI Planner Pro</title>
-    
-    <!-- PWA Manifest Link -->
+    <title>Smart Life & Work Planner | پلنر هوشمند</title>
     <link rel="manifest" href="manifest.json">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Vazirmatn Persian Font -->
+    <!-- Vazirmatn & Inter Fonts -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Vazirmatn', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'Inter', 'sans-serif']
+                    },
                     colors: {
-                        darkBg: '#0b0f19',
-                        cardBg: 'rgba(17, 24, 39, 0.75)',
-                        accentBlue: '#3b82f6',
-                        accentCyan: '#06b6d4'
+                        notionBg: '#fbfbfa',
+                        notionDark: '#191919',
+                        notionCardDark: '#202020',
+                        todoistRed: '#db4c3f',
+                        brandBlue: '#2563eb'
                     }
                 }
             }
@@ -36,1052 +37,248 @@
     </script>
     <style>
         body {
-            background-color: #0b0f19;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.16) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.14) 0px, transparent 50%);
-            background-attachment: fixed;
-            color: #f3f4f6;
-            overflow-x: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
-        .glass {
-            background: rgba(17, 24, 39, 0.72);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .notion-card {
+            transition: all 0.18s ease;
         }
-        .glass-hover:hover {
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 4px 25px -5px rgba(59, 130, 246, 0.18);
-        }
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), 0 0 30px rgba(6, 182, 212, 0.3); }
-            50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.85), 0 0 45px rgba(6, 182, 212, 0.5); }
-        }
-        .fab-glow {
-            animation: pulseGlow 3s infinite;
+        .notion-card:hover {
+            transform: translateY(-1px);
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 4px; }
+        
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .fab-pulse { animation: subtlePulse 3s infinite; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col lg:flex-row font-sans antialiased selection:bg-blue-500 selection:text-white pb-20 lg:pb-0">
+<body class="bg-[#fbfbfa] dark:bg-[#191919] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col lg:flex-row font-sans antialiased pb-20 lg:pb-0">
 
-    <!-- Sidebar Navigation -->
-    <aside class="w-full lg:w-64 glass border-b lg:border-b-0 lg:border-l border-gray-800 flex flex-col justify-between p-4 z-20 shrink-0">
+    <!-- SIDEBAR (Notion Style) -->
+    <aside class="w-full lg:w-64 bg-[#f3f2ef] dark:bg-[#202020] border-b lg:border-b-0 lg:border-e border-slate-200 dark:border-neutral-800 flex flex-col justify-between p-3.5 shrink-0 z-20">
         <div>
-            <!-- Logo & Install App Button -->
-            <div class="flex items-center justify-between gap-2 px-2 py-3 mb-4 border-b border-gray-800/80">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                        <i class="fa-solid fa-brain text-white text-lg"></i>
+            <!-- Workspace Header -->
+            <div class="flex items-center justify-between px-2 py-2 mb-3 rounded-lg hover:bg-slate-200/60 dark:hover:bg-neutral-800 transition">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
+                        <i class="fa-solid fa-layer-group text-sm"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-base tracking-wide text-white">پلنر هوشمند</h1>
-                        <span class="text-[11px] text-cyan-400 flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> نسخه نصبی PWA
-                        </span>
+                        <h1 class="font-bold text-sm leading-tight" data-i18n="appTitle">پلنر جامع هوشمند</h1>
+                        <span class="text-[11px] text-slate-500 dark:text-neutral-400">Notion + Todoist UI</span>
                     </div>
                 </div>
-                <button id="install-pwa-btn" onclick="installPWA()" class="hidden px-2.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition shadow">
-                    <i class="fa-solid fa-download"></i> نصب
+                <button id="install-pwa-btn" onclick="installPWA()" class="hidden px-2 py-1 bg-blue-600 text-white rounded text-[11px] font-medium">
+                    <i class="fa-solid fa-download"></i>
                 </button>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="flex lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0">
-                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all bg-blue-600/20 text-blue-400 border border-blue-500/30 shrink-0">
-                    <i class="fa-solid fa-chart-pie w-5 text-center"></i> داشبورد هوشمند
+            <!-- Navigation Menu -->
+            <nav class="flex lg:flex-col gap-1 overflow-x-auto pb-1 lg:pb-0 text-xs sm:text-[13px]">
+                <button onclick="switchTab('overview')" id="tab-overview" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-house text-blue-500 w-4 text-center"></i> <span data-i18n="navOverview">پیش‌نمایش و صفحه اول</span>
                 </button>
-                <button onclick="switchTab('ai-planner')" id="tab-ai-planner" class="nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-cyan-300 hover:text-white hover:bg-cyan-900/30 border border-transparent transition-all shrink-0">
-                    <i class="fa-solid fa-wand-magic-sparkles w-5 text-center text-cyan-400"></i> برنامه‌ریز خودکار (توضیحی)
+                <button onclick="switchTab('todo')" id="tab-todo" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-circle-check text-red-500 w-4 text-center"></i> <span data-i18n="navTodo">لیست کارها (To-Do)</span>
                 </button>
-                <button onclick="switchTab('routines')" id="tab-routines" class="nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all shrink-0">
-                    <i class="fa-solid fa-thumbtack w-5 text-center text-amber-400"></i> کارهای ثابت و روتین‌ها
+                <button onclick="switchTab('timeblock')" id="tab-timeblock" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-regular fa-calendar-days text-indigo-500 w-4 text-center"></i> <span data-i18n="navTimeblock">تقویم و کارهای ثابت</span>
                 </button>
-                <button onclick="switchTab('timeblock')" id="tab-timeblock" class="nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all shrink-0">
-                    <i class="fa-regular fa-calendar-check w-5 text-center"></i> بلوک‌بندی زمان روزانه
+                <button onclick="switchTab('ai')" id="tab-ai" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple-500 w-4 text-center"></i> <span data-i18n="navAI">برنامه‌ریز خودکار هوش مصنوعی</span>
                 </button>
-                <button onclick="switchTab('tasks')" id="tab-tasks" class="nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all shrink-0">
-                    <i class="fa-solid fa-list-check w-5 text-center"></i> پروژه‌ها و تسک‌ها
+                <button onclick="switchTab('notes')" id="tab-notes" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-regular fa-file-lines text-amber-500 w-4 text-center"></i> <span data-i18n="navNotes">یادداشت‌ها (Notes)</span>
                 </button>
-                <button onclick="switchTab('kanban')" id="tab-kanban" class="nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all shrink-0">
-                    <i class="fa-solid fa-table-columns w-5 text-center"></i> برد کانبان
+                <button onclick="switchTab('shopping')" id="tab-shopping" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-cart-shopping text-emerald-500 w-4 text-center"></i> <span data-i18n="navShopping">لیست خرید و مدیریت مالی</span>
                 </button>
-                <button onclick="switchTab('settings')" id="tab-settings" class="nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all shrink-0">
-                    <i class="fa-solid fa-mobile-screen-button w-5 text-center"></i> قفل صفحه و هوش مصنوعی
+                <button onclick="switchTab('workout')" id="tab-workout" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-dumbbell text-orange-500 w-4 text-center"></i> <span data-i18n="navWorkout">باشگاه و جزئیات ورزش</span>
+                </button>
+                <button onclick="switchTab('travel')" id="tab-travel" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-earth-americas text-cyan-500 w-4 text-center"></i> <span data-i18n="navTravel">سفر و مکان‌های منتخب</span>
+                </button>
+                <button onclick="switchTab('settings')" id="tab-settings" class="nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium shrink-0">
+                    <i class="fa-solid fa-sliders text-slate-500 w-4 text-center"></i> <span data-i18n="navSettings">تنظیمات و قفل صفحه</span>
                 </button>
             </nav>
         </div>
 
-        <!-- Lock Screen Status & Pomodoro Widget -->
-        <div class="hidden lg:flex flex-col gap-3 mt-6">
-            <button onclick="enableLockScreenWidget()" class="w-full glass hover:border-cyan-500/40 rounded-xl p-3 text-right transition flex items-center justify-between">
-                <div>
-                    <div class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-lock"></i> ویجت صفحه قفل گوشی
-                    </div>
-                    <p class="text-[10px] text-gray-400 mt-0.5" id="lockscreen-status-text">برای نمایش روی Lock Screen کلیک کنید</p>
-                </div>
-                <i class="fa-solid fa-bell text-gray-400"></i>
-            </button>
-
-            <div class="glass rounded-2xl p-4 border border-gray-800">
-                <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs text-gray-400 font-medium"><i class="fa-regular fa-clock text-blue-400 ml-1"></i> تایمر پومودورو</span>
-                    <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full">۲۵ دقیقه</span>
-                </div>
-                <div class="text-2xl font-bold text-center my-1.5 font-mono tracking-wider text-white" id="pomo-timer">25:00</div>
-                <div class="flex justify-center gap-2 mt-2">
-                    <button onclick="togglePomodoro()" id="pomo-btn" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition">شروع</button>
-                    <button onclick="resetPomodoro()" class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition">ریست</button>
-                </div>
+        <!-- Bottom Sidebar Controls -->
+        <div class="hidden lg:flex flex-col gap-2 pt-3 border-t border-slate-200 dark:border-neutral-800 text-xs">
+            <div class="flex items-center justify-between px-2 py-1.5 rounded-lg bg-white dark:bg-neutral-900 border border-slate-200/80 dark:border-neutral-800">
+                <span class="text-slate-600 dark:text-neutral-400" data-i18n="fabToggleLabel">دکمه شناور (Float)</span>
+                <input type="checkbox" id="sidebar-fab-toggle" onchange="toggleFabSetting(this.checked)" class="w-4 h-4 accent-blue-600 cursor-pointer" checked>
+            </div>
+            <div class="flex items-center justify-between px-2 py-1.5 text-[11px] text-slate-500">
+                <span data-i18n="tomorrowAlertTimeLabel">ساعت پیش‌نمایش فردا:</span>
+                <span id="sidebar-preview-time" class="font-mono font-bold text-blue-600 dark:text-blue-400">20:00</span>
             </div>
         </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col p-4 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
-        
-        <!-- Header & Smart Natural Language Bar -->
-        <header class="mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col max-w-6xl mx-auto w-full p-4 lg:p-8 overflow-y-auto">
+
+        <!-- TOP UTILITY BAR (Theme, Language, Floating Toggle, Quick Add) -->
+        <header class="flex flex-col gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-neutral-800">
+            <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-white">داشبورد برنامه‌ریزی و دستیار هوشمند</h2>
-                    <p class="text-xs sm:text-sm text-gray-400 mt-1" id="persian-date">در حال بارگذاری تقویم شمسی...</p>
+                    <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="header-greeting" data-i18n="welcomeTitle">نمای کلی و برنامه‌ریزی روزانه</h2>
+                    <p class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5" id="live-date-display">...</p>
                 </div>
+
+                <!-- Action Buttons: Lang, Theme, Float Icon, LockScreen -->
                 <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="enableLockScreenWidget()" class="px-3.5 py-2 rounded-xl glass hover:border-cyan-500/50 text-cyan-300 text-xs font-medium flex items-center gap-2 transition">
-                        <i class="fa-solid fa-mobile-screen"></i>
-                        <span>ارسال برنامه به صفحه قفل (Lock Screen)</span>
+                    <!-- Language Toggle -->
+                    <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-neutral-700 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-language text-blue-600 dark:text-blue-400"></i>
+                        <span id="lang-btn-text">EN / فارسی</span>
                     </button>
-                    <button onclick="switchTab('ai-planner')" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs sm:text-sm font-medium shadow-lg shadow-blue-500/25 flex items-center gap-2 transition">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>برنامه‌ریزی توصیفی هوشمند</span>
+
+                    <!-- Theme Toggle (Default Light) -->
+                    <button onclick="toggleTheme()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-medium hover:bg-slate-50 dark:hover:bg-neutral-700 transition flex items-center gap-1.5 shadow-sm">
+                        <i id="theme-icon" class="fa-solid fa-moon text-slate-700 dark:text-yellow-400"></i>
+                        <span id="theme-btn-text" data-i18n="themeBtn">حالت تاریک</span>
+                    </button>
+
+                    <!-- Floating Icon Quick Toggle -->
+                    <button onclick="toggleFabSetting()" id="header-fab-btn" class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-medium transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        <span data-i18n="floatBtnToggle">آیکون شناور: فعال</span>
+                    </button>
+
+                    <!-- Lock Screen Notification -->
+                    <button onclick="sendToLockScreen()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-medium hover:border-blue-400 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-mobile-screen text-indigo-500"></i>
+                        <span data-i18n="lockScreenBtn">قفل صفحه</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Magic Smart Input Bar -->
-            <div class="glass rounded-2xl p-2.5 border border-blue-500/30 shadow-xl shadow-blue-950/20">
-                <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-bolt"></i>
-                    </div>
-                    <input type="text" id="smart-input" 
-                        placeholder="ثبت فوری... مثلاً: «ساعت ۱۶ تا ۱۸ رندر پروژه موشن #فوری» یا «هر روز ساعت ۸ ورزش #ثابت»" 
-                        class="w-full bg-transparent text-white placeholder-gray-500 text-xs sm:text-sm focus:outline-none px-1"
-                        onkeydown="if(event.key === 'Enter') processSmartInput()">
-                    
-                    <button onclick="startVoiceCapture('smart-input')" title="ثبت صوتی" class="w-9 h-9 rounded-xl hover:bg-gray-800 text-gray-400 hover:text-cyan-400 flex items-center justify-center transition shrink-0">
-                        <i class="fa-solid fa-microphone"></i>
-                    </button>
-                    <button onclick="processSmartInput()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-medium rounded-xl transition shrink-0">
-                        ثبت
-                    </button>
+            <!-- Todoist-Style Quick Task Capture Bar -->
+            <div class="bg-white dark:bg-[#202020] rounded-xl p-2 border border-slate-200 dark:border-neutral-800 shadow-sm flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <div class="flex items-center gap-2 flex-1 min-w-[220px]">
+                    <i class="fa-solid fa-plus text-red-500 px-2"></i>
+                    <input type="text" id="quick-task-input" data-i18n-placeholder="quickAddPlaceholder"
+                        placeholder="ثبت سریع کار... (مثلاً: تماس با مدیر ساعت ۱۰ #فوری)"
+                        class="w-full bg-transparent text-sm focus:outline-none"
+                        onkeydown="if(event.key==='Enter') quickAddTask()">
+                </div>
+                <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-neutral-800">
+                    <select id="quick-task-day" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+                        <option value="today" data-i18n="todayOpt">امروز</option>
+                        <option value="tomorrow" data-i18n="tomorrowOpt">فردا</option>
+                    </select>
+                    <select id="quick-task-priority" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+                        <option value="p1">🔴 P1</option>
+                        <option value="p2" selected>🟡 P2</option>
+                        <option value="p3">🔵 P3</option>
+                    </select>
+                    <button onclick="startVoice('quick-task-input')" class="p-1.5 text-slate-400 hover:text-blue-600"><i class="fa-solid fa-microphone"></i></button>
+                    <button onclick="quickAddTask()" class="px-4 py-1.5 bg-[#db4c3f] hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition" data-i18n="addBtn">افزودن</button>
                 </div>
             </div>
         </header>
 
-        <!-- VIEW 1: DASHBOARD -->
-        <section id="view-dashboard" class="space-y-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div class="glass rounded-2xl p-4">
-                    <p class="text-xs text-gray-400">کارهای متغیر امروز</p>
-                    <h3 class="text-xl sm:text-2xl font-bold mt-1 text-white" id="stat-today-count">0 کار</h3>
-                    <p class="text-[11px] text-emerald-400 mt-2" id="stat-completed-ratio">0% انجام شده</p>
+        <!-- ==================== VIEW 1: HOME OVERVIEW (PREVIEW PAGE) ==================== -->
+        <section id="view-overview" class="space-y-6">
+            
+            <!-- Night-Before Tomorrow Preview Banner (Auto triggers at user set time or manual toggle) -->
+            <div id="tomorrow-night-banner" class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl p-5 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm sm:text-base text-indigo-950 dark:text-indigo-200" data-i18n="tomorrowPreviewTitle">پیش‌نمایش شبانه برنامه‌های فردا</h3>
+                            <p class="text-xs text-indigo-700 dark:text-indigo-300/80" id="tomorrow-banner-subtitle">تنظیم‌شده برای یادآوری شب قبل ساعت 20:00</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs text-indigo-800 dark:text-indigo-300" data-i18n="setPreviewTime">ساعت نمایش شبانه:</label>
+                        <input type="time" id="overview-preview-time" value="20:00" onchange="updatePreviewTimeSetting(this.value)"
+                            class="bg-white dark:bg-neutral-900 border border-indigo-300 dark:border-indigo-700 rounded-lg px-2 py-1 text-xs font-mono">
+                    </div>
                 </div>
-                <div class="glass rounded-2xl p-4">
-                    <p class="text-xs text-gray-400">کارهای ثابت (روتین)</p>
-                    <h3 class="text-xl sm:text-2xl font-bold mt-1 text-amber-400" id="stat-routines-count">0 برنامه</h3>
-                    <p class="text-[11px] text-gray-400 mt-2">قفل‌شده در تقویم روزانه</p>
+                <div id="overview-tomorrow-list" class="space-y-2"></div>
+            </div>
+
+            <!-- 4 Summary Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                <div onclick="switchTab('todo')" class="notion-card cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200/90 dark:border-neutral-800 shadow-sm">
+                    <div class="flex justify-between items-center text-xs text-slate-500 dark:text-neutral-400">
+                        <span data-i18n="cardTodayTasks">کارهای امروز</span>
+                        <i class="fa-solid fa-list-check text-red-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold mt-2" id="stat-today-tasks">0</div>
+                    <div class="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1" id="stat-today-done">0 انجام شده</div>
                 </div>
-                <div class="glass rounded-2xl p-4">
-                    <p class="text-xs text-gray-400">ساعت آزاد قابل برنامه‌ریزی</p>
-                    <h3 class="text-xl sm:text-2xl font-bold mt-1 text-cyan-400" id="stat-free-time">0 ساعت</h3>
-                    <p class="text-[11px] text-gray-400 mt-2">خارج از کارهای ثابت و جلسات</p>
+
+                <div onclick="switchTab('shopping')" class="notion-card cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200/90 dark:border-neutral-800 shadow-sm">
+                    <div class="flex justify-between items-center text-xs text-slate-500 dark:text-neutral-400">
+                        <span data-i18n="cardBalance">تراز مالی و خرید</span>
+                        <i class="fa-solid fa-wallet text-emerald-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold mt-2" id="stat-balance">0</div>
+                    <div class="text-[11px] text-slate-400 mt-1" id="stat-shopping-items">0 قلم در لیست خرید</div>
                 </div>
-                <div class="glass rounded-2xl p-4">
-                    <p class="text-xs text-gray-400">کارهای فوری (#فوری)</p>
-                    <h3 class="text-xl sm:text-2xl font-bold mt-1 text-red-400" id="stat-high-priority">0 مورد</h3>
-                    <p class="text-[11px] text-gray-400 mt-2">در اولویت اول چیدمان AI</p>
+
+                <div onclick="switchTab('workout')" class="notion-card cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200/90 dark:border-neutral-800 shadow-sm">
+                    <div class="flex justify-between items-center text-xs text-slate-500 dark:text-neutral-400">
+                        <span data-i18n="cardWorkout">برنامه ورزشی</span>
+                        <i class="fa-solid fa-dumbbell text-orange-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold mt-2" id="stat-workouts">0</div>
+                    <div class="text-[11px] text-orange-500 mt-1" data-i18n="clickForDetails">مشاهده جزئیات ست‌ها</div>
+                </div>
+
+                <div onclick="switchTab('travel')" class="notion-card cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200/90 dark:border-neutral-800 shadow-sm">
+                    <div class="flex justify-between items-center text-xs text-slate-500 dark:text-neutral-400">
+                        <span data-i18n="cardTravel">سفر و مکان‌های محبوب</span>
+                        <i class="fa-solid fa-location-dot text-cyan-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold mt-2" id="stat-places">0</div>
+                    <div class="text-[11px] text-cyan-600 dark:text-cyan-400 mt-1" id="stat-packing">0 وسیله سفر آماده</div>
                 </div>
             </div>
 
+            <!-- Main Overview Two Columns -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Today's Combined Schedule Preview -->
-                <div class="lg:col-span-2 glass rounded-2xl p-5">
+                <!-- Today's Focus Tasks (Click to open details drawer) -->
+                <div class="lg:col-span-2 bg-white dark:bg-[#202020] rounded-2xl p-5 border border-slate-200 dark:border-neutral-800 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-blue-400"></i> برنامه ترکیبی امروز (کارهای ثابت + کارهای روزانه)
+                            <i class="fa-solid fa-bullseye text-red-500"></i>
+                            <span data-i18n="todayFocusTitle">برنامه تمرکز امروز (برای ثبت ریزکارها روی هر مورد کلیک کنید)</span>
                         </h3>
-                        <button onclick="aiAutoSchedule()" class="text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-3 py-1 rounded-lg hover:bg-cyan-500/30 transition">
-                            <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> چیدمان خودکار در ساعت‌های خالی
-                        </button>
+                        <button onclick="switchTab('todo')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline" data-i18n="viewAll">مشاهده همه</button>
                     </div>
-                    <div id="dashboard-combined-list" class="space-y-2.5"></div>
+                    <div id="overview-today-list" class="space-y-2.5"></div>
                 </div>
 
-                <!-- Habits & Quick Notes -->
-                <div class="space-y-6">
-                    <div class="glass rounded-2xl p-5">
+                <!-- Right Column: Quick Notes & Fixed Routines Preview -->
+                <div class="space-y-4">
+                    <div class="bg-white dark:bg-[#202020] rounded-2xl p-5 border border-slate-200 dark:border-neutral-800 shadow-sm">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-bold text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-fire text-orange-400"></i> زنجیره عادت‌ها (Streak)
+                                <i class="fa-solid fa-thumbtack text-amber-500"></i>
+                                <span data-i18n="routinesTitle">کارهای ثابت امروز</span>
                             </h3>
-                            <button onclick="addNewHabitPrompt()" class="text-xs text-blue-400 hover:underline">+ عادت جدید</button>
+                            <button onclick="switchTab('timeblock')" class="text-xs text-blue-600">+ <span data-i18n="manage">مدیریت</span></button>
                         </div>
-                        <div id="dashboard-habits" class="space-y-2"></div>
+                        <div id="overview-routines-list" class="space-y-2 text-xs"></div>
                     </div>
 
-                    <div class="glass rounded-2xl p-5">
+                    <div class="bg-white dark:bg-[#202020] rounded-2xl p-5 border border-slate-200 dark:border-neutral-800 shadow-sm">
                         <h3 class="font-bold text-sm flex items-center gap-2 mb-2">
-                            <i class="fa-regular fa-note-sticky text-yellow-400"></i> یادداشت و صندوق ورودی سریع
+                            <i class="fa-regular fa-note-sticky text-amber-500"></i>
+                            <span data-i18n="scratchpadTitle">یادداشت دم‌دستی</span>
                         </h3>
-                        <textarea id="quick-note-area" rows="4" 
-                            placeholder="هر ایده یا نکته‌ای را اینجا بنویسید..."
-                            class="w-full bg-gray-900/70 border border-gray-800 rounded-xl p-3 text-xs sm:text-sm text-gray-200 focus:outline-none focus:border-blue-500/50 resize-none"
-                            oninput="saveQuickNote()"></textarea>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW 2: AI CONVERSATIONAL AUTO-PLANNER (NEW FEATURE) -->
-        <section id="view-ai-planner" class="hidden space-y-6">
-            <div class="glass rounded-2xl p-6 border border-cyan-500/30">
-                <div class="flex items-start justify-between gap-4 mb-4">
-                    <div>
-                        <span class="text-xs font-bold text-cyan-400 bg-cyan-950/80 border border-cyan-500/30 px-2.5 py-1 rounded-full">اتاق فرمان هوشمند</span>
-                        <h3 class="text-lg sm:text-xl font-bold text-white mt-2">برنامه‌ریزی اتوماتیک با توضیح متنی یا صوتی</h3>
-                        <p class="text-xs sm:text-sm text-gray-400 mt-1">
-                            فقط به زبان محاوره‌ای بنویسید یا بگویید امروز چه کارهایی دارید، چه ساعت‌هایی درگیر هستید و کدام پروژه مهم‌تر است. سیستم با توجه به **کارهای ثابت شما**، کل روز را به صورت خودکار بلوک‌بندی می‌کند.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Example Prompts Chips -->
-                <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="text-xs text-gray-400 self-center">نمونه توضیح آماده (کلیک کنید):</span>
-                    <button onclick="fillAIPlannerSample(1)" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg border border-gray-700 transition">
-                        «امروز ۲ ساعت طراحی سایت دارم، ۳ ساعت ساخت موشن گرافیک #فوری و ۱ ساعت بررسی پیام‌ها»
-                    </button>
-                    <button onclick="fillAIPlannerSample(2)" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1.5 rounded-lg border border-gray-700 transition">
-                        «ساعت ۱۴ تا ۱۶ جلسه اداری ثابت دارم؛ بقیه روز رو برای تدوین ویدئو (۲ ساعت) و مطالعه هوش مصنوعی (۱ ساعت) بچین»
-                    </button>
-                </div>
-
-                <div class="relative">
-                    <textarea id="ai-narrative-input" rows="4"
-                        placeholder="اینجا بنویسید یا دکمه میکروفون را بزنید... مثلاً: امروز صبح کارهای مدرسه رو دارم، بعدازظهر باید ۲ ساعت روی پروژه انیمیشن کار کنم و ۱ ساعت هم کدنویسی لندینگ‌پیج انجام بدم..."
-                        class="w-full bg-gray-950/90 border border-gray-700 focus:border-cyan-500 rounded-2xl p-4 text-sm text-white leading-relaxed focus:outline-none"></textarea>
-                    
-                    <button onclick="startVoiceCapture('ai-narrative-input')" class="absolute left-3 bottom-3 px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-cyan-600 text-gray-300 hover:text-white text-xs flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-microphone"></i> تایپ صوتی
-                    </button>
-                </div>
-
-                <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
-                    <div class="text-xs text-gray-400 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-emerald-400"></i>
-                        <span>کارهای ثابت شما (مثل ساعات کاری و استراحت) حفظ شده و کارهای جدید در زمان‌های آزاد چیده می‌شوند.</span>
-                    </div>
-                    <button onclick="generateScheduleFromNarrative()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 flex items-center gap-2 transition">
-                        <i class="fa-solid fa-microchip"></i>
-                        <span>تحلیل توضیح و چیدمان خودکار برنامه</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- AI Generated Schedule Result Preview -->
-            <div id="ai-plan-result-box" class="hidden glass rounded-2xl p-6 border border-emerald-500/30">
-                <div class="flex items-center justify-between mb-4">
-                    <h4 class="font-bold text-base text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check"></i> برنامه پیشنهادی چیده‌شده بر اساس توضیح شما:
-                    </h4>
-                    <button onclick="switchTab('timeblock')" class="text-xs bg-emerald-600/20 text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-500/30">
-                        مشاهده در جدول ساعتی کامل
-                    </button>
-                </div>
-                <div id="ai-plan-preview-list" class="space-y-2"></div>
-            </div>
-        </section>
-
-        <!-- VIEW 3: FIXED ROUTINES & RECURRING BLOCKS (NEW FEATURE) -->
-        <section id="view-routines" class="hidden space-y-6">
-            <div class="glass rounded-2xl p-6 border border-amber-500/20">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-thumbtack text-amber-400"></i> تعریف کارهای ثابت و روتین‌های غیرقابل تغییر
-                        </h3>
-                        <p class="text-xs text-gray-400 mt-1">
-                            کارهایی که ساعت مشخص و ثابتی دارند (مثل حضور در مدرسه/محل کار، ناهار و استراحت، ورزش یا کلاس‌ها) را اینجا تعریف کنید. نرم‌افزار این ساعت‌ها را در تقویم قفل می‌کند تا تداخلی پیش نیاید.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Add New Fixed Routine Form -->
-                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 bg-gray-900/80 p-4 rounded-2xl border border-gray-800 mb-6">
-                    <div class="sm:col-span-2">
-                        <label class="block text-[11px] text-gray-400 mb-1">عنوان کار ثابت / روتین</label>
-                        <input type="text" id="routine-title" placeholder="مثلاً: حضور در مدرسه و امور اداری" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-gray-400 mb-1">از ساعت (۶ تا ۲۳)</label>
-                        <input type="number" id="routine-start" min="6" max="23" value="8" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-gray-400 mb-1">تا ساعت (۷ تا ۲۴)</label>
-                        <input type="number" id="routine-end" min="7" max="24" value="13" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white">
-                    </div>
-                    <div class="flex flex-col justify-end">
-                        <button onclick="addFixedRoutine()" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition">
-                            + افزودن کار ثابت
-                        </button>
-                    </div>
-                </div>
-
-                <!-- List of Fixed Routines -->
-                <div id="routines-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-            </div>
-        </section>
-
-        <!-- VIEW 4: TIME BLOCKING -->
-        <section id="view-timeblock" class="hidden space-y-6">
-            <div class="glass p-5 rounded-2xl">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-                    <div>
-                        <h3 class="font-bold text-lg text-white">تقویم بلوک‌بندی ساعتی (کارهای ثابت + کارهای روزانه)</h3>
-                        <p class="text-xs text-gray-400">بلوک‌های طلایی مربوط به «کارهای ثابت» و بلوک‌های آبی مربوط به «پروژه‌ها و تسک‌های روز» هستند.</p>
-                    </div>
-                    <button onclick="aiAutoSchedule()" class="px-4 py-2 bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 rounded-xl text-xs hover:bg-cyan-600/30 transition self-start">
-                        <i class="fa-solid fa-robot ml-1"></i> چیدمان مجدد ساعت‌های خالی
-                    </button>
-                </div>
-                <div id="timeblock-grid" class="space-y-2 border-r-2 border-gray-800 pr-4 mr-2"></div>
-            </div>
-        </section>
-
-        <!-- VIEW 5: PROJECTS & TASKS -->
-        <section id="view-tasks" class="hidden space-y-6">
-            <div class="flex flex-wrap items-center justify-between gap-4 glass p-4 rounded-2xl">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs sm:text-sm text-gray-400">فیلتر پروژه:</span>
-                    <select id="filter-project" onchange="renderAll()" class="bg-gray-900 border border-gray-700 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-white">
-                        <option value="all">همه دسته‌ها و پروژه‌ها</option>
-                        <option value="تولید محتوا و موشن">تولید محتوا و موشن</option>
-                        <option value="طراحی سایت و فنی">طراحی سایت و فنی</option>
-                        <option value="آموزش و مدرسه">آموزش و مدرسه</option>
-                        <option value="اداری و شخصی">اداری و شخصی</option>
-                    </select>
-                </div>
-                <button onclick="openQuickCaptureModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-medium text-white flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> افزودن تسک یا پروژه جدید
-                </button>
-            </div>
-            <div id="full-tasks-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </section>
-
-        <!-- VIEW 6: KANBAN BOARD -->
-        <section id="view-kanban" class="hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass rounded-2xl p-4 border-t-4 border-t-gray-500">
-                    <h4 class="font-bold text-sm mb-4 flex justify-between"><span>برای انجام</span><span id="kanban-count-todo" class="text-xs bg-gray-800 px-2 py-0.5 rounded-full">0</span></h4>
-                    <div id="kanban-todo" class="space-y-3 min-h-[250px]"></div>
-                </div>
-                <div class="glass rounded-2xl p-4 border-t-4 border-t-blue-500">
-                    <h4 class="font-bold text-sm mb-4 flex justify-between"><span>در حال انجام</span><span id="kanban-count-doing" class="text-xs bg-blue-900/40 text-blue-300 px-2 py-0.5 rounded-full">0</span></h4>
-                    <div id="kanban-doing" class="space-y-3 min-h-[250px]"></div>
-                </div>
-                <div class="glass rounded-2xl p-4 border-t-4 border-t-emerald-500">
-                    <h4 class="font-bold text-sm mb-4 flex justify-between"><span>تکمیل شده</span><span id="kanban-count-done" class="text-xs bg-emerald-900/40 text-emerald-300 px-2 py-0.5 rounded-full">0</span></h4>
-                    <div id="kanban-done" class="space-y-3 min-h-[250px]"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW 7: LOCK SCREEN & AI SETTINGS -->
-        <section id="view-settings" class="hidden space-y-6">
-            <!-- Lock Screen Notification Control -->
-            <div class="glass rounded-2xl p-6 border border-cyan-500/30">
-                <h3 class="text-base sm:text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-mobile-screen-button text-cyan-400"></i> دسترسی از صفحه قفل گوشی (Lock Screen) و نصب اپلیکیشن
-                </h3>
-                <p class="text-xs text-gray-400 leading-relaxed mb-4">
-                    با فعال‌سازی «اعلان زنده»، برنامه فعلی و کار بعدی شما به‌صورت دائمی روی صفحه قفل گوشی (Lock Screen) و نوار اعلان نمایش داده می‌شود و با لمس آن می‌توانید فوراً کار جدید ثبت کنید.
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <button onclick="enableLockScreenWidget()" class="px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2">
-                        <i class="fa-solid fa-bell"></i> فعال‌سازی و بروزرسانی اعلان روی صفحه قفل
-                    </button>
-                    <button onclick="installPWA()" class="px-4 py-2.5 bg-blue-600/20 border border-blue-500/40 text-blue-300 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                        <i class="fa-solid fa-download"></i> نصب مستقیم روی صفحه اصلی گوشی (PWA)
-                    </button>
-                </div>
-            </div>
-
-            <!-- 3-Layer AI Settings -->
-            <div class="glass rounded-2xl p-6 border border-blue-500/20">
-                <h3 class="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-network-wired text-blue-400"></i> تنظیمات اتصال به هوش مصنوعی آفلاین (AI Edge / Ollama) و ابری
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
-                        <label class="block text-xs font-bold text-cyan-400 mb-2">آدرس سرور محلی (AI Edge Gallery / Ollama API)</label>
-                        <input type="text" id="local-ai-url" value="http://127.0.0.1:11434/v1/chat/completions" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-left dir-ltr text-gray-300 mb-2">
-                        <input type="text" id="local-ai-model" value="gemma2:2b" placeholder="نام مدل محلی" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-left dir-ltr text-gray-300">
-                    </div>
-                    <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
-                        <label class="block text-xs font-bold text-purple-400 mb-2">کلید Gemini API (لایه سوم - اختیاری برای پردازش ابری)</label>
-                        <input type="password" id="cloud-api-key" placeholder="AIzaSy..." class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs text-left dir-ltr text-gray-300 mb-2">
-                        <p class="text-[11px] text-gray-500">در صورت خالی بودن، موتور هوشمند محلی (بدون نیاز به اینترنت) تمام زمان‌بندی‌ها را انجام می‌دهد.</p>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center pt-3 border-t border-gray-800">
-                    <button onclick="exportData()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-xl text-xs">دانلود فایل پشتیبان (JSON)</button>
-                    <button onclick="resetDemoData()" class="text-xs text-red-400 hover:underline">بازگردانی تنظیمات اولیه</button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FLOATING ACTION BUTTON (FAB - ALWAYS ACCESSIBLE) -->
-    <button onclick="openQuickCaptureModal()" title="ثبت فوری کار، صوت یا یادداشت"
-        class="fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 text-white flex items-center justify-center fab-glow hover:scale-105 active:scale-95 transition-all">
-        <i class="fa-solid fa-plus text-2xl"></i>
-    </button>
-
-    <!-- QUICK CAPTURE FLOATING MODAL -->
-    <div id="quick-capture-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="glass rounded-2xl max-w-md w-full p-5 border border-blue-500/40 shadow-2xl">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-bolt text-cyan-400"></i> دستیار ثبت فوری (Quick Capture)
-                </h3>
-                <button onclick="closeQuickCaptureModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            
-            <div class="space-y-3 text-xs sm:text-sm">
-                <div class="relative">
-                    <input type="text" id="fab-input" placeholder="عنوان کار یا دستور... (مثلاً: ساعت ۱۷ تدوین موشن)" 
-                        class="w-full bg-gray-950 border border-gray-700 focus:border-blue-500 rounded-xl p-3 pl-10 text-white"
-                        onkeydown="if(event.key==='Enter') saveFromFabModal()">
-                    <button onclick="startVoiceCapture('fab-input')" class="absolute left-2.5 top-2.5 text-gray-400 hover:text-cyan-400 p-1">
-                        <i class="fa-solid fa-microphone text-base"></i>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="fab-type" class="bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs">
-                        <option value="task">ثبت به عنوان کار روزانه</option>
-                        <option value="routine">ثبت به عنوان کار ثابت (روتین)</option>
-                    </select>
-                    <select id="fab-priority" class="bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs">
-                        <option value="high">اولویت: فوری و مهم</option>
-                        <option value="medium" selected>اولویت: مهم</option>
-                        <option value="low">اولویت: عادی</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2">
-                    <select id="fab-project" class="bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs">
-                        <option value="تولید محتوا و موشن">تولید محتوا</option>
-                        <option value="طراحی سایت و فنی">طراحی سایت</option>
-                        <option value="آموزش و مدرسه">آموزش/مدرسه</option>
-                        <option value="اداری و شخصی">شخصی/اداری</option>
-                    </select>
-                    <input type="number" id="fab-start" min="6" max="23" placeholder="از ساعت (مثلا 14)" class="bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs">
-                    <input type="number" id="fab-end" min="7" max="24" placeholder="تا ساعت (مثلا 16)" class="bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs">
-                </div>
-
-                <div class="flex justify-end gap-2 pt-2">
-                    <button onclick="closeQuickCaptureModal()" class="px-4 py-2 bg-gray-800 rounded-xl text-gray-300 text-xs">بستن</button>
-                    <button onclick="saveFromFabModal()" class="px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl font-bold text-xs shadow-lg">ثبت فوری</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- DEFAULT DATA (TASKS & FIXED ROUTINES) ---
-                // --- DEFAULT DATA (EMPTY FOR PRIVACY) ---
-        const defaultRoutines = [];
-        const defaultTasks = [];
-        const defaultHabits = [];
-
-        // --- STATE LOADING ---
-        let routines = JSON.parse(localStorage.getItem('ai_planner_routines')) || defaultRoutines;
-        let tasks = JSON.parse(localStorage.getItem('ai_planner_tasks')) || defaultTasks;
-        let habits = JSON.parse(localStorage.getItem('ai_planner_habits')) || defaultHabits;
-        let quickNote = localStorage.getItem('ai_planner_note') || "";
         
-                function saveState() {
-            localStorage.setItem('ai_planner_routines', JSON.stringify(routines));
-            localStorage.setItem('ai_planner_tasks', JSON.stringify(tasks));
-            localStorage.setItem('ai_planner_habits', JSON.stringify(habits));
-            updateLockScreenNotificationIfPermitted();
-        }
-
-        // --- PERSIAN DATE ---
-        function initPersianDate() {
-            const now = new Date();
-            const persianDateStr = new Intl.DateTimeFormat('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
-            document.getElementById('persian-date').innerText = `امروز: ${persianDateStr}`;
-        }
-
-        // --- NAVIGATION ---
-        function switchTab(tabId) {
-            const views = ['dashboard', 'ai-planner', 'routines', 'timeblock', 'tasks', 'kanban', 'settings'];
-            views.forEach(v => {
-                document.getElementById(`view-${v}`).classList.add('hidden');
-                const btn = document.getElementById(`tab-${v}`);
-                if (btn) btn.className = "nav-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all shrink-0";
-            });
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-${tabId}`);
-            if (activeBtn) activeBtn.className = "nav-btn active flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all bg-blue-600/20 text-blue-400 border border-blue-500/30 shrink-0";
-            renderAll();
-        }
-
-        // --- PERSIAN DIGIT NORMALIZER ---
-        function toEnglishDigits(str) {
-            const persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-            const arabic  = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-            return str.replace(/[۰-۹]/g, d => persian.indexOf(d)).replace(/[٠-٩]/g, d => arabic.indexOf(d));
-        }
-
-        // --- SMART SINGLE INPUT PARSER ---
-        function processSmartInput() {
-            const inputEl = document.getElementById('smart-input');
-            const raw = inputEl.value.trim();
-            if (!raw) return;
-            const norm = toEnglishDigits(raw);
-
-            const rangeMatch = norm.match(/(?:ساعت|از)?\s*(\d{1,2})\s*تا\s*(\d{1,2})/);
-            const singleMatch = norm.match(/ساعت\s*(\d{1,2})/);
-            let startHour = rangeMatch ? parseInt(rangeMatch[1]) : (singleMatch ? parseInt(singleMatch[1]) : null);
-            let endHour = rangeMatch ? parseInt(rangeMatch[2]) : (startHour ? startHour + 1 : null);
-
-            if (norm.includes('#ثابت') || norm.includes('هر روز')) {
-                routines.push({
-                    id: Date.now(),
-                    title: raw.replace(/#ثابت/g, '').trim(),
-                    startHour: startHour || 8,
-                    endHour: endHour || 10,
-                    days: "هر روز"
-                });
-            } else {
-                let priority = (norm.includes('#فوری') || norm.includes('فوری')) ? 'high' : 'medium';
-                let project = 'اداری و شخصی';
-                if (norm.includes('سایت') || norm.includes('کد')) project = 'طراحی سایت و فنی';
-                else if (norm.includes('موشن') || norm.includes('ویدئو') || norm.includes('انیمیشن')) project = 'تولید محتوا و موشن';
-                else if (norm.includes('مدرسه') || norm.includes('آموزش')) project = 'آموزش و مدرسه';
-
-                tasks.unshift({
-                    id: Date.now(),
-                    title: raw.replace(/#\S+/g, '').trim(),
-                    project,
-                    priority,
-                    status: 'todo',
-                    duration: (startHour && endHour) ? (endHour - startHour) : 1,
-                    startHour,
-                    endHour,
-                    subtasks: []
-                });
-            }
-
-            inputEl.value = '';
-            saveState();
-            renderAll();
-        }
-
-        // --- AI NARRATIVE AUTO-PLANNER ENGINE (FEATURE 3) ---
-        function fillAIPlannerSample(num) {
-            const box = document.getElementById('ai-narrative-input');
-            if (num === 1) {
-                box.value = "امروز ۲ ساعت طراحی سایت و لندینگ‌پیج دارم #فوری، ۳ ساعت ساخت و رندر موشن گرافیک دارم و ۱ ساعت هم بررسی ایمیل‌ها و پیام‌های کاری.";
-            } else {
-                box.value = "ساعت ۱۴ تا ۱۶ جلسه هماهنگی ثابت دارم؛ بقیه زمان‌های آزاد امروز رو برای تدوین ویدئو (۲ ساعت #فوری) و مطالعه هوش مصنوعی (۱ ساعت) برنامه‌ریزی کن.";
-            }
-        }
-
-        function generateScheduleFromNarrative() {
-            const rawText = document.getElementById('ai-narrative-input').value.trim();
-            if (!rawText) return alert("لطفاً توضیح کوتاهی از کارهای امروزتان بنویسید.");
-
-            const norm = toEnglishDigits(rawText);
-            // Split narrative by Persian separators (و، ،، ؛، خط جدید)
-            const segments = norm.split(/[\n،؛]+|\s+و\s+/).map(s => s.trim()).filter(s => s.length > 3);
-
-            let extractedCount = 0;
-
-            segments.forEach(seg => {
-                // Check if segment specifies a fixed time range like "ساعت 14 تا 16"
-                const rangeMatch = seg.match(/(?:ساعت|از)?\s*(\d{1,2})\s*تا\s*(\d{1,2})/);
-                // Check if segment specifies duration like "2 ساعت"
-                const durMatch = seg.match(/(\d{1,2})\s*ساعت/);
-
-                if (seg.includes('ثابت') && rangeMatch) {
-                    routines.push({
-                        id: Date.now() + Math.random(),
-                        title: seg.replace(/ثابت/g, '').trim(),
-                        startHour: parseInt(rangeMatch[1]),
-                        endHour: parseInt(rangeMatch[2]),
-                        days: "امروز"
-                    });
-                    extractedCount++;
-                } else {
-                    const duration = durMatch ? Math.min(4, parseInt(durMatch[1])) : 1;
-                    const startH = rangeMatch ? parseInt(rangeMatch[1]) : null;
-                    const endH = rangeMatch ? parseInt(rangeMatch[2]) : null;
-                    const isHigh = seg.includes('فوری') || seg.includes('مهم');
-
-                    let project = 'اداری و شخصی';
-                    if (seg.includes('سایت') || seg.includes('کد') || seg.includes('لندینگ')) project = 'طراحی سایت و فنی';
-                    else if (seg.includes('موشن') || seg.includes('ویدئو') || seg.includes('انیمیشن')) project = 'تولید محتوا و موشن';
-                    else if (seg.includes('مدرسه') || seg.includes('آموزش') || seg.includes('مطالعه')) project = 'آموزش و مدرسه';
-
-                    tasks.unshift({
-                        id: Math.floor(Date.now() + Math.random() * 1000),
-                        title: seg.replace(/#\S+/g, '').trim(),
-                        project,
-                        priority: isHigh ? 'high' : 'medium',
-                        status: 'todo',
-                        duration: duration,
-                        startHour: startH,
-                        endHour: endH,
-                        subtasks: []
-                    });
-                    extractedCount++;
-                }
-            });
-
-            // Now run Auto-Scheduler respecting Fixed Routines
-            aiAutoSchedule(true);
-
-            // Show result preview
-            const resultBox = document.getElementById('ai-plan-result-box');
-            resultBox.classList.remove('hidden');
-            renderAll();
-        }
-
-        // --- AUTO-SCHEDULER RESPECTING FIXED ROUTINES (FEATURE 3 & 4) ---
-        function aiAutoSchedule(silent = false) {
-            // 1. Mark all hours occupied by Fixed Routines
-            const occupied = new Set();
-            routines.forEach(r => {
-                for (let h = r.startHour; h < r.endHour; h++) occupied.add(h);
-            });
-
-            // 2. Also mark hours of tasks that already have explicit times
-            tasks.forEach(t => {
-                if (t.startHour && t.endHour && t.status !== 'done') {
-                    for (let h = t.startHour; h < t.endHour; h++) occupied.add(h);
-                }
-            });
-
-            // 3. Sort unscheduled tasks by priority (high first)
-            const pOrder = { high: 1, medium: 2, low: 3 };
-            const unscheduled = tasks.filter(t => !t.startHour && t.status !== 'done')
-                                     .sort((a, b) => pOrder[a.priority] - pOrder[b.priority]);
-
-            let scheduledCount = 0;
-            unscheduled.forEach(task => {
-                const dur = task.duration || 1;
-                // Find contiguous free block between 8:00 and 22:00
-                for (let h = 8; h <= 22 - dur; h++) {
-                    let canFit = true;
-                    for (let d = 0; d < dur; d++) {
-                        if (occupied.has(h + d)) { canFit = false; break; }
-                    }
-                    if (canFit) {
-                        task.startHour = h;
-                        task.endHour = h + dur;
-                        for (let d = 0; d < dur; d++) occupied.add(h + d);
-                        scheduledCount++;
-                        break;
-                    }
-                }
-            });
-
-            saveState();
-            renderAll();
-            if (!silent) {
-                alert(`چیدمان هوشمند انجام شد! کارهای شما بدون تداخل با «کارهای ثابت» در ساعت‌های آزاد روز قرار گرفتند.`);
-            }
-        }
-
-        // --- FIXED ROUTINES MANAGEMENT (FEATURE 4) ---
-        function addFixedRoutine() {
-            const title = document.getElementById('routine-title').value.trim();
-            const startHour = parseInt(document.getElementById('routine-start').value);
-            const endHour = parseInt(document.getElementById('routine-end').value);
-            if (!title || isNaN(startHour) || isNaN(endHour) || endHour <= startHour) {
-                return alert("لطفاً عنوان و بازه زمانی معتبر وارد کنید.");
-            }
-            routines.push({ id: Date.now(), title, startHour, endHour, days: "روزانه" });
-            document.getElementById('routine-title').value = '';
-            saveState();
-            renderAll();
-        }
-
-        function deleteRoutine(id) {
-            routines = routines.filter(r => r.id !== id);
-            saveState();
-            renderAll();
-        }
-
-        // --- FLOATING QUICK CAPTURE MODAL (FEATURE 1) ---
-        function openQuickCaptureModal() {
-            const modal = document.getElementById('quick-capture-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => document.getElementById('fab-input').focus(), 100);
-        }
-
-        function closeQuickCaptureModal() {
-            const modal = document.getElementById('quick-capture-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function saveFromFabModal() {
-            const title = document.getElementById('fab-input').value.trim();
-            if (!title) return;
-            const type = document.getElementById('fab-type').value;
-            const priority = document.getElementById('fab-priority').value;
-            const project = document.getElementById('fab-project').value;
-            const startVal = parseInt(document.getElementById('fab-start').value);
-            const endVal = parseInt(document.getElementById('fab-end').value);
-
-            if (type === 'routine') {
-                routines.push({
-                    id: Date.now(),
-                    title,
-                    startHour: !isNaN(startVal) ? startVal : 8,
-                    endHour: !isNaN(endVal) ? endVal : 10,
-                    days: "هر روز"
-                });
-            } else {
-                tasks.unshift({
-                    id: Date.now(),
-                    title,
-                    project,
-                    priority,
-                    status: 'todo',
-                    duration: (!isNaN(startVal) && !isNaN(endVal)) ? (endVal - startVal) : 1,
-                    startHour: !isNaN(startVal) ? startVal : null,
-                    endHour: !isNaN(endVal) ? endVal : (!isNaN(startVal) ? startVal + 1 : null),
-                    subtasks: []
-                });
-            }
-
-            document.getElementById('fab-input').value = '';
-            document.getElementById('fab-start').value = '';
-            document.getElementById('fab-end').value = '';
-            closeQuickCaptureModal();
-            saveState();
-            renderAll();
-        }
-
-        // --- LOCK SCREEN PERSISTENT NOTIFICATION (FEATURE 2) ---
-        async function enableLockScreenWidget() {
-            if (!("Notification" in window)) {
-                return alert("مرورگر شما از اعلان‌های صفحه قفل پشتیبانی نمی‌کند.");
-            }
-            const permission = await Notification.requestPermission();
-            if (permission === "granted") {
-                updateLockScreenNotificationIfPermitted(true);
-                const statusEl = document.getElementById('lockscreen-status-text');
-                if (statusEl) statusEl.innerText = "فعال روی Lock Screen گوشی";
-            } else {
-                alert("برای نمایش برنامه روی صفحه قفل، مجوز Notification را تایید کنید.");
-            }
-        }
-
-        async function updateLockScreenNotificationIfPermitted(showConfirm = false) {
-            if (!("Notification" in window) || Notification.permission !== "granted") return;
-
-            const activeTasks = tasks.filter(t => t.status !== 'done');
-            const nextTask = activeTasks[0] ? activeTasks[0].title : "همه کارهای امروز تکمیل شده‌اند!";
-            const notifOptions = {
-                body: `کار جاری: ${nextTask} | (${activeTasks.length} کار باقی‌مانده) — برای ثبت سریع لمس کنید`,
-                tag: 'ai-planner-lockscreen-widget',
-                renotify: false,
-                requireInteraction: true
-            };
-
-            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                const reg = await navigator.serviceWorker.ready;
-                reg.showNotification("پلنر هوشمند | برنامه امروز", notifOptions);
-            } else {
-                new Notification("پلنر هوشمند | برنامه امروز", notifOptions);
-            }
-            if (showConfirm) {
-                alert("ویجت برنامه به نوار اعلان و صفحه قفل (Lock Screen) ارسال شد!");
-            }
-        }
-
-        // --- VOICE RECOGNITION ---
-        function startVoiceCapture(targetInputId) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return alert("مرورگر شما از تایپ صوتی پشتیبانی نمی‌کند.");
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'fa-IR';
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                const el = document.getElementById(targetInputId);
-                el.value = el.value ? (el.value + " " + transcript) : transcript;
-            };
-            recognition.start();
-        }
-
-        // --- SUBTASKS & STATUS ---
-        function toggleTaskStatus(id) {
-            const t = tasks.find(x => x.id === id);
-            if (t) { t.status = t.status === 'done' ? 'todo' : 'done'; saveState(); renderAll(); }
-        }
-        function changeTaskStage(id, st) {
-            const t = tasks.find(x => x.id === id);
-            if (t) { t.status = st; saveState(); renderAll(); }
-        }
-        function deleteTask(id) {
-            tasks = tasks.filter(x => x.id !== id);
-            saveState();
-            renderAll();
-        }
-        function toggleHabit(id) {
-            const h = habits.find(x => x.id === id);
-            if (h) {
-                h.doneToday = !h.doneToday;
-                h.streak = h.doneToday ? h.streak + 1 : Math.max(0, h.streak - 1);
-                saveState();
-                renderAll();
-            }
-        }
-        function addNewHabitPrompt() {
-            const title = prompt("عنوان عادت جدید:");
-            if (title) { habits.push({ id: Date.now(), title, streak: 0, doneToday: false }); saveState(); renderAll(); }
-        }
-        function saveQuickNote() {
-            localStorage.setItem('ai_planner_note', document.getElementById('quick-note-area').value);
-        }
-
-        // --- RENDER UI ---
-        function getPriorityBadge(p) {
-            if (p === 'high') return `<span class="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">فوری</span>`;
-            if (p === 'medium') return `<span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">مهم</span>`;
-            return `<span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">عادی</span>`;
-        }
-
-        function renderAll() {
-            const total = tasks.length;
-            const doneCount = tasks.filter(t => t.status === 'done').length;
-            const highCount = tasks.filter(t => t.priority === 'high' && t.status !== 'done').length;
-
-            // Calculate occupied hours
-            const occupied = new Set();
-            routines.forEach(r => { for (let h = r.startHour; h < r.endHour; h++) occupied.add(h); });
-            tasks.forEach(t => { if (t.startHour && t.endHour && t.status !== 'done') { for (let h = t.startHour; h < t.endHour; h++) occupied.add(h); } });
-            const freeHours = Math.max(0, 15 - occupied.size);
-
-            document.getElementById('stat-today-count').innerText = `${total} کار`;
-            document.getElementById('stat-completed-ratio').innerText = total ? `${Math.round((doneCount / total) * 100)}% انجام شده` : 'بدون کار';
-            document.getElementById('stat-routines-count').innerText = `${routines.length} روتین ثابت`;
-            document.getElementById('stat-free-time').innerText = `${freeHours} ساعت آزاد`;
-            document.getElementById('stat-high-priority').innerText = `${highCount} مورد`;
-
-            // Dashboard Combined Timeline
-            const combined = [
-                ...routines.map(r => ({ ...r, isRoutine: true })),
-                ...tasks.map(t => ({ ...t, isRoutine: false }))
-            ].sort((a, b) => (a.startHour || 99) - (b.startHour || 99));
-
-            const combinedHTML = combined.map(item => item.isRoutine ? `
-                <div class="p-3 rounded-xl bg-amber-950/30 border border-amber-500/30 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-lock text-amber-400 text-sm"></i>
-                        <div>
-                            <h4 class="text-xs sm:text-sm font-bold text-amber-200">${item.title}</h4>
-                            <span class="text-[11px] text-amber-400/80">ساعت ${item.startHour}:00 تا ${item.endHour}:00 (کار ثابت)</span>
-                        </div>
-                    </div>
-                    <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">روتین قفل‌شده</span>
-                </div>
-            ` : `
-                <div class="p-3 rounded-xl bg-gray-900/80 border border-gray-800 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" ${item.status === 'done' ? 'checked' : ''} onchange="toggleTaskStatus(${item.id})" class="w-4 h-4 accent-blue-500 cursor-pointer">
-                        <div>
-                            <h4 class="text-xs sm:text-sm font-medium ${item.status === 'done' ? 'line-through text-gray-500' : 'text-white'}">${item.title}</h4>
-                            <div class="flex gap-2 mt-0.5 text-[11px]">
-                                <span class="text-cyan-400">${item.project}</span>
-                                ${item.startHour ? `<span class="text-blue-300">ساعت ${item.startHour}:00 تا ${item.endHour}:00</span>` : `<span class="text-gray-500">بدون ساعت</span>`}
-                            </div>
-                        </div>
-                    </div>
-                    ${getPriorityBadge(item.priority)}
-                </div>
-            `).join('');
-
-            document.getElementById('dashboard-combined-list').innerHTML = combinedHTML;
-            const aiPreview = document.getElementById('ai-plan-preview-list');
-            if (aiPreview) aiPreview.innerHTML = combinedHTML;
-
-            // Render Fixed Routines Tab
-            document.getElementById('routines-list').innerHTML = routines.map(r => `
-                <div class="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 flex items-center justify-between">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-thumbtack text-amber-400 text-xs"></i>
-                            <h4 class="font-bold text-sm text-white">${r.title}</h4>
-                        </div>
-                        <p class="text-xs text-amber-300 mt-1">ساعت ${r.startHour}:00 تا ${r.endHour}:00 (${r.days})</p>
-                    </div>
-                    <button onclick="deleteRoutine(${r.id})" class="text-red-400 hover:text-red-300 p-2"><i class="fa-regular fa-trash-can"></i></button>
-                </div>
-            `).join('');
-
-            // Render Time Blocking Grid (07:00 to 22:00)
-            let tbHTML = '';
-            for (let hour = 7; hour <= 22; hour++) {
-                const slotRoutines = routines.filter(r => hour >= r.startHour && hour < r.endHour);
-                const slotTasks = tasks.filter(t => t.startHour && hour >= t.startHour && hour < t.endHour);
-                tbHTML += `
-                    <div class="flex items-center gap-3 py-2 border-b border-gray-800/50">
-                        <div class="w-14 text-xs font-mono text-gray-400 shrink-0 text-left">${hour}:00</div>
-                        <div class="flex-1 flex flex-wrap gap-2">
-                            ${slotRoutines.map(sr => `
-                                <div class="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-xs text-amber-200 flex items-center gap-2">
-                                    <i class="fa-solid fa-lock text-[10px]"></i>
-                                    <span class="font-bold">${sr.title}</span>
-                                </div>
-                            `).join('')}
-                            ${slotTasks.map(st => `
-                                <div class="px-3 py-1.5 rounded-xl bg-blue-600/20 border border-blue-500/40 text-xs text-blue-200 flex items-center gap-2">
-                                    <span class="font-medium">${st.title}</span>
-                                    <span class="text-[10px] bg-blue-950 px-2 py-0.5 rounded text-cyan-300">${st.project}</span>
-                                </div>
-                            `).join('')}
-                            ${(!slotRoutines.length && !slotTasks.length) ? `<span class="text-[11px] text-gray-600">آزاد</span>` : ''}
-                        </div>
-                    </div>
-                `;
-            }
-            document.getElementById('timeblock-grid').innerHTML = tbHTML;
-
-            // Render Tasks Tab
-            const filterProj = document.getElementById('filter-project').value;
-            const filteredTasks = filterProj === 'all' ? tasks : tasks.filter(t => t.project === filterProj);
-            document.getElementById('full-tasks-list').innerHTML = filteredTasks.map(t => `
-                <div class="glass rounded-2xl p-4 flex flex-col justify-between border border-gray-800">
-                    <div>
-                        <div class="flex justify-between items-start gap-2 mb-2">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" ${t.status === 'done' ? 'checked' : ''} onchange="toggleTaskStatus(${t.id})" class="w-4 h-4 accent-blue-500">
-                                <span class="font-bold text-sm ${t.status === 'done' ? 'line-through text-gray-500' : 'text-white'}">${t.title}</span>
-                            </label>
-                            ${getPriorityBadge(t.priority)}
-                        </div>
-                        <p class="text-xs text-cyan-400 mb-3">${t.project} ${t.startHour ? `• ساعت ${t.startHour} تا ${t.endHour}` : ''}</p>
-                    </div>
-                    <div class="flex justify-between items-center pt-2 border-t border-gray-800 text-xs">
-                        <div class="flex gap-1">
-                            <button onclick="changeTaskStage(${t.id}, 'todo')" class="px-2 py-1 rounded ${t.status==='todo'?'bg-gray-700 text-white':'text-gray-400'}">انتظار</button>
-                            <button onclick="changeTaskStage(${t.id}, 'doing')" class="px-2 py-1 rounded ${t.status==='doing'?'bg-blue-600 text-white':'text-gray-400'}">در حال اجرا</button>
-                            <button onclick="changeTaskStage(${t.id}, 'done')" class="px-2 py-1 rounded ${t.status==='done'?'bg-emerald-600 text-white':'text-gray-400'}">تکمیل</button>
-                        </div>
-                        <button onclick="deleteTask(${t.id})" class="text-red-400"><i class="fa-regular fa-trash-can"></i></button>
-                    </div>
-                </div>
-            `).join('');
-
-            // Render Kanban
-            ['todo', 'doing', 'done'].forEach(st => {
-                const col = tasks.filter(t => t.status === st);
-                document.getElementById(`kanban-count-${st}`).innerText = col.length;
-                document.getElementById(`kanban-${st}`).innerHTML = col.map(t => `
-                    <div class="p-3 rounded-xl bg-gray-900 border border-gray-800 space-y-2">
-                        <div class="flex justify-between"><h5 class="text-xs font-bold">${t.title}</h5>${getPriorityBadge(t.priority)}</div>
-                        <p class="text-[10px] text-cyan-400">${t.project}</p>
-                    </div>
-                `).join('');
-            });
-
-            // Render Habits
-            document.getElementById('dashboard-habits').innerHTML = habits.map(h => `
-                <div class="flex items-center justify-between p-2.5 rounded-xl bg-gray-900/60 border border-gray-800">
-                    <label class="flex items-center gap-2 text-xs cursor-pointer">
-                        <input type="checkbox" ${h.doneToday ? 'checked' : ''} onchange="toggleHabit(${h.id})" class="w-4 h-4 accent-orange-500">
-                        <span class="${h.doneToday ? 'line-through text-gray-500' : 'text-gray-200'}">${h.title}</span>
-                    </label>
-                    <span class="text-xs font-bold text-orange-400"><i class="fa-solid fa-fire"></i> ${h.streak}</span>
-                </div>
-            `).join('');
-        }
-
-        // --- POMODORO ---
-        let pomoSeconds = 25 * 60, pomoInterval = null;
-        function togglePomodoro() {
-            const btn = document.getElementById('pomo-btn');
-            if (pomoInterval) { clearInterval(pomoInterval); pomoInterval = null; btn.innerText = 'ادامه'; }
-            else {
-                btn.innerText = 'توقف';
-                pomoInterval = setInterval(() => {
-                    if (pomoSeconds > 0) {
-                        pomoSeconds--;
-                        document.getElementById('pomo-timer').innerText = `${String(Math.floor(pomoSeconds/60)).padStart(2,'0')}:${String(pomoSeconds%60).padStart(2,'0')}`;
-                    } else { clearInterval(pomoInterval); alert("پومودورو تمام شد!"); }
-                }, 1000);
-            }
-        }
-        function resetPomodoro() { clearInterval(pomoInterval); pomoInterval = null; pomoSeconds = 25*60; document.getElementById('pomo-timer').innerText = "25:00"; document.getElementById('pomo-btn').innerText = "شروع"; }
-
-        // --- PWA INSTALLATION & SERVICE WORKER ---
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-pwa-btn').classList.remove('hidden');
-        });
-
-        async function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                await deferredPrompt.userChoice;
-                deferredPrompt = null;
-            } else {
-                alert("برای نصب روی گوشی: از منوی سه نقطه مرورگر کروم گزینه «Add to Home screen» یا «Install App» را انتخاب کنید.");
-            }
-        }
-
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ routines, tasks, habits, quickNote }, null, 2));
-            const a = document.createElement('a'); a.href = dataStr; a.download = "planner_backup.json"; a.click();
-        }
-
-        function resetDemoData() {
-            if (confirm("بازگردانی داده‌های اولیه؟")) { localStorage.clear(); location.reload(); }
-        }
-
-        window.onload = () => {
-            initPersianDate();
-            document.getElementById('quick-note-area').value = quickNote;
-            renderAll();
-
-            // Check URL parameter for Quick Capture Shortcut (from Lock Screen / Home Screen icon)
-            if (window.location.search.includes('action=quick')) {
-                openQuickCaptureModal();
-            }
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js').catch(() => {});
-            }
-        };
-    </script>
-</body>
-</html>
