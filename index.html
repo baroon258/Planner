@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>پلنر جامع هوشمند | Smart Planner</title>
+    <link rel="manifest" href="manifest.json">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Vazirmatn', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { transition: background-color 0.2s, color 0.2s; }
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-[#fbfbfa] dark:bg-[#191919] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col lg:flex-row font-sans pb-20 lg:pb-0">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full lg:w-64 bg-[#f3f2ef] dark:bg-[#202020] border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-neutral-800 p-3.5 shrink-0 z-20">
+        <div class="flex items-center justify-between px-2 py-2 mb-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-layer-group text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm" id="txt-app-title">پلنر جامع هوشمند</h1>
+                    <span class="text-[10px] text-slate-500 dark:text-neutral-400">Notion + Todoist UI</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex lg:flex-col gap-1 overflow-x-auto pb-1 lg:pb-0 text-xs sm:text-[13px]">
+            <button type="button" onclick="window.switchTab('overview')" id="btn-overview" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
+                <i class="fa-solid fa-house w-4 text-center"></i> <span id="nav-overview">پیش‌نمایش و صفحه اول</span>
+            </button>
+            <button type="button" onclick="window.switchTab('todo')" id="btn-todo" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-solid fa-circle-check text-red-500 w-4 text-center"></i> <span id="nav-todo">لیست کارها (To-Do)</span>
+            </button>
+            <button type="button" onclick="window.switchTab('timeblock')" id="btn-timeblock" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-regular fa-calendar-days text-indigo-500 w-4 text-center"></i> <span id="nav-timeblock">تقویم و کارهای ثابت</span>
+            </button>
+            <button type="button" onclick="window.switchTab('ai')" id="btn-ai" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-solid fa-wand-magic-sparkles text-purple-500 w-4 text-center"></i> <span id="nav-ai">برنامه‌ریز خودکار AI</span>
+            </button>
+            <button type="button" onclick="window.switchTab('notes')" id="btn-notes" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-regular fa-file-lines text-amber-500 w-4 text-center"></i> <span id="nav-notes">یادداشت‌ها (Notes)</span>
+            </button>
+            <button type="button" onclick="window.switchTab('shopping')" id="btn-shopping" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-solid fa-cart-shopping text-emerald-500 w-4 text-center"></i> <span id="nav-shopping">لیست خرید و مالی</span>
+            </button>
+            <button type="button" onclick="window.switchTab('workout')" id="btn-workout" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-solid fa-dumbbell text-orange-500 w-4 text-center"></i> <span id="nav-workout">باشگاه و ورزش</span>
+            </button>
+            <button type="button" onclick="window.switchTab('travel')" id="btn-travel" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-solid fa-earth-americas text-cyan-500 w-4 text-center"></i> <span id="nav-travel">سفر و مکان‌های منتخب</span>
+            </button>
+            <button type="button" onclick="window.switchTab('settings')" id="btn-settings" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                <i class="fa-solid fa-sliders text-slate-500 w-4 text-center"></i> <span id="nav-settings">تنظیمات</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 max-w-6xl mx-auto w-full p-4 lg:p-8">
+
+        <!-- TOP BAR -->
+        <header class="flex flex-col gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-neutral-800">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-bold" id="txt-welcome">نمای کلی و برنامه‌ریزی روزانه</h2>
+                    <p class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5" id="live-date">...</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="window.toggleLang()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-bold shadow-sm">
+                        <i class="fa-solid fa-language text-blue-600"></i> EN / فارسی
+                    </button>
+                    <button type="button" onclick="window.toggleTheme()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-medium shadow-sm flex items-center gap-1.5">
+                        <i id="theme-icon" class="fa-solid fa-moon"></i> <span id="txt-theme">تم تاریک/روشن</span>
+                    </button>
+                    <button type="button" onclick="window.toggleFab()" id="btn-fab-state" class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-medium">
+                        <i class="fa-solid fa-circle-plus"></i> <span id="txt-fab-btn">شناور: روشن</span>
+                    </button>
+                    <button type="button" onclick="window.sendLockScreenNotif()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-medium shadow-sm">
+                        <i class="fa-solid fa-mobile-screen text-indigo-500"></i> <span id="txt-lock">قفل صفحه</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- QUICK ADD TASK BAR -->
+            <div class="bg-white dark:bg-[#202020] rounded-xl p-2.5 border border-slate-200 dark:border-neutral-800 shadow-sm flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <input type="text" id="quick-task-in" placeholder="ثبت سریع کار جدید... (مثلاً: جلسه ساعت ۱۰)" 
+                    class="flex-1 min-w-[200px] bg-transparent text-sm px-2 focus:outline-none"
+                    onkeydown="if(event.key==='Enter') window.addQuickTask()">
+                <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+                    <select id="quick-day-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2.5 py-1.5">
+                        <option value="today">امروز / Today</option>
+                        <option value="tomorrow">فردا / Tomorrow</option>
+                    </select>
+                    <select id="quick-prio-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2 py-1.5">
+                        <option value="p1">🔴 P1</option>
+                        <option value="p2" selected>🟡 P2</option>
+                        <option value="p3">🔵 P3</option>
+                    </select>
+                    <button type="button" onclick="window.addQuickTask()" class="px-4 py-1.5 bg-[#db4c3f] hover:bg-red-600 text-white text-xs font-bold rounded-lg">+ ثبت</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- TAB 1: OVERVIEW (HOME PREVIEW) -->
+        <section id="sec-overview" class="tab-section active space-y-6">
+            <!-- Night-Before Tomorrow Preview -->
+            <div class="bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-moon text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                        <div>
+                            <h3 class="font-bold text-sm text-indigo-950 dark:text-indigo-200" id="txt-tom-title">پیش‌نمایش شبانه کارهای فردا</h3>
+                            <p class="text-[11px] text-indigo-700 dark:text-indigo-300" id="txt-tom-sub">نمایش خودکار در ساعت تنظیم‌شده</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>ساعت یادآوری:</span>
+                        <input type="time" id="tom-time-in" value="20:00" onchange="window.setTomorrowTime(this.value)" class="bg-white dark:bg-neutral-900 border border-indigo-300 rounded px-2 py-1 font-mono text-xs">
+                    </div>
+                </div>
+                <div id="list-tomorrow-preview" class="space-y-2"></div>
+            </div>
+
+            <!-- 4 Quick Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div onclick="window.switchTab('todo')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                    <span class="text-xs text-slate-500">کارهای امروز</span>
+                    <div class="text-2xl font-bold mt-1" id="stat-tasks">0</div>
+                </div>
+                <div onclick="window.switchTab('shopping')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                    <span class="text-xs text-slate-500">تراز مالی</span>
+                    <div class="text-2xl font-bold mt-1 text-emerald-600" id="stat-net">0</div>
+                </div>
+                <div onclick="window.switchTab('workout')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                    <span class="text-xs text-slate-500">تمرینات ورزشی</span>
+                    <div class="text-2xl font-bold mt-1 text-orange-500" id="stat-wo">0</div>
+                </div>
+                <div onclick="window.switchTab('travel')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                    <span class="text-xs text-slate-500">مکان‌ها و سفر</span>
+                    <div class="text-2xl font-bold mt-1 text-cyan-600" id="stat-tr">0</div>
+                </div>
+            </div>
+
+            <!-- Today Tasks & Scratchpad -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-list-check text-red-500 ml-1"></i> کارهای امروز (برای باز کردن زیرمنوی جزئیات روی کار کلیک کنید)</h3>
+                    <div id="list-today-overview" class="space-y-2"></div>
+                </div>
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-2"><i class="fa-regular fa-note-sticky text-amber-500 ml-1"></i> یادداشت سریع</h3>
+                    <textarea id="quick-scratch" rows="5" oninput="window.saveScratch()" placeholder="یادداشت فوری..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs focus:outline-none"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: TO-DO LIST -->
+        <section id="sec-todo" class="tab-section space-y-4">
+            <div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 flex justify-between items-center">
+                <h3 class="font-bold text-sm">همه کارها (برای نوشتن ریزکارها و توضیحات روی هر کار کلیک کنید)</h3>
+            </div>
+            <div id="list-all-todo" class="space-y-2"></div>
+        </section>
+
+        <!-- TAB 3: TIMEBLOCK & FIXED ROUTINES -->
+        <section id="sec-timeblock" class="tab-section space-y-6">
+            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-lock text-amber-500 ml-1"></i> افزودن کار ثابت روزانه (روتین قفل‌شده در تقویم)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <input type="text" id="rt-title" placeholder="عنوان کار ثابت (مثلاً: محل کار)" class="sm:col-span-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                    <div class="flex gap-2">
+                        <input type="number" id="rt-start" placeholder="از ساعت (8)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                        <input type="number" id="rt-end" placeholder="تا (14)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                    </div>
+                    <button type="button" onclick="window.addRoutine()" class="bg-amber-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت کار ثابت</button>
+                </div>
+                <div id="list-routines" class="flex flex-wrap gap-2 mt-3"></div>
+            </div>
+
+            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">جدول بلوک‌بندی ساعتی (۷ تا ۲۲)</h3>
+                    <button type="button" onclick="window.autoSchedule()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">چیدمان خودکار در ساعت‌های خالی</button>
+                </div>
+                <div id="grid-hours" class="divide-y divide-slate-100 dark:divide-neutral-800"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: AI AUTO PLANNER -->
+        <section id="sec-ai" class="tab-section space-y-4">
+            <div class="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-purple-200 dark:border-purple-900/50">
+                <h3 class="font-bold text-base mb-2"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 ml-1"></i> برنامه‌ریزی خودکار با توضیح متنی</h3>
+                <p class="text-xs text-slate-500 mb-3">کارهای خود را با علامت ویرگول (،) یا خط جدید جدا کنید تا سیستم به صورت خودکار در ساعت‌های خالی (بدون تداخل با کارهای ثابت) بچیند.</p>
+                <textarea id="ai-text" rows="4" placeholder="مثلاً: طراحی سایت، تدوین ویدیو، مطالعه..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-sm mb-3"></textarea>
+                <button type="button" onclick="window.runAIPlanner()" class="px-5 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-bold">تولید و چیدمان خودکار برنامه</button>
+            </div>
+        </section>
+
+        <!-- TAB 5: NOTES -->
+        <section id="sec-notes" class="tab-section space-y-4">
+            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <h3 class="font-bold text-sm mb-2">یادداشت جدید</h3>
+                <input type="text" id="nt-title" placeholder="عنوان یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs font-bold mb-2">
+                <textarea id="nt-body" rows="3" placeholder="متن یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs mb-2"></textarea>
+                <button type="button" onclick="window.addNote()" class="px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold">+ ذخیره یادداشت</button>
+            </div>
+            <div id="list-notes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
+        <!-- TAB 6: SHOPPING & FINANCE -->
+        <section id="sec-shopping" class="tab-section space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-cart-shopping text-emerald-500 ml-1"></i> لیست خرید</h3>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="sh-title" placeholder="نام کالا..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <input type="number" id="sh-price" placeholder="قیمت" class="w-28 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                        <button type="button" onclick="window.addShop()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">+</button>
+                    </div>
+                    <div id="list-shop" class="space-y-2"></div>
+                </div>
+
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-wallet text-blue-500 ml-1"></i> ثبت درآمد و هزینه</h3>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <input type="text" id="tx-title" placeholder="شرح..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                        <input type="number" id="tx-amount" placeholder="مبلغ" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                        <select id="tx-type" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <option value="expense">هزینه (-)</option>
+                            <option value="income">درآمد (+)</option>
+                        </select>
+                    </div>
+                    <button type="button" onclick="window.addTx()" class="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold mb-3">ثبت تراکنش</button>
+                    <div id="list-tx" class="space-y-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: WORKOUT -->
+        <section id="sec-workout" class="tab-section space-y-4">
+            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-dumbbell text-orange-500 ml-1"></i> ثبت جزئیات ورزش</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
+                    <input type="text" id="wo-name" placeholder="نام حرکت ورزشی..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                    <input type="text" id="wo-sets" placeholder="ست و تکرار (مثلاً 3x12)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                    <input type="text" id="wo-time" placeholder="وزنه یا زمان (مثلاً ۳۰ دقیقه)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                    <button type="button" onclick="window.addWorkout()" class="bg-orange-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت حرکت</button>
+                </div>
+                <div id="list-workout" class="space-y-2"></div>
+            </div>
+        </section>
+
+        <!-- TAB 8: TRAVEL & PLACES -->
+        <section id="sec-travel" class="tab-section space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-suitcase text-cyan-500 ml-1"></i> احتیاجات و چک‌لیست قبل از سفر</h3>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="tr-item" placeholder="وسیله یا اقدام قبل سفر..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <button type="button" onclick="window.addTravelItem()" class="px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold">+</button>
+                    </div>
+                    <div id="list-travel-items" class="space-y-2"></div>
+                </div>
+
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-location-dot text-rose-500 ml-1"></i> مکان‌های مورد علاقه</h3>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input type="text" id="pl-name" placeholder="نام مکان / شهر..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <input type="text" id="pl-note" placeholder="آدرس / یادداشت..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                    <button type="button" onclick="window.addPlace()" class="w-full py-2 bg-rose-500 text-white rounded-xl text-xs font-bold mb-3">+ افزودن مکان</button>
+                    <div id="list-places" class="space-y-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 9: SETTINGS -->
+        <section id="sec-settings" class="tab-section space-y-4">
+            <div class="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-4">
+                <h3 class="font-bold text-base">تنظیمات برنامه</h3>
+                <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                    <span class="text-xs font-medium">فعال بودن دکمه شناور (Floating Button)</span>
+                    <button type="button" onclick="window.toggleFab()" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs">تغییر وضعیت</button>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="window.resetAll()" class="px-4 py-2 bg-red-500 text-white rounded-xl text-xs font-bold">پاکسازی و ریست کامل حافظه</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SUBMENU DRAWER FOR TASK DETAILS -->
+    <div id="task-drawer" class="fixed inset-0 bg-black/50 hidden z-50 justify-end">
+        <div class="bg-white dark:bg-[#202020] w-full max-w-md h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
+            <div>
+                <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-neutral-800">
+                    <h4 class="font-bold text-sm text-blue-600">جزئیات، یادداشت و ریزکارها</h4>
+                    <button type="button" onclick="window.closeDrawer()" class="text-slate-400 hover:text-red-500 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="space-y-4 mt-4 text-xs">
+                    <div>
+                        <label class="block text-slate-400 mb-1">عنوان کار</label>
+                        <input type="text" id="dr-title" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2.5 font-bold text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-400 mb-1">ساعت شروع (7-22)</label>
+                            <input type="number" id="dr-start" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">ساعت پایان</label>
+                            <input type="number" id="dr-end" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">یادداشت و توضیحات کامل این کار</label>
+                        <textarea id="dr-notes" rows="3" placeholder="توضیحات، لینک یا جزئیات..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2.5"></textarea>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-neutral-900 p-3 rounded-xl border border-slate-200 dark:border-neutral-800">
+                        <label class="block font-bold mb-2">لیست ریزکارها (Sub-tasks)</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="dr-sub-in" placeholder="افزودن مرحله جزئی..." class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-2 py-1.5">
+                            <button type="button" onclick="window.addSubtask()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold">+</button>
+                        </div>
+                        <div id="dr-sub-list" class="space-y-1.5"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between pt-4 border-t border-slate-200 dark:border-neutral-800">
+                <button type="button" onclick="window.deleteDrawerTask()" class="px-4 py-2 text-red-500 font-bold text-xs">حذف کار</button>
+                <button type="button" onclick="window.saveDrawerTask()" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs">ذخیره تغییرات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING BUTTON -->
+    <button type="button" id="fab-btn" onclick="document.getElementById('quick-task-in').focus()" 
+        class="fixed bottom-6 left-6 z-40 w-13 h-13 p-4 rounded-full bg-blue-600 text-white shadow-xl flex items-center justify-center">
+        <i class="fa-solid fa-plus text-lg"></i>
+    </button>
+
+    <script>
+        // SAFE STORAGE HELPER
+        function safeGet(key, fallback) {
+            try {
+                const val = localStorage.getItem(key);
+                return val ? JSON.parse(val) : fallback;
+            } catch (e) { return fallback; }
+        }
+        function safeSet(key, val) {
+            try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+        }
+
+        // STATE
+        let cfg = safeGet('pl_cfg', { lang: 'fa', theme: 'light', fab: true, tomTime: '20:00' });
+        let tasks = safeGet('pl_tasks', []);
+        let routines = safeGet('pl_routines', []);
+        let notes = safeGet('pl_notes', []);
+        let shops = safeGet('pl_shops', []);
+        let txs = safeGet('pl_txs', []);
+        let workouts = safeGet('pl_wo', []);
+        let travelItems = safeGet('pl_tr_items', []);
+        let places = safeGet('pl_places', []);
+        let currentTaskId = null;
+
+        function saveAll() {
+            safeSet('pl_cfg', cfg);
+            safeSet('pl_tasks', tasks);
+            safeSet('pl_routines', routines);
+            safeSet('pl_notes', notes);
+            safeSet('pl_shops', shops);
+            safeSet('pl_txs', txs);
+            safeSet('pl_wo', workouts);
+            safeSet('pl_tr_items', travelItems);
+            safeSet('pl_places', places);
+        }
+
+        // NAVIGATION (ATTACHED TO WINDOW)
+        window.switchTab = function(tabName) {
+            const allTabs = ['overview', 'todo', 'timeblock', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'];
+            allTabs.forEach(t => {
+                const sec = document.getElementById('sec-' + t);
+                const btn = document.getElementById('btn-' + t);
+                if (sec) sec.classList.remove('active');
+                if (btn) btn.className = "nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0";
+            });
+            const targetSec = document.getElementById('sec-' + tabName);
+            const targetBtn = document.getElementById('btn-' + tabName);
+            if (targetSec) targetSec.classList.add('active');
+            if (targetBtn) targetBtn.className = "nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0";
+            window.renderAll();
+        };
+
+        // THEME, LANG, FAB
+        window.applySettings = function() {
+            const html = document.documentElement;
+            if (cfg.theme === 'dark') html.classList.add('dark');
+            else html.classList.remove('dark');
+
+            html.lang = cfg.lang;
+            html.dir = cfg.lang === 'fa' ? 'rtl' : 'ltr';
+
+            const fab = document.getElementById('fab-btn');
+            if (fab) fab.style.display = cfg.fab ? 'flex' : 'none';
+            const fabTxt = document.getElementById('txt-fab-btn');
+            if (fabTxt) fabTxt.innerText = cfg.fab ? (cfg.lang === 'fa' ? 'شناور: روشن' : 'Float: ON') : (cfg.lang === 'fa' ? 'شناور: خاموش' : 'Float: OFF');
+
+            const isEn = cfg.lang === 'en';
+            document.getElementById('txt-app-title').innerText = isEn ? 'Smart Planner Pro' : 'پلنر جامع هوشمند';
+            document.getElementById('nav-overview').innerText = isEn ? 'Home Preview' : 'پیش‌نمایش و صفحه اول';
+            document.getElementById('nav-todo').innerText = isEn ? 'To-Do List' : 'لیست کارها (To-Do)';
+            document.getElementById('nav-timeblock').innerText = isEn ? 'Calendar & Routines' : 'تقویم و کارهای ثابت';
+            document.getElementById('nav-ai').innerText = isEn ? 'AI Auto-Planner' : 'برنامه‌ریز خودکار AI';
+            document.getElementById('nav-notes').innerText = isEn ? 'Notes' : 'یادداشت‌ها (Notes)';
+            document.getElementById('nav-shopping').innerText = isEn ? 'Shopping & Finance' : 'لیست خرید و مالی';
+            document.getElementById('nav-workout').innerText = isEn ? 'Workout' : 'باشگاه و ورزش';
+            document.getElementById('nav-travel').innerText = isEn ? 'Travel & Places' : 'سفر و مکان‌های منتخب';
+            document.getElementById('nav-settings').innerText = isEn ? 'Settings' : 'تنظیمات';
+
+            const now = new Date();
+            document.getElementById('live-date').innerText = new Intl.DateTimeFormat(isEn ? 'en-US' : 'fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
+        };
+
+        window.toggleTheme = function() {
+            cfg.theme = cfg.theme === 'light' ? 'dark' : 'light';
+            saveAll();
+            window.applySettings();
+        };
+
+        window.toggleLang = function() {
+            cfg.lang = cfg.lang === 'fa' ? 'en' : 'fa';
+            saveAll();
+            window.applySettings();
+            window.renderAll();
+        };
+
+        window.toggleFab = function() {
+            cfg.fab = !cfg.fab;
+            saveAll();
+            window.applySettings();
+        };
+
+        window.setTomorrowTime = function(val) {
+            cfg.tomTime = val || '20:00';
+            saveAll();
+            window.renderAll();
+        };
+
+        // TASKS & SUBMENU DRAWER
+        window.addQuickTask = function() {
+            const inp = document.getElementById('quick-task-in');
+            const title = inp.value.trim();
+            if (!title) return;
+            tasks.unshift({
+                id: Date.now(),
+                title: title,
+                day: document.getElementById('quick-day-in').value,
+                prio: document.getElementById('quick-prio-in').value,
+                done: false,
+                startHour: null,
+                endHour: null,
+                notes: '',
+                subtasks: []
+            });
+            inp.value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.toggleTask = function(id, ev) {
+            if (ev) ev.stopPropagation();
+            const t = tasks.find(x => x.id === id);
+            if (t) { t.done = !t.done; saveAll(); window.renderAll(); }
+        };
+
+        window.openDrawer = function(id) {
+            currentTaskId = id;
+            const t = tasks.find(x => x.id === id);
+            if (!t) return;
+            document.getElementById('dr-title').value = t.title;
+            document.getElementById('dr-start').value = t.startHour || '';
+            document.getElementById('dr-end').value = t.endHour || '';
+            document.getElementById('dr-notes').value = t.notes || '';
+            window.renderSubtasks();
+            const dr = document.getElementById('task-drawer');
+            dr.classList.remove('hidden');
+            dr.classList.add('flex');
+        };
+
+        window.closeDrawer = function() {
+            const dr = document.getElementById('task-drawer');
+            dr.classList.add('hidden');
+            dr.classList.remove('flex');
+            currentTaskId = null;
+        };
+
+        window.renderSubtasks = function() {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (!t) return;
+            const box = document.getElementById('dr-sub-list');
+            box.innerHTML = (t.subtasks || []).map((s, i) => `
+                <div class="flex items-center justify-between bg-white dark:bg-neutral-800 p-2 rounded border border-slate-200 dark:border-neutral-700">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" ${s.done ? 'checked' : ''} onchange="window.toggleSubtask(${i})">
+                        <span class="${s.done ? 'line-through text-slate-400' : ''}">${s.text}</span>
+                    </label>
+                    <button type="button" onclick="window.delSubtask(${i})" class="text-red-500">×</button>
+                </div>
+            `).join('');
+        };
+
+        window.addSubtask = function() {
+            const inp = document.getElementById('dr-sub-in');
+            const txt = inp.value.trim();
+            if (!txt || !currentTaskId) return;
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (!t.subtasks) t.subtasks = [];
+            t.subtasks.push({ text: txt, done: false });
+            inp.value = '';
+            saveAll();
+            window.renderSubtasks();
+            window.renderAll();
+        };
+
+        window.toggleSubtask = function(i) {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (t && t.subtasks[i]) { t.subtasks[i].done = !t.subtasks[i].done; saveAll(); window.renderSubtasks(); window.renderAll(); }
+        };
+
+        window.delSubtask = function(i) {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (t) { t.subtasks.splice(i, 1); saveAll(); window.renderSubtasks(); window.renderAll(); }
+        };
+
+        window.saveDrawerTask = function() {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (!t) return;
+            t.title = document.getElementById('dr-title').value.trim() || t.title;
+            const sh = parseInt(document.getElementById('dr-start').value);
+            const eh = parseInt(document.getElementById('dr-end').value);
+            t.startHour = !isNaN(sh) ? sh : null;
+            t.endHour = !isNaN(eh) ? eh : (!isNaN(sh) ? sh + 1 : null);
+            t.notes = document.getElementById('dr-notes').value;
+            saveAll();
+            window.closeDrawer();
+            window.renderAll();
+        };
+
+        window.deleteDrawerTask = function() {
+            tasks = tasks.filter(x => x.id !== currentTaskId);
+            saveAll();
+            window.closeDrawer();
+            window.renderAll();
+        };
+
+        // ROUTINES & AI
+        window.addRoutine = function() {
+            const title = document.getElementById('rt-title').value.trim();
+            const s = parseInt(document.getElementById('rt-start').value);
+            const e = parseInt(document.getElementById('rt-end').value);
+            if (!title || isNaN(s) || isNaN(e) || e <= s) return;
+            routines.push({ id: Date.now(), title, startHour: s, endHour: e });
+            document.getElementById('rt-title').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.delRoutine = function(id) {
+            routines = routines.filter(r => r.id !== id);
+            saveAll();
+            window.renderAll();
+        };
+
+        window.autoSchedule = function() {
+            const busy = new Set();
+            routines.forEach(r => { for (let h = r.startHour; h < r.endHour; h++) busy.add(h); });
+            tasks.filter(t => t.day === 'today' && !t.done && t.startHour).forEach(t => {
+                for (let h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
+            });
+            let cur = 8;
+            tasks.filter(t => t.day === 'today' && !t.done && !t.startHour).forEach(t => {
+                while (busy.has(cur) && cur < 22) cur++;
+                if (cur < 22) { t.startHour = cur; t.endHour = cur + 1; busy.add(cur); }
+            });
+            saveAll();
+            window.renderAll();
+        };
+
+        window.runAIPlanner = function() {
+            const raw = document.getElementById('ai-text').value.trim();
+            if (!raw) return;
+            raw.split(/[\n،,]+/).map(s => s.trim()).filter(Boolean).forEach(part => {
+                tasks.unshift({ id: Date.now() + Math.random(), title: part, day: 'today', prio: 'p1', done: false, startHour: null, endHour: null, notes: '', subtasks: [] });
+            });
+            document.getElementById('ai-text').value = '';
+            window.autoSchedule();
+            window.switchTab('timeblock');
+        };
+
+        // OTHER MODULES
+        window.addNote = function() {
+            const title = document.getElementById('nt-title').value.trim();
+            const body = document.getElementById('nt-body').value.trim();
+            if (!title && !body) return;
+            notes.unshift({ id: Date.now(), title: title || 'یادداشت', body });
+            document.getElementById('nt-title').value = '';
+            document.getElementById('nt-body').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.addShop = function() {
+            const title = document.getElementById('sh-title').value.trim();
+            const price = parseFloat(document.getElementById('sh-price').value) || 0;
+            if (!title) return;
+            shops.unshift({ id: Date.now(), title, price, bought: false });
+            document.getElementById('sh-title').value = '';
+            document.getElementById('sh-price').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.addTx = function() {
+            const title = document.getElementById('tx-title').value.trim();
+            const amount = parseFloat(document.getElementById('tx-amount').value) || 0;
+            const type = document.getElementById('tx-type').value;
+            if (!title || amount <= 0) return;
+            txs.unshift({ id: Date.now(), title, amount, type });
+            document.getElementById('tx-title').value = '';
+            document.getElementById('tx-amount').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.addWorkout = function() {
+            const name = document.getElementById('wo-name').value.trim();
+            const sets = document.getElementById('wo-sets').value.trim();
+            const time = document.getElementById('wo-time').value.trim();
+            if (!name) return;
+            workouts.unshift({ id: Date.now(), name, sets: sets || '-', time: time || '-' });
+            document.getElementById('wo-name').value = '';
+            document.getElementById('wo-sets').value = '';
+            document.getElementById('wo-time').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.addTravelItem = function() {
+            const txt = document.getElementById('tr-item').value.trim();
+            if (!txt) return;
+            travelItems.unshift({ id: Date.now(), txt, done: false });
+            document.getElementById('tr-item').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.addPlace = function() {
+            const name = document.getElementById('pl-name').value.trim();
+            const note = document.getElementById('pl-note').value.trim();
+            if (!name) return;
+            places.unshift({ id: Date.now(), name, note });
+            document.getElementById('pl-name').value = '';
+            document.getElementById('pl-note').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.saveScratch = function() {
+            localStorage.setItem('pl_scratch', document.getElementById('quick-scratch').value);
+        };
+
+        window.sendLockScreenNotif = async function() {
+            if (!("Notification" in window)) return alert("پشتیبانی نمی‌شود");
+            const p = await Notification.requestPermission();
+            if (p === "granted") {
+                const open = tasks.filter(t => !t.done && t.day === 'today');
+                new Notification("پلنر هوشمند", { body: open[0] ? `کار جاری: ${open[0].title}` : "کارهای امروز تکمیل است!" });
+            }
+        };
+
+        window.resetAll = function() {
+            if (confirm("پاکسازی کامل حافظه؟")) { localStorage.clear(); location.reload(); }
+        };
+
+        // RENDER ENGINE
+        function taskRowHTML(t) {
+            const subCount = (t.subtasks || []).length;
+            return `
+                <div onclick="window.openDrawer(${t.id})" class="cursor-pointer bg-slate-50 dark:bg-neutral-900 hover:border-blue-400 p-3 rounded-xl border border-slate-200 dark:border-neutral-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onclick="window.toggleTask(${t.id}, event)" class="w-4 h-4 accent-red-500">
+                        <div>
+                            <div class="text-xs sm:text-sm font-bold ${t.done ? 'line-through text-slate-400' : ''}">${t.title}</div>
+                            <div class="text-[11px] text-slate-500 flex gap-2 mt-0.5">
+                                <span>${t.day === 'tomorrow' ? '🌙 فردا' : '☀️ امروز'}</span>
+                                ${t.startHour ? `<span class="text-blue-600">ساعت ${t.startHour} تا ${t.endHour}</span>` : ''}
+                                ${subCount ? `<span>(${subCount} زیرکار)</span>` : ''}
+                                ${t.notes ? `<span class="text-amber-600">📝 دارای توضیحات</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-xs text-blue-500">جزئیات ❮</span>
+                </div>
+            `;
+        }
+
+        window.renderAll = function() {
+            const todayList = tasks.filter(t => t.day !== 'tomorrow');
+            const tomList = tasks.filter(t => t.day === 'tomorrow');
+
+            const inc = txs.filter(x => x.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const exp = txs.filter(x => x.type === 'expense').reduce((a, b) => a + b.amount, 0) + shops.reduce((a, b) => a + b.price, 0);
+
+            document.getElementById('stat-tasks').innerText = todayList.length;
+            document.getElementById('stat-net').innerText = (inc - exp).toLocaleString();
+            document.getElementById('stat-wo').innerText = workouts.length;
+            document.getElementById('stat-tr').innerText = places.length;
+
+            document.getElementById('list-tomorrow-preview').innerHTML = tomList.length ? tomList.map(taskRowHTML).join('') : `<p class="text-xs text-slate-400">کاری برای فردا ثبت نشده است.</p>`;
+            document.getElementById('list-today-overview').innerHTML = todayList.length ? todayList.map(taskRowHTML).join('') : `<p class="text-xs text-slate-400">کاری برای امروز ثبت نشده است.</p>`;
+            document.getElementById('list-all-todo').innerHTML = tasks.length ? tasks.map(taskRowHTML).join('') : `<p class="text-xs text-slate-400">لیست کارها خالی است.</p>`;
+
+            document.getElementById('list-routines').innerHTML = routines.map(r => `
+                <span class="px-3 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-xs flex items-center gap-2">
+                    🔒 ${r.title} (${r.startHour}-${r.endHour})
+                    <button type="button" onclick="window.delRoutine(${r.id})" class="text-red-500 font-bold">×</button>
+                </span>
+            `).join('');
+
+            let hoursHTML = '';
+            for (let h = 7; h <= 22; h++) {
+                const rIn = routines.filter(r => h >= r.startHour && h < r.endHour);
+                const tIn = todayList.filter(t => t.startHour && h >= t.startHour && h < (t.endHour || t.startHour + 1));
+                hoursHTML += `
+                    <div class="flex items-center gap-3 py-2 text-xs">
+                        <div class="w-12 font-mono text-slate-400">${h}:00</div>
+                        <div class="flex-1 flex flex-wrap gap-2">
+                            ${rIn.map(r => `<span class="px-2.5 py-1 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">🔒 ${r.title}</span>`).join('')}
+                            ${tIn.map(t => `<span onclick="window.openDrawer(${t.id})" class="cursor-pointer px-2.5 py-1 rounded bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">${t.title}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('grid-hours').innerHTML = hoursHTML;
+
+            document.getElementById('list-notes').innerHTML = notes.map(n => `
+                <div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800">
+                    <h4 class="font-bold text-sm mb-1">${n.title}</h4>
+                    <p class="text-xs text-slate-500 whitespace-pre-line">${n.body}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('list-shop').innerHTML = shops.map(s => `
+                <div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
+                    <span>${s.title}</span>
+                    <span class="font-mono text-emerald-600">${s.price.toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('list-tx').innerHTML = txs.map(x => `
+                <div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
+                    <span>${x.title}</span>
+                    <span class="font-mono font-bold ${x.type==='income'?'text-emerald-600':'text-red-500'}">${x.type==='income'?'+':'-'}${x.amount.toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('list-workout').innerHTML = workouts.map(w => `
+                <div class="flex justify-between p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
+                    <span class="font-bold">${w.name}</span>
+                    <span>ست: ${w.sets} | زمان/وزنه: ${w.time}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('list-travel-items').innerHTML = travelItems.map(tr => `
+                <div class="p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">${tr.txt}</div>
+            `).join('');
+
+            document.getElementById('list-places').innerHTML = places.map(p => `
+                <div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
+                    <div class="font-bold text-rose-500">📍 ${p.name}</div>
+                    <div class="text-slate-500">${p.note}</div>
+                </div>
+            `).join('');
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('quick-scratch').value = localStorage.getItem('pl_scratch') || '';
+            document.getElementById('tom-time-in').value = cfg.tomTime || '20:00';
+            window.applySettings();
+            window.renderAll();
+        });
+    </script>
+</body>
+</html>
