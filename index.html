@@ -1570,7 +1570,7 @@
             window.renderAll();
         };
 
-        // ==================== 10. AI CHATBOT ====================
+               // ==================== 10. AI CHATBOT (DAILY + 7-DAY WEEKLY FREE-SLOT SCHEDULER) ====================
         window.sendAIChat = function() {
             var inp = document.getElementById('ai-chat-in');
             var rawText = inp.value.trim();
@@ -1581,33 +1581,162 @@
             stream.innerHTML += '<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">' + rawText + '</div></div>';
             inp.value = '';
 
-            var moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
-            if (moveMatch && (norm.indexOf('ببر') !== -1 || norm.indexOf('بذار') !== -1 || norm.indexOf('ساعت') !== -1 || norm.toLowerCase().indexOf('move') !== -1)) {
+            // 1. دستور جابه‌جایی کار به روز یا ساعت مشخص (مثلاً: طراحی سایت رو ببر دوشنبه ساعت 16:30)
+            var weekMap = { 'شنبه': 6, 'یکشنبه': 0, 'دوشنبه': 1, 'سه شنبه': 2, 'سه‌شنبه': 2, 'چهارشنبه': 3, 'پنجشنبه': 4, 'جمعه': 5 };
+            var moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(شنبه|یکشنبه|دوشنبه|سه‌شنبه|سه شنبه|چهارشنبه|پنجشنبه|جمعه)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
+            
+            if (moveMatch && (norm.indexOf('ببر') !== -1 || norm.indexOf('بذار') !== -1 || norm.indexOf('انتقال') !== -1 || norm.toLowerCase().indexOf('move') !== -1)) {
                 var kw = moveMatch[1].trim();
-                var newH = parseInt(moveMatch[2], 10);
-                var newM = moveMatch[3] ? parseInt(moveMatch[3], 10) : 0;
+                var targetDayName = moveMatch[2] ? moveMatch[2].trim() : null;
+                var newH = parseInt(moveMatch[3], 10);
+                var newM = moveMatch[4] ? parseInt(moveMatch[4], 10) : 0;
                 var found = tasks.find(function(t) { return t.title.indexOf(kw) !== -1; });
+                
                 if (found && newH >= 3 && newH <= 24) {
+                    if (targetDayName && weekMap[targetDayName] !== undefined) {
+                        var targetJsDay = weekMap[targetDayName];
+                        for (var dOff = 0; dOff < 7; dOff++) {
+                            var testD = new Date();
+                            testD.setDate(testD.getDate() + dOff);
+                            if (testD.getDay() === targetJsDay) {
+                                found.dateISO = toISODate(testD);
+                                break;
+                            }
+                        }
+                    }
                     found.startHour = newH;
                     found.endHour = Math.min(24, newH + 1);
                     found.startTime = String(newH).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
                     found.endTime = String(Math.min(24, newH + 1)).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
                     saveAll(); window.renderAll();
-                    stream.innerHTML += '<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«' + found.title + '»</strong> به ساعت <strong>' + found.startTime + '</strong> منتقل شد.</div>';
+                    stream.innerHTML += '<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«' + found.title + '»</strong> به تاریخ <strong>' + found.dateISO + '</strong> ساعت <strong>' + found.startTime + '</strong> منتقل شد.</div>';
                     stream.scrollTop = stream.scrollHeight;
                     return;
                 }
             }
 
-            var items = norm.split(/[\n،؛,]+|\s+و\s+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 2; });
-            var s1 = items.map(function(title, i) { return { title: title, startHour: 8 + i, endHour: 9 + i, startTime: String(8+i).padStart(2,'0') + ':00', endTime: String(9+i).padStart(2,'0') + ':00' }; });
-            var s2 = items.map(function(title, i) { return { title: title, startHour: 9 + (i * 2), endHour: 10 + (i * 2), startTime: String(9+i*2).padStart(2,'0') + ':30', endTime: String(10+i*2).padStart(2,'0') + ':30' }; });
-            s2.push({ title: '⚡ ذخیره کارهای اتفاقی', startHour: 14, endHour: 15, startTime: '14:15', endTime: '15:00', isBuffer: true });
-            var s3 = items.map(function(title, i) { return { title: title, startHour: 15 + i, endHour: 16 + i, startTime: String(15+i).padStart(2,'0') + ':00', endTime: String(16+i).padStart(2,'0') + ':00' }; });
+            // 2. تشخیص اینکه کاربر برنامه «هفتگی» می‌خواهد یا «روزانه»
+            var isWeekly = (norm.indexOf('هفته') !== -1 || norm.toLowerCase().indexOf('week') !== -1 || norm.indexOf('۷ روز') !== -1 || norm.indexOf('7 روز') !== -1);
+
+            // تمیز کردن جملات دستوری از اول متن تا فقط نام کارها باقی بماند
+            var cleanListText = norm
+                .replace(/من این کارها رو باید در یک هفته انجام بدم:?/g, '')
+                .replace(/در این هفته:?/g, '')
+                .replace(/بر اساس زمان های خالی برام زمان بندی کن/g, '')
+                .replace(/برام برنامه ریزی کن/g, '');
+
+            var items = cleanListText.split(/[\n،؛,]+|\s+و\s+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 2; });
+            if (!items.length) return;
+
+            // تابع پیدا کردن اولین ساعت خالی در یک تاریخ مشخص (با در نظر گرفتن روتین‌های آن روز هفته و کارهای قبلی)
+            function findFreeHourOnDate(isoDate, preferredStartH, tempBookedMap) {
+                var dObj = new Date(isoDate + 'T12:00:00');
+                var jsDay = dObj.getDay();
+                var busy = new Set();
+
+                // قفل کردن ساعت‌های روتین ثابت آن روز هفته
+                routines.filter(function(r) { return (r.daysOfWeek || [6,0,1,2,3,4]).indexOf(jsDay) !== -1; }).forEach(function(r) {
+                    for (var h = r.startHour; h < r.endHour; h++) busy.add(h);
+                });
+                // قفل کردن کارهایی که از قبل در آن تاریخ ثبت شده‌اند
+                tasks.filter(function(t) { return (t.dateISO || todayISO) === isoDate && !t.done && t.startHour; }).forEach(function(t) {
+                    for (var h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
+                });
+                // قفل کردن کارهایی که در همین سناریو تا الان چیده شده‌اند
+                var alreadyInScenario = tempBookedMap[isoDate] || [];
+                alreadyInScenario.forEach(function(h) { busy.add(h); });
+
+                for (var h = preferredStartH; h <= 22; h++) {
+                    if (!busy.has(h)) {
+                        if (!tempBookedMap[isoDate]) tempBookedMap[isoDate] = [];
+                        tempBookedMap[isoDate].push(h);
+                        return h;
+                    }
+                }
+                return null;
+            }
+
+            if (isWeekly) {
+                // ساخت لیست ۷ روز آینده از امروز
+                var next7Days = [];
+                for (var d = 0; d < 7; d++) {
+                    var dt = new Date();
+                    dt.setDate(dt.getDate() + d);
+                    var iso = toISODate(dt);
+                    var wdName = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' }).format(dt);
+                    var p = getTripleDateParts(dt);
+                    next7Days.push({ iso: iso, label: wdName + ' ' + p.jDay + ' ' + p.jMonth });
+                }
+
+                // سناریوی هفتگی ۱: پخش متوازن در کل ۷ روز (ساعت‌های صبح/ظهر خالی)
+                var map1 = {}, wScenario1 = [];
+                items.forEach(function(title, idx) {
+                    var dayObj = next7Days[idx % 7];
+                    var freeH = findFreeHourOnDate(dayObj.iso, 9, map1) || 16;
+                    wScenario1.push({ title: title, dateISO: dayObj.iso, dayLabel: dayObj.label, startHour: freeH, endHour: freeH + 1, startTime: String(freeH).padStart(2,'0') + ':00', endTime: String(freeH+1).padStart(2,'0') + ':00' });
+                });
+
+                // سناریوی هفتگی ۲: فشرده در نیمه اول هفته (۳ روز اول در زمان‌های خالی)
+                var map2 = {}, wScenario2 = [];
+                items.forEach(function(title, idx) {
+                    var dayObj = next7Days[idx % 3];
+                    var freeH = findFreeHourOnDate(dayObj.iso, 8, map2) || 15;
+                    wScenario2.push({ title: title, dateISO: dayObj.iso, dayLabel: dayObj.label, startHour: freeH, endHour: freeH + 1, startTime: String(freeH).padStart(2,'0') + ':00', endTime: String(freeH+1).padStart(2,'0') + ':00' });
+                });
+
+                // سناریوی هفتگی ۳: زمان‌های خالی عصرگاهی در طول هفته
+                var map3 = {}, wScenario3 = [];
+                items.forEach(function(title, idx) {
+                    var dayObj = next7Days[idx % 6];
+                    var freeH = findFreeHourOnDate(dayObj.iso, 15, map3) || 18;
+                    wScenario3.push({ title: title, dateISO: dayObj.iso, dayLabel: dayObj.label, startHour: freeH, endHour: freeH + 1, startTime: String(freeH).padStart(2,'0') + ':00', endTime: String(freeH+1).padStart(2,'0') + ':00' });
+                });
+
+                lastAIScenarios = [wScenario1, wScenario2, wScenario3];
+
+                function weekBoxHTML(idx, name, list) {
+                    return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2 flex flex-col justify-between">' +
+                        '<div><div class="font-bold text-xs text-purple-600 mb-2">' + name + '</div>' +
+                        '<div class="space-y-1.5">' + list.map(function(x) {
+                            return '<div class="text-[11px] border-b border-slate-100 dark:border-neutral-800 pb-1">' +
+                                '<div class="font-bold">• ' + x.title + '</div>' +
+                                '<div class="flex justify-between text-slate-500 mt-0.5"><span>📅 ' + x.dayLabel + '</span><span class="font-mono text-purple-600 font-bold">⏰ ' + x.startTime + '</span></div>' +
+                                '</div>';
+                        }).join('') + '</div></div>' +
+                        '<button type="button" onclick="window.applyAIScenario(' + idx + ')" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold mt-2">✓ ثبت این برنامه هفتگی در تقویم</button>' +
+                        '</div>';
+                }
+
+                stream.innerHTML += '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
+                    '<div class="text-xs font-bold text-purple-700 dark:text-purple-300">📅 زمان‌های خالی شما در ۷ روز آینده (با کسر ساعت‌های روتین ثابت) بررسی شد. یکی از ۳ برنامه هفتگی زیر را انتخاب کنید:</div>' +
+                    '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">' +
+                    weekBoxHTML(0, '۱. پخش متوازن در کل هفته', wScenario1) +
+                    weekBoxHTML(1, '۲. فشرده در ۳ روز اول هفته', wScenario2) +
+                    weekBoxHTML(2, '۳. تایم‌های آزاد عصرگاهی هفته', wScenario3) +
+                    '</div></div>';
+                stream.scrollTop = stream.scrollHeight;
+                return;
+            }
+
+            // 3. حالت روزانه (با بررسی ساعت‌های خالی امروز/روز انتخابی)
+            var targetISO = cfg.selectedISO || todayISO;
+            var dMap1 = {}, dMap2 = {}, dMap3 = {};
+            var s1 = items.map(function(title) {
+                var h = findFreeHourOnDate(targetISO, 8, dMap1) || 8;
+                return { title: title, dateISO: targetISO, startHour: h, endHour: h + 1, startTime: String(h).padStart(2,'0') + ':00', endTime: String(h+1).padStart(2,'0') + ':00' };
+            });
+            var s2 = items.map(function(title, i) {
+                var h = findFreeHourOnDate(targetISO, 9 + i, dMap2) || 10;
+                return { title: title, dateISO: targetISO, startHour: h, endHour: h + 1, startTime: String(h).padStart(2,'0') + ':30', endTime: String(h+1).padStart(2,'0') + ':30' };
+            });
+            var s3 = items.map(function(title) {
+                var h = findFreeHourOnDate(targetISO, 15, dMap3) || 16;
+                return { title: title, dateISO: targetISO, startHour: h, endHour: h + 1, startTime: String(h).padStart(2,'0') + ':00', endTime: String(h+1).padStart(2,'0') + ':00' };
+            });
 
             lastAIScenarios = [s1, s2, s3];
 
-            function boxHTML(idx, name, list) {
+            function dayBoxHTML(idx, name, list) {
                 return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2">' +
                     '<div class="font-bold text-xs text-purple-600">' + name + '</div>' +
                     '<div class="space-y-1">' + list.map(function(x) { return '<div class="flex justify-between text-[11px]"><span>• ' + x.title + '</span><span class="font-mono">' + x.startTime + '</span></div>'; }).join('') + '</div>' +
@@ -1616,10 +1745,11 @@
             }
 
             stream.innerHTML += '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
+                '<div class="text-xs text-slate-500">💡 نکته: اگر می‌خواهید کارها در طول هفته پخش شوند، در جمله‌تان کلمه <strong>«هفته»</strong> را بنویسید.</div>' +
                 '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">' +
-                boxHTML(0, '۱. متد قورباغه (صبحگاهی)', s1) +
-                boxHTML(1, '۲. متوازن + ذخیره اتفاقی', s2) +
-                boxHTML(2, '۳. عصرگاهی و سبک', s3) +
+                dayBoxHTML(0, '۱. ساعت‌های خالی صبح', s1) +
+                dayBoxHTML(1, '۲. متوازن با تنفس', s2) +
+                dayBoxHTML(2, '۳. ساعت‌های خالی عصر', s3) +
                 '</div></div>';
             stream.scrollTop = stream.scrollHeight;
         };
@@ -1631,7 +1761,7 @@
                 tasks.unshift({
                     id: Date.now() + Math.floor(Math.random() * 10000),
                     title: item.title,
-                    dateISO: cfg.selectedISO || todayISO,
+                    dateISO: item.dateISO || cfg.selectedISO || todayISO,
                     project: 'پروژه اصلی',
                     prio: 'p1',
                     progress: 0,
@@ -1646,7 +1776,7 @@
                 });
             });
             saveAll();
-            window.openPage('calendar');
+            window.openPage('home');
         };
 
         // ==================== 11. SMS POPUP & OTHER MODULES ====================
