@@ -1,30 +1,46 @@
-const CACHE_NAME = 'ai-planner-v2';
+const CACHE_NAME = 'ai-planner-v3';
 const ASSETS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
     );
-    self.skipWaiting();
 });
 
+// پاک کردن خودکار کش‌های نسخه قبلی (v1 و v2)
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+            );
+        })
+    );
+    self.clients.claim();
+});
+
+// اولویت با دریافت آخرین نسخه از اینترنت (Network First)
 self.addEventListener('fetch', (event) => {
     event.respondWith(
-        caches.match(event.request).then((cached) => cached || fetch(event.request))
+        fetch(event.request)
+            .then((response) => {
+                const resClone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+                return response;
+            })
+            .catch(() => caches.match(event.request))
     );
 });
 
-// باز کردن مستقیم پنجره ثبت سریع با لمس ویجت صفحه قفل
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
             if (clientList.length > 0) {
-                let client = clientList[0];
-                client.focus();
-                return client.navigate('./index.html?action=quick');
+                return clientList[0].focus();
             }
-            return clients.openWindow('./index.html?action=quick');
+            return clients.openWindow('./index.html');
         })
     );
 });
