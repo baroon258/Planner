@@ -8,6 +8,29 @@
     <title>پلنر جامع هوشمند | Smart Planner Pro</title>
     <link rel="manifest" href="manifest.json">
     
+    <!-- FAIL-SAFE NAVIGATION ENGINE -->
+    <script>
+        window.openPage = function(pageName) {
+            var screens = ['home', 'calendar', 'todo', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'];
+            for (var i = 0; i < screens.length; i++) {
+                var el = document.getElementById('screen-' + screens[i]);
+                if (el) {
+                    el.classList.remove('active');
+                    el.style.display = 'none';
+                }
+            }
+            var target = document.getElementById('screen-' + pageName);
+            if (target) {
+                target.classList.add('active');
+                target.style.display = 'block';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (typeof window.renderAll === 'function') {
+                try { window.renderAll(); } catch (e) { console.error(e); }
+            }
+        };
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
@@ -25,7 +48,8 @@
     <style>
         body { transition: background-color 0.2s, color 0.2s; }
         .page-screen { display: none; }
-        .page-screen.active { display: block; }
+        .page-screen.active { display: block; animation: fadeIn 0.18s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.45); border-radius: 4px; }
         #sms-float-popup { box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.25); }
@@ -63,7 +87,7 @@
     <div class="max-w-5xl mx-auto w-full p-3.5 sm:p-6">
 
         <!-- ==================== HOME SCREEN ==================== -->
-        <div id="screen-home" class="page-screen active space-y-6">
+        <div id="screen-home" class="page-screen active space-y-6" style="display: block;">
 
             <!-- Top Status Header -->
             <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-[#1e1e1e] px-4 py-3 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs">
@@ -153,7 +177,7 @@
                 </div>
             </div>
 
-            <!-- 2. QUICK ADD TASK BAR -->
+            <!-- 2. QUICK ADD TASK BAR (DEFAULT SHAMSI SOLAR DATE PICKER + HH:MM + PROGRESS %) -->
             <div class="bg-white dark:bg-[#1e1e1e] rounded-2xl p-3.5 border border-slate-200/90 dark:border-neutral-800 shadow-xs space-y-2.5">
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
                     <i class="fa-solid fa-bolt text-blue-600 px-1"></i>
@@ -165,11 +189,14 @@
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 border-t border-slate-100 dark:border-neutral-800 text-xs">
-                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
-                        <i class="fa-regular fa-calendar text-blue-500"></i>
-                        <input type="date" id="quick-date-in" class="bg-transparent w-full text-[11px] focus:outline-none cursor-pointer">
+                    <!-- Direct Shamsi Date Selector (Default Solar Calendar) -->
+                    <div class="col-span-2 sm:col-span-1 flex items-center gap-1 bg-slate-50 dark:bg-neutral-900 px-2 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
+                        <i class="fa-regular fa-calendar text-blue-500 shrink-0"></i>
+                        <select id="quick-shamsi-day" class="bg-transparent text-[11px] font-bold focus:outline-none cursor-pointer"></select>
+                        <select id="quick-shamsi-month" class="bg-transparent text-[11px] font-bold focus:outline-none cursor-pointer flex-1"></select>
                     </div>
 
+                    <!-- Start & End Time with Minute Precision -->
                     <div class="flex items-center gap-1 bg-slate-50 dark:bg-neutral-900 px-2 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <i class="fa-solid fa-bell text-amber-500" title="ساعت و دقیقه آلارم"></i>
                         <input type="time" id="quick-start-time" title="زمان شروع و آلارم" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
@@ -177,6 +204,7 @@
                         <input type="time" id="quick-end-time" title="زمان پایان" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
                     </div>
 
+                    <!-- Category / Project -->
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <i class="fa-regular fa-folder text-indigo-500"></i>
                         <select id="quick-proj-in" class="bg-transparent w-full text-[11px] focus:outline-none">
@@ -187,6 +215,7 @@
                         </select>
                     </div>
 
+                    <!-- Priority -->
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <select id="quick-prio-in" class="bg-transparent w-full text-[11px] focus:outline-none">
                             <option value="p1">🔴 P1</option>
@@ -195,6 +224,7 @@
                         </select>
                     </div>
 
+                    <!-- Progress % -->
                     <div class="col-span-2 sm:col-span-1 flex items-center gap-2 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <span class="text-[11px] text-slate-500 shrink-0"><strong id="quick-prog-val" class="text-blue-600">0%</strong></span>
                         <input type="range" id="quick-prog-in" min="0" max="100" step="10" value="0"
@@ -209,7 +239,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-calendar-check text-blue-600 text-base"></i>
-                        <h2 class="font-bold text-sm sm:text-base" data-i18n="upcomingHeader">برنامه‌های پیش‌رو بر اساس تقویم</h2>
+                        <h2 class="font-bold text-sm sm:text-base" data-i18n="upcomingHeader">برنامه‌های پیش‌رو بر اساس تقویم شمسی</h2>
                     </div>
                     <button type="button" onclick="window.openPage('calendar')" class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-neutral-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                         <i class="fa-regular fa-calendar"></i>
@@ -250,7 +280,7 @@
 
         </div>
 
-        <!-- ==================== DEDICATED PAGE 1: CALENDAR (7-DAY TRIPLE DATES + 03:00 TO 24:00) ==================== -->
+        <!-- ==================== DEDICATED PAGE 1: CALENDAR ==================== -->
         <div id="screen-calendar" class="page-screen space-y-6">
             <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
@@ -370,38 +400,47 @@
                     <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
                         <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
                     </button>
-                    <h2 class="font-bold text-sm sm:text-base" data-i18n="todoPageHeader">مدیریت کارها (بر اساس تاریخ، ساعت دقیق و درصد پیشرفت)</h2>
+                    <h2 class="font-bold text-sm sm:text-base" data-i18n="todoPageHeader">مدیریت کارها (بر اساس تاریخ شمسی، ساعت دقیق و درصد پیشرفت)</h2>
                 </div>
             </div>
             <div id="list-all-todo" class="space-y-2.5"></div>
         </div>
 
-        <!-- ==================== DEDICATED PAGE 3: AI CHAT PLANNER ==================== -->
+        <!-- ==================== DEDICATED PAGE 3: AI CHAT PLANNER (WITH ONLINE/OFFLINE ENGINE SELECTOR) ==================== -->
         <div id="screen-ai" class="page-screen space-y-4">
-            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
                     <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
                         <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
                     </button>
-                    <h2 class="font-bold text-sm sm:text-base" data-i18n="aiPageHeader">چت‌بات هوشمند برنامه‌ریزی (چندکاره + متد روز دنیا)</h2>
+                    <div>
+                        <h2 class="font-bold text-sm sm:text-base" data-i18n="aiPageHeader">چت‌بات هوشمند برنامه‌ریزی (پشتیبانی از کارهای هر روز و روزهای خاص هفته)</h2>
+                        <span id="ai-active-engine-badge" class="text-[10px] text-purple-600 dark:text-purple-400 font-bold">موتور فعلی: قواعد هوشمند محلی + اتصال آنلاین/آفلاین</span>
+                    </div>
                 </div>
-                <select id="ai-method-select" class="bg-purple-50 dark:bg-neutral-800 border border-purple-200 dark:border-purple-800 rounded-xl px-3 py-1.5 text-xs font-bold text-purple-700 dark:text-purple-300">
-                    <option value="frog">🐸 Eat That Frog</option>
-                    <option value="deep">🧠 Deep Work</option>
-                    <option value="balanced">⚖️ Balanced + Buffer</option>
-                </select>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.openPage('settings')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold hover:bg-purple-600 hover:text-white transition">
+                        <i class="fa-solid fa-plug me-1"></i> تنظیم اتصال AI آنلاین/آفلاین
+                    </button>
+                </div>
             </div>
 
-            <div class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-purple-200 dark:border-purple-900/50 flex flex-col h-[540px] overflow-hidden">
+            <div class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-purple-200 dark:border-purple-900/50 flex flex-col h-[550px] overflow-hidden">
                 <div id="ai-chat-stream" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs sm:text-sm">
-                    <div class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl max-w-2xl leading-relaxed" data-i18n="aiWelcomeMsg">
-                        سلام! 👋 لیست کارهای خود را با علامت ویرگول «،» یا در چند خط بنویسید. من ۳ سناریوی زمان‌بندی پیشنهاد می‌دهم و هر زمان بگویید «فلان کار رو ببر ساعت ۱۶:۳۰» جای آن را عوض می‌کنم!
+                    <div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-2xl leading-relaxed space-y-2">
+                        <div class="font-bold text-purple-600 dark:text-purple-400">چطور برنامه یک هفته را با کارهای «هر روز» و «روزهای خاص» بچینم؟</div>
+                        <p class="text-xs text-slate-600 dark:text-neutral-300">
+                            کافی است لیست کارهایتان را با ویرگول «،» یا در چند خط بنویسید و مشخص کنید کدام کار **هر روز** است و کدام کار برای **چند روز یا روزهای خاصی** از هفته است. مثلاً بنویسید:
+                        </p>
+                        <div class="bg-white dark:bg-neutral-900 p-2.5 rounded-xl border border-purple-200 dark:border-neutral-700 text-[11px] font-mono text-purple-800 dark:text-purple-300">
+                            در این هفته: ورزش هر روز، مطالعه هوش مصنوعی هر روز، طراحی سایت شنبه و دوشنبه و چهارشنبه، تدوین ویدیو ۳ روز در هفته، خرید هفتگی پنجشنبه
+                        </div>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-800 flex items-end gap-2">
-                    <textarea id="ai-chat-in" rows="2" data-i18n-placeholder="aiInputPlaceholder" placeholder="کارها را با ویرگول بنویسید... یا دستور دهید: «طراحی سایت رو ببر ساعت ۱۶:۳۰»"
+                    <textarea id="ai-chat-in" rows="2" data-i18n-placeholder="aiInputPlaceholder" placeholder="مثلاً: در این هفته: ورزش هر روز، کلاس زبان یکشنبه و سه‌شنبه، طراحی سایت ۳ روز در هفته..."
                         class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none resize-none"></textarea>
-                    <button type="button" onclick="window.sendAIChat()" class="px-5 py-3 bg-purple-600 text-white rounded-xl text-xs font-bold shrink-0" data-i18n="sendChatBtn">ارسال و تحلیل</button>
+                    <button type="button" onclick="window.sendAIChat()" class="px-5 py-3 bg-purple-600 text-white rounded-xl text-xs font-bold shrink-0" data-i18n="sendChatBtn">ارسال و زمان‌بندی</button>
                 </div>
             </div>
         </div>
@@ -507,15 +546,51 @@
             </div>
         </div>
 
-        <!-- ==================== DEDICATED PAGE 8: SETTINGS ==================== -->
+        <!-- ==================== DEDICATED PAGE 8: SETTINGS (INCLUDING ONLINE/OFFLINE AI CONNECTION) ==================== -->
         <div id="screen-settings" class="page-screen space-y-5">
             <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
                     <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
                 </button>
-                <h2 class="font-bold text-sm sm:text-base" data-i18n="settingsPageHeader">تنظیمات برنامه (آلارم صوتی، تم، زبان، پنجره پیامکی و قفل صفحه)</h2>
+                <h2 class="font-bold text-sm sm:text-base" data-i18n="settingsPageHeader">تنظیمات برنامه و اتصال به هوش مصنوعی (آنلاین و آفلاین)</h2>
             </div>
 
+            <!-- 3-Layer AI Connection Panel (Restored) -->
+            <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border-2 border-purple-500/30 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm sm:text-base text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>تنظیمات اتصال به هوش مصنوعی (معماری سه‌لایه: آفلاین و آنلاین)</span>
+                    </h3>
+                    <select id="cfg-ai-mode" onchange="window.saveAIConnectionSettings()" class="bg-purple-50 dark:bg-neutral-800 border border-purple-300 dark:border-purple-700 rounded-xl px-3 py-1.5 text-xs font-bold text-purple-700 dark:text-purple-300">
+                        <option value="local_rules">لایه ۱: موتور هوشمند داخلی (بدون اینترنت)</option>
+                        <option value="offline_edge">لایه ۲: هوش مصنوعی آفلاین روی دستگاه (AI Edge / Ollama)</option>
+                        <option value="online_gemini">لایه ۳: هوش مصنوعی آنلاین ابری (Google Gemini API)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <!-- Layer 2: Offline Local AI API -->
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 space-y-2">
+                        <div class="font-bold text-cyan-600 dark:text-cyan-400">🤖 تنظیمات هوش مصنوعی آفلاین (AI Edge Gallery / Ollama)</div>
+                        <p class="text-[11px] text-slate-500">آدرس سرور محلی روی گوشی یا سیستم (سازگار با OpenAI API):</p>
+                        <input type="text" id="cfg-local-ai-url" value="http://127.0.0.1:11434/v1/chat/completions" dir="ltr" class="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg p-2 font-mono text-[11px]">
+                        <input type="text" id="cfg-local-ai-model" value="gemma2:2b" dir="ltr" placeholder="نام مدل (مثلاً gemma2 یا qwen)" class="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg p-2 font-mono text-[11px]">
+                    </div>
+
+                    <!-- Layer 3: Online Cloud Gemini API -->
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-800 space-y-2">
+                        <div class="font-bold text-purple-600 dark:text-purple-400">☁️ تنظیمات هوش مصنوعی آنلاین (Google Gemini API)</div>
+                        <p class="text-[11px] text-slate-500">کلید API جمینای برای برنامه‌ریزی ابری پیشرفته:</p>
+                        <input type="password" id="cfg-cloud-ai-key" dir="ltr" placeholder="AIzaSy..." class="w-full bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg p-2 font-mono text-[11px]">
+                        <button type="button" onclick="window.saveAIConnectionSettings(true)" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold transition">
+                            ✓ ذخیره و تست اتصال هوش مصنوعی
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Settings -->
             <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-slate-100 dark:border-neutral-800">
                     <div>
@@ -585,12 +660,12 @@
         <button type="button" onclick="window.toggleInAppFab(false)" class="w-5 h-5 -mt-9 -ms-2 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center shadow">×</button>
     </div>
 
-    <!-- SUBMENU DRAWER FOR TASK DETAILS -->
+    <!-- SUBMENU DRAWER FOR TASK DETAILS (WITH SHAMSI DATE PICKER) -->
     <div id="task-drawer" class="fixed inset-0 bg-black/50 hidden z-50 justify-end">
         <div class="bg-white dark:bg-[#1e1e1e] w-full max-w-md h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
             <div>
                 <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-neutral-800">
-                    <h4 class="font-bold text-sm text-blue-600" data-i18n="drawerHeader">زیرمنوی جزئیات، ساعت و دقیقه، پیشرفت و ریزکارها</h4>
+                    <h4 class="font-bold text-sm text-blue-600" data-i18n="drawerHeader">زیرمنوی جزئیات، تاریخ شمسی، ساعت و ریزکارها</h4>
                     <button type="button" onclick="window.closeDrawer()" class="text-slate-400 hover:text-red-500 text-lg"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="space-y-4 mt-4 text-xs">
@@ -601,8 +676,11 @@
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-slate-400 mb-1" data-i18n="dateLabel">تاریخ انجام</label>
-                            <input type="date" id="dr-date" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                            <label class="block text-slate-400 mb-1" data-i18n="dateLabel">تاریخ انجام (شمسی)</label>
+                            <div class="flex gap-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                                <select id="dr-shamsi-day" class="bg-transparent font-bold focus:outline-none"></select>
+                                <select id="dr-shamsi-month" class="bg-transparent font-bold focus:outline-none flex-1"></select>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-slate-400 mb-1" data-i18n="projLabel">پروژه / دسته</label>
@@ -659,7 +737,7 @@
     </div>
 
     <script>
-        // ==================== 1. CORE HELPERS (DEFINED FIRST SO CALENDAR NEVER FAILS) ====================
+        // ==================== 1. CORE HELPERS & SHAMSI DATE CONVERTERS ====================
         function safeGet(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
         function safeSet(k, val) { try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {} }
         function toEnDigits(s) { return String(s || '').replace(/[۰-۹]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); }).replace(/[٠-٩]/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }); }
@@ -670,6 +748,8 @@
             var da = String(d.getDate()).padStart(2, '0');
             return yr + '-' + mo + '-' + da;
         }
+
+        var shamsiMonthsFA = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
 
         function parseTimeStr(timeStr, fallbackH) {
             if (!timeStr) {
@@ -687,13 +767,14 @@
         }
 
         function getTripleDateParts(dateObj) {
-            var jDay = "۱", jMonth = "مهر", jMonthNum = 7, jDayNum = 1;
+            var jDay = "۱", jMonth = "مهر", jMonthNum = 7, jDayNum = 1, jYear = "۱۴۰۵";
             var gDay = dateObj.getDate(), gMonthNum = dateObj.getMonth() + 1, gMonth = "Oct";
             var hDay = "۱", hMonth = "ربیع", hMonthNum = 3, hDayNum = 1;
 
             try {
                 jDay = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric' }).format(dateObj);
                 jMonth = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { month: 'long' }).format(dateObj);
+                jYear = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric' }).format(dateObj);
                 jMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-persian', { month: 'numeric' }).format(dateObj)), 10) || 1;
                 jDayNum = parseInt(toEnDigits(jDay), 10) || 1;
             } catch (e) {}
@@ -714,7 +795,47 @@
                 } catch (e2) {}
             }
 
-            return { jDay: jDay, jMonth: jMonth, jMonthNum: jMonthNum, jDayNum: jDayNum, gDay: gDay, gMonth: gMonth, gMonthNum: gMonthNum, hDay: hDay, hMonth: hMonth, hMonthNum: hMonthNum, hDayNum: hDayNum };
+            return { jDay: jDay, jMonth: jMonth, jYear: jYear, jMonthNum: jMonthNum, jDayNum: jDayNum, gDay: gDay, gMonth: gMonth, gMonthNum: gMonthNum, hDay: hDay, hMonth: hMonth, hMonthNum: hMonthNum, hDayNum: hDayNum };
+        }
+
+        // Convert selected Shamsi (jMonthNum 1..12, jDayNum 1..31) in current Solar Year to ISO Date
+        function shamsiToISODate(targetJMonth, targetJDay) {
+            var now = new Date();
+            for (var diff = -200; diff <= 200; diff++) {
+                var testD = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff, 12, 0, 0);
+                var p = getTripleDateParts(testD);
+                if (p.jMonthNum === parseInt(targetJMonth, 10) && p.jDayNum === parseInt(targetJDay, 10)) {
+                    return toISODate(testD);
+                }
+            }
+            return toISODate(now);
+        }
+
+        function formatShamsiFull(isoStr) {
+            var dObj = new Date((isoStr || todayISO) + 'T12:00:00');
+            var p = getTripleDateParts(dObj);
+            var wd = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' }).format(dObj);
+            return wd + ' ' + p.jDay + ' ' + p.jMonth + ' ' + p.jYear;
+        }
+
+        function populateShamsiSelectors(daySelectId, monthSelectId, isoDateStr) {
+            var dSel = document.getElementById(daySelectId);
+            var mSel = document.getElementById(monthSelectId);
+            if (!dSel || !mSel) return;
+            var dObj = new Date((isoDateStr || todayISO) + 'T12:00:00');
+            var p = getTripleDateParts(dObj);
+
+            var dHTML = '';
+            for (var i = 1; i <= 31; i++) {
+                dHTML += '<option value="' + i + '" ' + (p.jDayNum === i ? 'selected' : '') + '>' + i + '</option>';
+            }
+            dSel.innerHTML = dHTML;
+
+            var mHTML = '';
+            for (var m = 1; m <= 12; m++) {
+                mHTML += '<option value="' + m + '" ' + (p.jMonthNum === m ? 'selected' : '') + '>' + shamsiMonthsFA[m - 1] + '</option>';
+            }
+            mSel.innerHTML = mHTML;
         }
 
         // ==================== 2. BILINGUAL DICTIONARY ====================
@@ -736,7 +857,7 @@
                 projContent: "تولید محتوا و طراحی",
                 projStudy: "آموزش و مطالعه",
                 projPersonal: "امور شخصی و اداری",
-                upcomingHeader: "برنامه‌های پیش‌رو بر اساس تقویم",
+                upcomingHeader: "برنامه‌های پیش‌رو بر اساس تقویم شمسی",
                 alertTimeLabel: "ساعت آلارم شبانه:",
                 projectsProgressHeader: "نمای کلی از درصد پیشرفت پروژه‌ها",
                 calPageHeader: "تقویم سه‌گانه، مناسبت‌ها و بلوک‌بندی ساعتی",
@@ -751,11 +872,9 @@
                 routinePlaceholder: "عنوان کار ثابت (مثلاً: کلاس، ورزش، محل کار)",
                 saveRoutineBtn: "+ ذخیره روتین ثابت",
                 repeatDaysLabel: "روزهای هفته:",
-                todoPageHeader: "مدیریت کارها (بر اساس تاریخ، ساعت دقیق و درصد پیشرفت)",
-                aiPageHeader: "چت‌بات هوشمند برنامه‌ریزی (چندکاره + متد روز دنیا)",
-                aiWelcomeMsg: "سلام! 👋 لیست کارهای خود را با علامت ویرگول «،» یا در چند خط بنویسید. من ۳ سناریوی زمان‌بندی پیشنهاد می‌دهم و هر زمان بگویید «فلان کار رو ببر ساعت ۱۶:۳۰» جای آن را عوض می‌کنم!",
-                aiInputPlaceholder: "کارها را با ویرگول بنویسید... یا دستور دهید: «طراحی سایت رو ببر ساعت ۱۶:۳۰»",
-                sendChatBtn: "ارسال و تحلیل",
+                todoPageHeader: "مدیریت کارها (بر اساس تاریخ شمسی، ساعت دقیق و درصد پیشرفت)",
+                aiPageHeader: "چت‌بات هوشمند برنامه‌ریزی (پشتیبانی از کارهای هر روز و روزهای خاص هفته)",
+                sendChatBtn: "ارسال و زمان‌بندی",
                 notesPageHeader: "دفترچه یادداشت‌ها (Notes)",
                 saveNoteBtn: "+ ذخیره یادداشت",
                 shopPageHeader: "لیست خرید و مدیریت مالی",
@@ -766,7 +885,7 @@
                 travelPageHeader: "چک‌لیست سفر و مکان‌های مورد علاقه",
                 travelCheckTitle: "احتیاجات قبل از سفر",
                 placesTitle: "مکان‌های مورد علاقه",
-                settingsPageHeader: "تنظیمات برنامه (آلارم صوتی، تم، زبان، پنجره پیامکی و قفل صفحه)",
+                settingsPageHeader: "تنظیمات برنامه و اتصال به هوش مصنوعی (آنلاین و آفلاین)",
                 setAlarmTitle: "آلارم صوتی و نوتیفیکیشن خودکار سررسید کارها",
                 setThemeTitle: "تغییر تم روز و شب (Light / Dark)",
                 toggleThemeBtn: "تغییر تم",
@@ -777,9 +896,9 @@
                 activateLockBtn: "فعال‌سازی قفل صفحه",
                 resetBtn: "پاکسازی کامل حافظه",
                 smsPopupTitle: "💬 پنجره پیامک ثبت سریع",
-                drawerHeader: "زیرمنوی جزئیات، ساعت و دقیقه، پیشرفت و ریزکارها",
+                drawerHeader: "زیرمنوی جزئیات، تاریخ شمسی، ساعت و ریزکارها",
                 taskTitleLabel: "عنوان کار",
-                dateLabel: "تاریخ انجام",
+                dateLabel: "تاریخ انجام (شمسی)",
                 projLabel: "پروژه / دسته",
                 progressLabel: "میزان پیشرفت این کار:",
                 startTimeLabel: "زمان شروع و آلارم (HH:MM)",
@@ -822,10 +941,8 @@
                 saveRoutineBtn: "+ Save Routine",
                 repeatDaysLabel: "Weekdays:",
                 todoPageHeader: "All Tasks (By Date, Exact Time & Progress %)",
-                aiPageHeader: "AI Multi-Task Scheduler (World-Class Methods)",
-                aiWelcomeMsg: "Hello! 👋 Enter multiple tasks separated by commas or lines. I will propose 3 schedule options, and you can tell me 'Move design to 16:30' anytime!",
-                aiInputPlaceholder: "Enter tasks separated by commas... or command: 'Move design to 16:30'",
-                sendChatBtn: "Plan Day",
+                aiPageHeader: "AI Weekly & Daily Scheduler (Daily, Specific Days & Custom Frequency)",
+                sendChatBtn: "Plan Schedule",
                 notesPageHeader: "Notes & Ideas",
                 saveNoteBtn: "+ Save Note",
                 shopPageHeader: "Shopping List & Finance Tracker",
@@ -836,7 +953,7 @@
                 travelPageHeader: "Travel Checklist & Favorite Places",
                 travelCheckTitle: "Pre-Trip Packing Checklist",
                 placesTitle: "Favorite Places",
-                settingsPageHeader: "Settings (Audio Alarm, Theme, Language, SMS Float & LockScreen)",
+                settingsPageHeader: "Settings & AI Connection (Online & Offline)",
                 setAlarmTitle: "Automatic Audio Alarm & Push Notification",
                 setThemeTitle: "Day / Night Theme (Light / Dark)",
                 toggleThemeBtn: "Switch Theme",
@@ -847,7 +964,7 @@
                 activateLockBtn: "Enable Lock Screen",
                 resetBtn: "Reset All Data",
                 smsPopupTitle: "💬 Quick SMS Capture",
-                drawerHeader: "Task Details, HH:MM Time, Progress & Sub-tasks",
+                drawerHeader: "Task Details, Date, HH:MM Time & Sub-tasks",
                 taskTitleLabel: "Task Title",
                 dateLabel: "Due Date",
                 projLabel: "Project / Category",
@@ -884,7 +1001,7 @@
 
         // ==================== 4. STATE INITIALIZATION ====================
         var todayISO = toISODate(new Date());
-        var cfg = safeGet('pl_cfg_v9', {
+        var cfg = safeGet('pl_cfg_v10', {
             lang: 'fa',
             theme: 'light',
             fab: true,
@@ -892,7 +1009,11 @@
             tomTime: '20:00',
             mood: 'focused',
             selectedISO: todayISO,
-            calMonthOffset: 0
+            calMonthOffset: 0,
+            aiMode: 'local_rules',
+            localAiUrl: 'http://127.0.0.1:11434/v1/chat/completions',
+            localAiModel: 'gemma2:2b',
+            cloudAiKey: ''
         });
         if (!cfg.selectedISO) cfg.selectedISO = todayISO;
 
@@ -909,7 +1030,7 @@
         var lastAIScenarios = [];
 
         function saveAll() {
-            safeSet('pl_cfg_v9', cfg);
+            safeSet('pl_cfg_v10', cfg);
             safeSet('pl_tasks', tasks);
             safeSet('pl_routines', routines);
             safeSet('pl_custom_occasions', customOccasions);
@@ -921,33 +1042,26 @@
             safeSet('pl_places', places);
         }
 
-        // ==================== 5. PAGE NAVIGATION ====================
-        window.openPage = function(pageName) {
-            var screens = ['home', 'calendar', 'todo', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'];
-            for (var i = 0; i < screens.length; i++) {
-                var el = document.getElementById('screen-' + screens[i]);
-                if (el) {
-                    el.classList.remove('active');
-                    el.style.display = 'none';
-                }
+        // ==================== 5. AI CONNECTION SETTINGS (ONLINE & OFFLINE) ====================
+        window.saveAIConnectionSettings = function(showAlert) {
+            cfg.aiMode = document.getElementById('cfg-ai-mode').value;
+            cfg.localAiUrl = document.getElementById('cfg-local-ai-url').value.trim();
+            cfg.localAiModel = document.getElementById('cfg-local-ai-model').value.trim();
+            cfg.cloudAiKey = document.getElementById('cfg-cloud-ai-key').value.trim();
+            saveAll();
+            window.applySettings();
+            if (showAlert) {
+                alert("تنظیمات اتصال هوش مصنوعی (آنلاین و آفلاین) با موفقیت ذخیره شد!");
             }
-            var target = document.getElementById('screen-' + pageName);
-            if (target) {
-                target.classList.add('active');
-                target.style.display = 'block';
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            window.renderAll();
         };
 
-        // ==================== 6. RELIABLE AUDIO ALARM + WAV GENERATOR + NOTIFICATION ====================
+        // ==================== 6. AUDIO ALARM + WAV GENERATOR + NOTIFICATION ====================
         var audioCtx = null;
         var alarmBeepTimer = null;
         var html5AudioRing = null;
         var triggeredAlarms = safeGet('pl_triggered_alarms', {});
         var activeRingingTitle = "";
 
-        // Generate an embedded WAV beep data URI so mobile <audio> elements play reliably
         function createBeepWavDataUri() {
             var sampleRate = 8000;
             var durationSeconds = 0.6;
@@ -983,16 +1097,12 @@
         }
 
         function playSoundRing() {
-            // 1. HTML5 Audio (works on mobile WebViews & browsers)
             try {
-                if (!html5AudioRing) {
-                    html5AudioRing = new Audio(createBeepWavDataUri());
-                }
+                if (!html5AudioRing) html5AudioRing = new Audio(createBeepWavDataUri());
                 html5AudioRing.currentTime = 0;
                 html5AudioRing.play().catch(function(){});
             } catch (e) {}
 
-            // 2. Web Audio API Chime Backup
             try {
                 var AudioContextClass = window.AudioContext || window.webkitAudioContext;
                 if (AudioContextClass) {
@@ -1015,7 +1125,6 @@
             } catch (e) {}
         }
 
-        // Unlock audio on first user touch anywhere in the app
         document.addEventListener('click', function unlockAudioOnce() {
             try {
                 if (!html5AudioRing) html5AudioRing = new Audio(createBeepWavDataUri());
@@ -1043,10 +1152,7 @@
 
             if ("Notification" in window && Notification.permission === "granted") {
                 try {
-                    new Notification('🔔 آلارم پلنر (' + timeStr + ')', {
-                        body: title,
-                        requireInteraction: true
-                    });
+                    new Notification('🔔 آلارم پلنر (' + timeStr + ')', { body: title, requireInteraction: true });
                 } catch (e) {}
             }
         };
@@ -1104,7 +1210,6 @@
             window.applySettings();
         };
 
-        // Check every 2 seconds so alarms never miss the minute
         setInterval(function() {
             if (!cfg.alarmEnabled) return;
             var now = new Date();
@@ -1219,10 +1324,24 @@
             var inAppBtn = document.getElementById('btn-inapp-fab');
             if (inAppBtn) inAppBtn.innerText = cfg.fab ? (cfg.lang === 'fa' ? 'آیکون شناور: روشن' : 'Float Icon: ON') : (cfg.lang === 'fa' ? 'آیکون شناور: خاموش' : 'Float Icon: OFF');
 
+            // Sync AI Connection Inputs
+            if (document.getElementById('cfg-ai-mode')) document.getElementById('cfg-ai-mode').value = cfg.aiMode || 'local_rules';
+            if (document.getElementById('cfg-local-ai-url')) document.getElementById('cfg-local-ai-url').value = cfg.localAiUrl || 'http://127.0.0.1:11434/v1/chat/completions';
+            if (document.getElementById('cfg-local-ai-model')) document.getElementById('cfg-local-ai-model').value = cfg.localAiModel || 'gemma2:2b';
+            if (document.getElementById('cfg-cloud-ai-key')) document.getElementById('cfg-cloud-ai-key').value = cfg.cloudAiKey || '';
+
+            var modeNames = {
+                local_rules: 'موتور هوشمند داخلی (آفلاین)',
+                offline_edge: 'مدل آفلاین دستگاه (' + (cfg.localAiModel || 'Local AI') + ')',
+                online_gemini: 'هوش مصنوعی آنلاین ابری (Gemini API)'
+            };
+            var aiBadge = document.getElementById('ai-active-engine-badge');
+            if (aiBadge) aiBadge.innerText = 'وضعیت اتصال: ' + (modeNames[cfg.aiMode] || modeNames.local_rules);
+
             var now = new Date();
             var p = getTripleDateParts(now);
             document.getElementById('live-header-dates').innerText = cfg.lang === 'fa'
-                ? 'شمسی: ' + p.jDay + ' ' + p.jMonth + ' | میلادی: ' + p.gDay + ' ' + p.gMonth + ' | قمری: ' + p.hDay + ' ' + p.hMonth
+                ? 'امروز: ' + p.jDay + ' ' + p.jMonth + ' ' + p.jYear + ' | میلادی: ' + p.gDay + ' ' + p.gMonth + ' | قمری: ' + p.hDay + ' ' + p.hMonth
                 : 'Solar: ' + p.jDay + ' ' + p.jMonth + ' | Gregorian: ' + p.gDay + ' ' + p.gMonth + ' | Hijri: ' + p.hDay + ' ' + p.hMonth;
 
             var todayOcc = getOccasionDetails(p, todayISO, now.getDay());
@@ -1251,12 +1370,16 @@
             saveAll(); window.applySettings(); window.renderAll();
         };
 
-        // ==================== 8. TASKS & SUBMENU DRAWER ====================
+        // ==================== 8. TASKS & SUBMENU DRAWER (SHAMSI DEFAULT) ====================
         window.addQuickTask = function() {
             var inp = document.getElementById('quick-task-in');
             var title = inp.value.trim();
             if (!title) return;
-            var dateVal = document.getElementById('quick-date-in').value || todayISO;
+
+            var selJDay = document.getElementById('quick-shamsi-day').value;
+            var selJMonth = document.getElementById('quick-shamsi-month').value;
+            var dateVal = shamsiToISODate(selJMonth, selJDay);
+
             var projVal = document.getElementById('quick-proj-in').value || 'پروژه اصلی';
             var prioVal = document.getElementById('quick-prio-in').value || 'p2';
             var progVal = parseInt(document.getElementById('quick-prog-in').value, 10) || 0;
@@ -1326,7 +1449,7 @@
             var t = tasks.find(function(x) { return x.id === id; });
             if (!t) return;
             document.getElementById('dr-title').value = t.title;
-            document.getElementById('dr-date').value = t.dateISO || todayISO;
+            populateShamsiSelectors('dr-shamsi-day', 'dr-shamsi-month', t.dateISO || todayISO);
             document.getElementById('dr-proj').value = t.project || 'پروژه اصلی';
             document.getElementById('dr-prog').value = t.progress || 0;
             document.getElementById('dr-prog-label').innerText = (t.progress || 0) + '%';
@@ -1397,7 +1520,9 @@
             var t = tasks.find(function(x) { return x.id === currentTaskId; });
             if (!t) return;
             t.title = document.getElementById('dr-title').value.trim() || t.title;
-            t.dateISO = document.getElementById('dr-date').value || todayISO;
+            var jD = document.getElementById('dr-shamsi-day').value;
+            var jM = document.getElementById('dr-shamsi-month').value;
+            t.dateISO = shamsiToISODate(jM, jD);
             t.project = document.getElementById('dr-proj').value;
             t.progress = parseInt(document.getElementById('dr-prog').value, 10) || 0;
             t.done = t.progress === 100;
@@ -1570,7 +1695,7 @@
             window.renderAll();
         };
 
-               // ==================== 10. AI CHATBOT (DAILY + 7-DAY WEEKLY FREE-SLOT SCHEDULER) ====================
+        // ==================== 10. ADVANCED WEEKLY & DAILY AI SCHEDULER (SUPPORTS EVERY DAY, SPECIFIC DAYS & N-DAYS/WEEK) ====================
         window.sendAIChat = function() {
             var inp = document.getElementById('ai-chat-in');
             var rawText = inp.value.trim();
@@ -1581,27 +1706,24 @@
             stream.innerHTML += '<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">' + rawText + '</div></div>';
             inp.value = '';
 
-            // 1. دستور جابه‌جایی کار به روز یا ساعت مشخص (مثلاً: طراحی سایت رو ببر دوشنبه ساعت 16:30)
-            var weekMap = { 'شنبه': 6, 'یکشنبه': 0, 'دوشنبه': 1, 'سه شنبه': 2, 'سه‌شنبه': 2, 'چهارشنبه': 3, 'پنجشنبه': 4, 'جمعه': 5 };
-            var moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(شنبه|یکشنبه|دوشنبه|سه‌شنبه|سه شنبه|چهارشنبه|پنجشنبه|جمعه)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
-            
-            if (moveMatch && (norm.indexOf('ببر') !== -1 || norm.indexOf('بذار') !== -1 || norm.indexOf('انتقال') !== -1 || norm.toLowerCase().indexOf('move') !== -1)) {
+            var weekMap = {
+                'شنبه': 6, 'یکشنبه': 0, 'دوشنبه': 1, 'سه شنبه': 2, 'سه‌شنبه': 2, 'چهارشنبه': 3, 'پنجشنبه': 4, 'جمعه': 5
+            };
+
+            // 1. Direct command to move an existing task
+            var moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)\s*(شنبه|یکشنبه|دوشنبه|سه‌شنبه|سه شنبه|چهارشنبه|پنجشنبه|جمعه)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
+            if (moveMatch) {
                 var kw = moveMatch[1].trim();
                 var targetDayName = moveMatch[2] ? moveMatch[2].trim() : null;
                 var newH = parseInt(moveMatch[3], 10);
                 var newM = moveMatch[4] ? parseInt(moveMatch[4], 10) : 0;
                 var found = tasks.find(function(t) { return t.title.indexOf(kw) !== -1; });
-                
                 if (found && newH >= 3 && newH <= 24) {
                     if (targetDayName && weekMap[targetDayName] !== undefined) {
                         var targetJsDay = weekMap[targetDayName];
                         for (var dOff = 0; dOff < 7; dOff++) {
-                            var testD = new Date();
-                            testD.setDate(testD.getDate() + dOff);
-                            if (testD.getDay() === targetJsDay) {
-                                found.dateISO = toISODate(testD);
-                                break;
-                            }
+                            var testD = new Date(); testD.setDate(testD.getDate() + dOff);
+                            if (testD.getDay() === targetJsDay) { found.dateISO = toISODate(testD); break; }
                         }
                     }
                     found.startHour = newH;
@@ -1609,44 +1731,50 @@
                     found.startTime = String(newH).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
                     found.endTime = String(Math.min(24, newH + 1)).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
                     saveAll(); window.renderAll();
-                    stream.innerHTML += '<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«' + found.title + '»</strong> به تاریخ <strong>' + found.dateISO + '</strong> ساعت <strong>' + found.startTime + '</strong> منتقل شد.</div>';
+                    stream.innerHTML += '<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«' + found.title + '»</strong> به تاریخ <strong>' + formatShamsiFull(found.dateISO) + '</strong> ساعت <strong>' + found.startTime + '</strong> منتقل شد.</div>';
                     stream.scrollTop = stream.scrollHeight;
                     return;
                 }
             }
 
-            // 2. تشخیص اینکه کاربر برنامه «هفتگی» می‌خواهد یا «روزانه»
-            var isWeekly = (norm.indexOf('هفته') !== -1 || norm.toLowerCase().indexOf('week') !== -1 || norm.indexOf('۷ روز') !== -1 || norm.indexOf('7 روز') !== -1);
+            // Build 7 days of the upcoming week with Shamsi labels
+            var next7Days = [];
+            for (var d = 0; d < 7; d++) {
+                var dt = new Date();
+                dt.setDate(dt.getDate() + d);
+                var iso = toISODate(dt);
+                var wdName = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' }).format(dt);
+                var p = getTripleDateParts(dt);
+                next7Days.push({ idx: d, jsDay: dt.getDay(), iso: iso, label: wdName + ' ' + p.jDay + ' ' + p.jMonth });
+            }
 
-            // تمیز کردن جملات دستوری از اول متن تا فقط نام کارها باقی بماند
+            // Clean introductory phrases
             var cleanListText = norm
                 .replace(/من این کارها رو باید در یک هفته انجام بدم:?/g, '')
                 .replace(/در این هفته:?/g, '')
+                .replace(/برنامه این هفته:?/g, '')
                 .replace(/بر اساس زمان های خالی برام زمان بندی کن/g, '')
                 .replace(/برام برنامه ریزی کن/g, '');
 
-            var items = cleanListText.split(/[\n،؛,]+|\s+و\s+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 2; });
-            if (!items.length) return;
+            // Split by comma or newline (NOT by "و" inside weekday names like "شنبه و دوشنبه")
+            var rawItems = cleanListText.split(/[\n،؛,]+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 2; });
+            if (!rawItems.length) return;
 
-            // تابع پیدا کردن اولین ساعت خالی در یک تاریخ مشخص (با در نظر گرفتن روتین‌های آن روز هفته و کارهای قبلی)
             function findFreeHourOnDate(isoDate, preferredStartH, tempBookedMap) {
                 var dObj = new Date(isoDate + 'T12:00:00');
                 var jsDay = dObj.getDay();
                 var busy = new Set();
 
-                // قفل کردن ساعت‌های روتین ثابت آن روز هفته
                 routines.filter(function(r) { return (r.daysOfWeek || [6,0,1,2,3,4]).indexOf(jsDay) !== -1; }).forEach(function(r) {
                     for (var h = r.startHour; h < r.endHour; h++) busy.add(h);
                 });
-                // قفل کردن کارهایی که از قبل در آن تاریخ ثبت شده‌اند
                 tasks.filter(function(t) { return (t.dateISO || todayISO) === isoDate && !t.done && t.startHour; }).forEach(function(t) {
                     for (var h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
                 });
-                // قفل کردن کارهایی که در همین سناریو تا الان چیده شده‌اند
                 var alreadyInScenario = tempBookedMap[isoDate] || [];
                 alreadyInScenario.forEach(function(h) { busy.add(h); });
 
-                for (var h = preferredStartH; h <= 22; h++) {
+                for (var h = preferredStartH; h <= 23; h++) {
                     if (!busy.has(h)) {
                         if (!tempBookedMap[isoDate]) tempBookedMap[isoDate] = [];
                         tempBookedMap[isoDate].push(h);
@@ -1656,100 +1784,111 @@
                 return null;
             }
 
-            if (isWeekly) {
-                // ساخت لیست ۷ روز آینده از امروز
-                var next7Days = [];
-                for (var d = 0; d < 7; d++) {
-                    var dt = new Date();
-                    dt.setDate(dt.getDate() + d);
-                    var iso = toISODate(dt);
-                    var wdName = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' }).format(dt);
-                    var p = getTripleDateParts(dt);
-                    next7Days.push({ iso: iso, label: wdName + ' ' + p.jDay + ' ' + p.jMonth });
-                }
+            // Analyze each task's frequency rule:
+            // - "هر روز" / "روزانه" / "every day" -> all 7 days
+            // - Specific weekdays mentioned ("شنبه", "دوشنبه", ...) -> those exact days
+            // - "روزهای زوج" (Sat, Mon, Wed -> 6, 1, 3) / "روزهای فرد" (Sun, Tue, Thu -> 0, 2, 4)
+            // - "X روز در هفته" / "X بار" -> X spaced days in the week
+            // - Otherwise -> single task placed on next balanced day
+            function buildWeeklyScenario(baseStartHour) {
+                var bookedMap = {};
+                var generated = [];
+                var singleTaskCounter = 0;
 
-                // سناریوی هفتگی ۱: پخش متوازن در کل ۷ روز (ساعت‌های صبح/ظهر خالی)
-                var map1 = {}, wScenario1 = [];
-                items.forEach(function(title, idx) {
-                    var dayObj = next7Days[idx % 7];
-                    var freeH = findFreeHourOnDate(dayObj.iso, 9, map1) || 16;
-                    wScenario1.push({ title: title, dateISO: dayObj.iso, dayLabel: dayObj.label, startHour: freeH, endHour: freeH + 1, startTime: String(freeH).padStart(2,'0') + ':00', endTime: String(freeH+1).padStart(2,'0') + ':00' });
+                rawItems.forEach(function(itemStr) {
+                    var isEveryDay = /هر\s*روز|روزانه|همه\s*روز|every\s*day|daily/i.test(itemStr);
+                    var isEvenDays = /روزهای\s*زوج|زوج/i.test(itemStr);
+                    var isOddDays  = /روزهای\s*فرد|فرد/i.test(itemStr);
+                    var nDaysMatch = itemStr.match(/(\d)\s*(?:روز|بار|جلسه)/);
+
+                    // Find any explicit weekday names in itemStr
+                    var matchedJsDays = [];
+                    Object.keys(weekMap).forEach(function(dayName) {
+                        var regex = new RegExp('(^|\\s|و)' + dayName + '(\\s|ها|$|و)', 'g');
+                        if (regex.test(itemStr) || itemStr.indexOf(dayName) !== -1) {
+                            if (matchedJsDays.indexOf(weekMap[dayName]) === -1) {
+                                matchedJsDays.push(weekMap[dayName]);
+                            }
+                        }
+                    });
+
+                    // Extract explicit hour if user wrote "ساعت 18"
+                    var explicitTimeMatch = itemStr.match(/(?:ساعت|at)\s*(\d{1,2})(?::(\d{1,2}))?/i);
+                    var expH = explicitTimeMatch ? parseInt(explicitTimeMatch[1], 10) : null;
+
+                    // Clean title for display
+                    var cleanTitle = itemStr
+                        .replace(/هر\s*روز|روزانه|همه\s*روز|روزهای\s*زوج|روزهای\s*فرد/g, '')
+                        .replace(/(\d)\s*(?:روز|بار|جلسه)\s*(?:در\s*هفته)?/g, '')
+                        .trim();
+                    if (!cleanTitle) cleanTitle = itemStr;
+
+                    var targetDaysList = [];
+
+                    if (isEveryDay) {
+                        targetDaysList = next7Days.slice(); // All 7 days!
+                    } else if (matchedJsDays.length > 0) {
+                        targetDaysList = next7Days.filter(function(dObj) { return matchedJsDays.indexOf(dObj.jsDay) !== -1; });
+                    } else if (isEvenDays) {
+                        targetDaysList = next7Days.filter(function(dObj) { return [6, 1, 3].indexOf(dObj.jsDay) !== -1; });
+                    } else if (isOddDays) {
+                        targetDaysList = next7Days.filter(function(dObj) { return [0, 2, 4].indexOf(dObj.jsDay) !== -1; });
+                    } else if (nDaysMatch) {
+                        var count = Math.min(7, Math.max(1, parseInt(nDaysMatch[1], 10)));
+                        var step = Math.max(1, Math.floor(7 / count));
+                        for (var c = 0; c < count; c++) {
+                            targetDaysList.push(next7Days[(c * step) % 7]);
+                        }
+                    } else {
+                        targetDaysList = [next7Days[singleTaskCounter % 7]];
+                        singleTaskCounter++;
+                    }
+
+                    targetDaysList.forEach(function(dayObj) {
+                        var chosenH = expH || findFreeHourOnDate(dayObj.iso, baseStartHour, bookedMap) || 17;
+                        generated.push({
+                            title: cleanTitle,
+                            dateISO: dayObj.iso,
+                            dayLabel: dayObj.label,
+                            startHour: chosenH,
+                            endHour: Math.min(24, chosenH + 1),
+                            startTime: String(chosenH).padStart(2,'0') + ':00',
+                            endTime: String(Math.min(24, chosenH + 1)).padStart(2,'0') + ':00'
+                        });
+                    });
                 });
 
-                // سناریوی هفتگی ۲: فشرده در نیمه اول هفته (۳ روز اول در زمان‌های خالی)
-                var map2 = {}, wScenario2 = [];
-                items.forEach(function(title, idx) {
-                    var dayObj = next7Days[idx % 3];
-                    var freeH = findFreeHourOnDate(dayObj.iso, 8, map2) || 15;
-                    wScenario2.push({ title: title, dateISO: dayObj.iso, dayLabel: dayObj.label, startHour: freeH, endHour: freeH + 1, startTime: String(freeH).padStart(2,'0') + ':00', endTime: String(freeH+1).padStart(2,'0') + ':00' });
+                return generated.sort(function(a, b) {
+                    if (a.dateISO !== b.dateISO) return a.dateISO.localeCompare(b.dateISO);
+                    return a.startHour - b.startHour;
                 });
-
-                // سناریوی هفتگی ۳: زمان‌های خالی عصرگاهی در طول هفته
-                var map3 = {}, wScenario3 = [];
-                items.forEach(function(title, idx) {
-                    var dayObj = next7Days[idx % 6];
-                    var freeH = findFreeHourOnDate(dayObj.iso, 15, map3) || 18;
-                    wScenario3.push({ title: title, dateISO: dayObj.iso, dayLabel: dayObj.label, startHour: freeH, endHour: freeH + 1, startTime: String(freeH).padStart(2,'0') + ':00', endTime: String(freeH+1).padStart(2,'0') + ':00' });
-                });
-
-                lastAIScenarios = [wScenario1, wScenario2, wScenario3];
-
-                function weekBoxHTML(idx, name, list) {
-                    return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2 flex flex-col justify-between">' +
-                        '<div><div class="font-bold text-xs text-purple-600 mb-2">' + name + '</div>' +
-                        '<div class="space-y-1.5">' + list.map(function(x) {
-                            return '<div class="text-[11px] border-b border-slate-100 dark:border-neutral-800 pb-1">' +
-                                '<div class="font-bold">• ' + x.title + '</div>' +
-                                '<div class="flex justify-between text-slate-500 mt-0.5"><span>📅 ' + x.dayLabel + '</span><span class="font-mono text-purple-600 font-bold">⏰ ' + x.startTime + '</span></div>' +
-                                '</div>';
-                        }).join('') + '</div></div>' +
-                        '<button type="button" onclick="window.applyAIScenario(' + idx + ')" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold mt-2">✓ ثبت این برنامه هفتگی در تقویم</button>' +
-                        '</div>';
-                }
-
-                stream.innerHTML += '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
-                    '<div class="text-xs font-bold text-purple-700 dark:text-purple-300">📅 زمان‌های خالی شما در ۷ روز آینده (با کسر ساعت‌های روتین ثابت) بررسی شد. یکی از ۳ برنامه هفتگی زیر را انتخاب کنید:</div>' +
-                    '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">' +
-                    weekBoxHTML(0, '۱. پخش متوازن در کل هفته', wScenario1) +
-                    weekBoxHTML(1, '۲. فشرده در ۳ روز اول هفته', wScenario2) +
-                    weekBoxHTML(2, '۳. تایم‌های آزاد عصرگاهی هفته', wScenario3) +
-                    '</div></div>';
-                stream.scrollTop = stream.scrollHeight;
-                return;
             }
 
-            // 3. حالت روزانه (با بررسی ساعت‌های خالی امروز/روز انتخابی)
-            var targetISO = cfg.selectedISO || todayISO;
-            var dMap1 = {}, dMap2 = {}, dMap3 = {};
-            var s1 = items.map(function(title) {
-                var h = findFreeHourOnDate(targetISO, 8, dMap1) || 8;
-                return { title: title, dateISO: targetISO, startHour: h, endHour: h + 1, startTime: String(h).padStart(2,'0') + ':00', endTime: String(h+1).padStart(2,'0') + ':00' };
-            });
-            var s2 = items.map(function(title, i) {
-                var h = findFreeHourOnDate(targetISO, 9 + i, dMap2) || 10;
-                return { title: title, dateISO: targetISO, startHour: h, endHour: h + 1, startTime: String(h).padStart(2,'0') + ':30', endTime: String(h+1).padStart(2,'0') + ':30' };
-            });
-            var s3 = items.map(function(title) {
-                var h = findFreeHourOnDate(targetISO, 15, dMap3) || 16;
-                return { title: title, dateISO: targetISO, startHour: h, endHour: h + 1, startTime: String(h).padStart(2,'0') + ':00', endTime: String(h+1).padStart(2,'0') + ':00' };
-            });
+            var wScenario1 = buildWeeklyScenario(8);   // Morning priority
+            var wScenario2 = buildWeeklyScenario(11);  // Mid-day balanced
+            var wScenario3 = buildWeeklyScenario(16);  // Afternoon/Evening free slots
 
-            lastAIScenarios = [s1, s2, s3];
+            lastAIScenarios = [wScenario1, wScenario2, wScenario3];
 
-            function dayBoxHTML(idx, name, list) {
-                return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2">' +
-                    '<div class="font-bold text-xs text-purple-600">' + name + '</div>' +
-                    '<div class="space-y-1">' + list.map(function(x) { return '<div class="flex justify-between text-[11px]"><span>• ' + x.title + '</span><span class="font-mono">' + x.startTime + '</span></div>'; }).join('') + '</div>' +
-                    '<button type="button" onclick="window.applyAIScenario(' + idx + ')" class="w-full py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold">✓ انتخاب این برنامه</button>' +
+            function weekBoxHTML(idx, name, list) {
+                return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2 flex flex-col justify-between">' +
+                    '<div><div class="font-bold text-xs text-purple-600 mb-2">' + name + ' (' + list.length + ' نوبت در هفته)</div>' +
+                    '<div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">' + list.map(function(x) {
+                        return '<div class="text-[11px] border-b border-slate-100 dark:border-neutral-800 pb-1">' +
+                            '<div class="font-bold">• ' + x.title + '</div>' +
+                            '<div class="flex justify-between text-slate-500 mt-0.5"><span>📅 ' + x.dayLabel + '</span><span class="font-mono text-purple-600 font-bold">⏰ ' + x.startTime + '</span></div>' +
+                            '</div>';
+                    }).join('') + '</div></div>' +
+                    '<button type="button" onclick="window.applyAIScenario(' + idx + ')" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold mt-2">✓ ثبت این برنامه در تقویم</button>' +
                     '</div>';
             }
 
             stream.innerHTML += '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
-                '<div class="text-xs text-slate-500">💡 نکته: اگر می‌خواهید کارها در طول هفته پخش شوند، در جمله‌تان کلمه <strong>«هفته»</strong> را بنویسید.</div>' +
+                '<div class="text-xs font-bold text-purple-700 dark:text-purple-300">✨ کارهای «هر روز»، «روزهای مشخص‌شده» و «تکرار در هفته» تفکیک شدند و در ساعت‌های خالی شما چیده شدند:</div>' +
                 '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">' +
-                dayBoxHTML(0, '۱. ساعت‌های خالی صبح', s1) +
-                dayBoxHTML(1, '۲. متوازن با تنفس', s2) +
-                dayBoxHTML(2, '۳. ساعت‌های خالی عصر', s3) +
+                weekBoxHTML(0, '۱. اولویت تایم‌های آزاد صبح', wScenario1) +
+                weekBoxHTML(1, '۲. اولویت تایم‌های میانه روز', wScenario2) +
+                weekBoxHTML(2, '۳. اولویت تایم‌های آزاد عصر', wScenario3) +
                 '</div></div>';
             stream.scrollTop = stream.scrollHeight;
         };
@@ -1759,7 +1898,7 @@
             if (!list) return;
             list.forEach(function(item) {
                 tasks.unshift({
-                    id: Date.now() + Math.floor(Math.random() * 10000),
+                    id: Date.now() + Math.floor(Math.random() * 100000),
                     title: item.title,
                     dateISO: item.dateISO || cfg.selectedISO || todayISO,
                     project: 'پروژه اصلی',
@@ -1880,7 +2019,7 @@
         };
         window.resetAll = function() { if (confirm("پاکسازی کامل حافظه؟")) { localStorage.clear(); location.reload(); } };
 
-        // ==================== 12. MASTER RENDER ENGINE ====================
+        // ==================== 12. MASTER RENDER ENGINE (SHAMSI DATES DEFAULT) ====================
         function formatTaskTimeBadge(t) {
             var st = parseTimeStr(t.startTime, t.startHour);
             var et = parseTimeStr(t.endTime, t.endHour);
@@ -1890,8 +2029,7 @@
 
         function taskCardHTML(t) {
             var prog = t.progress || 0;
-            var dObj = new Date((t.dateISO || todayISO) + 'T12:00:00');
-            var p = getTripleDateParts(dObj);
+            var shamsiStr = formatShamsiFull(t.dateISO || todayISO);
             return '<div onclick="window.openDrawer(' + t.id + ')" class="cursor-pointer bg-slate-50 dark:bg-neutral-900 hover:border-blue-400 p-3.5 rounded-2xl border border-slate-200/90 dark:border-neutral-800 space-y-2 transition">' +
                 '<div class="flex items-center justify-between gap-2">' +
                 '<div class="flex items-center gap-2.5">' +
@@ -1899,7 +2037,7 @@
                 '<div>' +
                 '<div class="text-xs sm:text-sm font-bold ' + (t.done ? 'line-through text-slate-400' : '') + '">' + t.title + '</div>' +
                 '<div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 mt-0.5">' +
-                '<span class="text-indigo-600 dark:text-indigo-400 font-semibold">📅 ' + p.jDay + ' ' + p.jMonth + ' (' + (t.dateISO || todayISO) + ')</span>' +
+                '<span class="text-indigo-600 dark:text-indigo-400 font-bold">📅 ' + shamsiStr + '</span>' +
                 '<span>📁 ' + (t.project || 'پروژه اصلی') + '</span>' +
                 formatTaskTimeBadge(t) +
                 '</div></div></div>' +
@@ -1931,10 +2069,11 @@
 
             var tomObj = new Date(); tomObj.setDate(tomObj.getDate() + 1);
             var tomISO = toISODate(tomObj);
+            var tomShamsi = formatShamsiFull(tomISO);
             var tomCount = tasks.filter(function(t) { return t.dateISO === tomISO; }).length;
             document.getElementById('home-tomorrow-summary').innerText = cfg.lang === 'en'
-                ? 'Tomorrow Preview (' + tomISO + '): ' + tomCount + ' tasks (Audio Alert at ' + cfg.tomTime + ')'
-                : 'پیش‌نمایش فردا (' + tomISO + '): ' + tomCount + ' کار ثبت‌شده (آلارم شبانه ساعت ' + cfg.tomTime + ')';
+                ? 'Tomorrow (' + tomShamsi + '): ' + tomCount + ' tasks (Alert at ' + cfg.tomTime + ')'
+                : 'پیش‌نمایش فردا (' + tomShamsi + '): ' + tomCount + ' کار ثبت‌شده (آلارم شبانه ساعت ' + cfg.tomTime + ')';
 
             // Projects Progress Overview
             var projectGroups = {};
@@ -1963,7 +2102,7 @@
             baseDate.setDate(1);
 
             var monthSampleParts = getTripleDateParts(new Date(baseDate.getFullYear(), baseDate.getMonth(), 15));
-            document.getElementById('cal-month-title').innerText = monthSampleParts.jMonth + ' | ' + monthSampleParts.gMonth + ' | ' + monthSampleParts.hMonth;
+            document.getElementById('cal-month-title').innerText = monthSampleParts.jMonth + ' ' + monthSampleParts.jYear + ' | ' + monthSampleParts.gMonth + ' | ' + monthSampleParts.hMonth;
 
             var firstJsDay = baseDate.getDay();
             var satOffset = (firstJsDay + 1) % 7;
@@ -2007,7 +2146,7 @@
             var weekdayStr = new Intl.DateTimeFormat(cfg.lang === 'en' ? 'en-US' : 'fa-IR', { weekday: 'long' }).format(selDateObj);
             var selOcc = getOccasionDetails(selParts, selISO, selJsDay);
 
-            document.getElementById('sel-day-full-dates').innerText = weekdayStr + ' ' + selParts.jDay + ' ' + selParts.jMonth + ' (' + selParts.gDay + ' ' + selParts.gMonth + ' | ' + selParts.hDay + ' ' + selParts.hMonth + ')';
+            document.getElementById('sel-day-full-dates').innerText = weekdayStr + ' ' + selParts.jDay + ' ' + selParts.jMonth + ' ' + selParts.jYear + ' (میلادی: ' + selParts.gDay + ' ' + selParts.gMonth + ' | قمری: ' + selParts.hDay + ' ' + selParts.hMonth + ')';
             document.getElementById('sel-day-occasions').innerText = selOcc.text;
 
             var dayRoutines = routines.filter(function(r) { return (r.daysOfWeek || [6,0,1,2,3,4]).indexOf(selJsDay) !== -1; });
@@ -2056,10 +2195,8 @@
             document.getElementById('list-places').innerHTML = places.map(function(p) { return '<div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><div class="font-bold text-rose-500">📍 ' + p.name + '</div><div class="text-slate-500">' + p.note + '</div></div>'; }).join('');
         };
 
-        // Initialize immediately on load
         document.addEventListener('DOMContentLoaded', function() {
-            var qDate = document.getElementById('quick-date-in');
-            if (qDate) qDate.value = todayISO;
+            populateShamsiSelectors('quick-shamsi-day', 'quick-shamsi-month', todayISO);
             window.applySettings();
             window.renderAll();
         });
