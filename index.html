@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Smart Planner Pro | پلنر جامع هوشمند</title>
+    <link rel="manifest" href="manifest.json">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Vazirmatn', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { transition: background-color 0.2s, color 0.2s; }
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.45); border-radius: 4px; }
+        
+        /* Menu Layout Modes */
+        body.menu-top #app-wrapper { flex-direction: column !important; }
+        body.menu-top #main-nav-aside { width: 100% !important; border-left: none !important; border-bottom: 1px solid rgba(148,163,184,0.2); }
+        body.menu-top #main-nav-list { flex-direction: row !important; overflow-x: auto; }
+
+        body.menu-bottom #main-nav-aside {
+            position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important;
+            z-index: 40; border-top: 1px solid rgba(148,163,184,0.25); padding: 0.4rem 0.75rem;
+        }
+        body.menu-bottom #nav-brand-box { display: none !important; }
+        body.menu-bottom #main-nav-list { flex-direction: row !important; justify-content: space-around; overflow-x: auto; }
+
+        body.nav-style-icons .nav-label { display: none !important; }
+        body.nav-style-text .nav-icon { display: none !important; }
+
+        /* White SMS-Style Floating Popup */
+        #sms-float-popup {
+            box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.22), 0 4px 12px -2px rgba(0, 0, 0, 0.12);
+        }
+    </style>
+</head>
+<body class="bg-[#fbfbfa] dark:bg-[#191919] text-slate-800 dark:text-slate-100 min-h-screen font-sans pb-20 lg:pb-0">
+
+    <div id="app-wrapper" class="min-h-screen flex flex-col lg:flex-row">
+
+        <!-- SIDEBAR / NAVIGATION -->
+        <aside id="main-nav-aside" class="w-full lg:w-64 bg-[#f3f2ef] dark:bg-[#202020] border-b lg:border-b-0 lg:border-e border-slate-200 dark:border-neutral-800 p-3 shrink-0 z-20">
+            <div id="nav-brand-box" class="flex items-center justify-between px-2 py-1.5 mb-2">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
+                        <i class="fa-solid fa-layer-group text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm" data-i18n="appTitle">پلنر جامع هوشمند</h1>
+                        <span class="text-[10px] text-slate-500 dark:text-neutral-400" id="active-mood-badge">😊 متمرکز</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav id="main-nav-list" class="flex lg:flex-col gap-1 overflow-x-auto pb-1 lg:pb-0 text-xs sm:text-[13px]">
+                <button type="button" onclick="window.switchTab('overview')" id="btn-overview" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
+                    <i class="nav-icon fa-solid fa-house w-4 text-center"></i> <span class="nav-label" data-i18n="navOverview">صفحه اول (پیش‌نمایش)</span>
+                </button>
+                <button type="button" onclick="window.switchTab('ai')" id="btn-ai" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-comments text-purple-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navAI">چت‌بات برنامه‌ریز AI</span>
+                </button>
+                <button type="button" onclick="window.switchTab('timeblock')" id="btn-timeblock" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-regular fa-calendar-days text-indigo-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navTimeblock">تقویم ماهانه و ساعتی</span>
+                </button>
+                <button type="button" onclick="window.switchTab('todo')" id="btn-todo" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-circle-check text-red-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navTodo">لیست کارها (To-Do)</span>
+                </button>
+                <button type="button" onclick="window.switchTab('notes')" id="btn-notes" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-regular fa-file-lines text-amber-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navNotes">یادداشت‌ها (Notes)</span>
+                </button>
+                <button type="button" onclick="window.switchTab('shopping')" id="btn-shopping" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-cart-shopping text-emerald-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navShopping">لیست خرید و مالی</span>
+                </button>
+                <button type="button" onclick="window.switchTab('workout')" id="btn-workout" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-dumbbell text-orange-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navWorkout">باشگاه و ورزش</span>
+                </button>
+                <button type="button" onclick="window.switchTab('travel')" id="btn-travel" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-earth-americas text-cyan-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navTravel">سفر و مکان‌ها</span>
+                </button>
+                <button type="button" onclick="window.switchTab('settings')" id="btn-settings" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-sliders text-slate-500 w-4 text-center"></i> <span class="nav-label" data-i18n="navSettings">تنظیمات</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <main class="flex-1 max-w-6xl mx-auto w-full p-4 lg:p-8">
+
+            <!-- HEADER WITH MOOD & EMERGENCY MODE BUTTON -->
+            <header class="flex flex-col gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-neutral-800">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-bold" data-i18n="welcomeTitle">پیش‌نمایش جامع و برنامه روزانه</h2>
+                        <p class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5" id="live-date">...</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Emergency / Crisis Mode Button -->
+                        <button type="button" onclick="window.triggerEmergencyMode()" id="btn-emergency"
+                            class="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+                            <span data-i18n="emergencyBtn">حالت اضطراری</span>
+                        </button>
+
+                        <!-- Mood Selector -->
+                        <div class="flex items-center gap-1 bg-white dark:bg-[#202020] px-2.5 py-1 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-xs">
+                            <span class="text-[11px] text-slate-500 me-1" data-i18n="moodLabel">حالت روحی:</span>
+                            <button type="button" onclick="window.setMood('energetic')" id="mood-energetic" class="mood-btn px-2 py-1 rounded-lg text-xs">🔥</button>
+                            <button type="button" onclick="window.setMood('focused')" id="mood-focused" class="mood-btn px-2 py-1 rounded-lg text-xs">😊</button>
+                            <button type="button" onclick="window.setMood('calm')" id="mood-calm" class="mood-btn px-2 py-1 rounded-lg text-xs">😐</button>
+                            <button type="button" onclick="window.setMood('tired')" id="mood-tired" class="mood-btn px-2 py-1 rounded-lg text-xs">😴</button>
+                            <button type="button" onclick="window.setMood('stressed')" id="mood-stressed" class="mood-btn px-2 py-1 rounded-lg text-xs">🤯</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Active Banner -->
+                <div id="emergency-banner" class="hidden bg-red-50 dark:bg-red-950/50 border border-red-300 dark:border-red-800 rounded-xl p-3 flex items-center justify-between text-xs text-red-800 dark:text-red-200">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-siren-on text-red-600 text-base"></i>
+                        <span data-i18n="emergencyActiveDesc">حالت اضطراری فعال شد! کارهای فرعی به فردا منتقل شدند و فقط کارهای حیاتی (P1) و بلوک‌های تنفس باقی ماندند.</span>
+                    </div>
+                    <button type="button" onclick="document.getElementById('emergency-banner').classList.add('hidden')" class="font-bold px-2">×</button>
+                </div>
+
+                <!-- QUICK ADD TASK BAR -->
+                <div class="bg-white dark:bg-[#202020] rounded-xl p-2.5 border border-slate-200 dark:border-neutral-800 shadow-sm flex flex-wrap sm:flex-nowrap items-center gap-2">
+                    <input type="text" id="quick-task-in" data-i18n-placeholder="quickAddPlaceholder" placeholder="ثبت سریع کار جدید... (مثلاً: جلسه ساعت ۱۰)" 
+                        class="flex-1 min-w-[200px] bg-transparent text-sm px-2 focus:outline-none"
+                        onkeydown="if(event.key==='Enter') window.addQuickTask()">
+                    <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+                        <select id="quick-day-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2.5 py-1.5">
+                            <option value="today" data-i18n="todayOpt">امروز</option>
+                            <option value="tomorrow" data-i18n="tomorrowOpt">فردا</option>
+                        </select>
+                        <select id="quick-prio-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2 py-1.5">
+                            <option value="p1">🔴 P1 (فوری)</option>
+                            <option value="p2" selected>🟡 P2 (مهم)</option>
+                            <option value="p3">🔵 P3 (عادی)</option>
+                        </select>
+                        <button type="button" onclick="window.addQuickTask()" class="px-4 py-1.5 bg-[#db4c3f] hover:bg-red-600 text-white text-xs font-bold rounded-lg" data-i18n="addBtn">+ ثبت</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ==================== TAB 1: OVERVIEW (HOME PREVIEW) ==================== -->
+            <section id="sec-overview" class="tab-section active space-y-6">
+                <!-- Night-Before Tomorrow Preview (Editable Time Directly Here & in Settings) -->
+                <div class="bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-moon text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                            <div>
+                                <h3 class="font-bold text-sm text-indigo-950 dark:text-indigo-200" data-i18n="tomPreviewTitle">پیش‌نمایش شبانه کارهای فردا</h3>
+                                <p class="text-[11px] text-indigo-700 dark:text-indigo-300" id="txt-tom-sub">...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs">
+                            <span class="text-indigo-800 dark:text-indigo-300" data-i18n="alertTimeLabel">ساعت نمایش:</span>
+                            <input type="time" id="overview-tom-time" value="20:00" onchange="window.setTomorrowTime(this.value)"
+                                class="bg-white dark:bg-neutral-900 border border-indigo-300 dark:border-indigo-700 rounded-lg px-2 py-1 font-mono text-xs cursor-pointer">
+                        </div>
+                    </div>
+                    <div id="list-tomorrow-preview" class="space-y-2"></div>
+                </div>
+
+                <!-- 4 Summary Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div onclick="window.switchTab('todo')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500" data-i18n="cardTodayTasks">کارهای امروز</span>
+                        <div class="text-2xl font-bold mt-1" id="stat-tasks">0</div>
+                    </div>
+                    <div onclick="window.switchTab('shopping')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500" data-i18n="cardBalance">تراز مالی</span>
+                        <div class="text-2xl font-bold mt-1 text-emerald-600" id="stat-net">0</div>
+                    </div>
+                    <div onclick="window.switchTab('workout')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500" data-i18n="cardWorkout">تمرینات ورزشی</span>
+                        <div class="text-2xl font-bold mt-1 text-orange-500" id="stat-wo">0</div>
+                    </div>
+                    <div onclick="window.switchTab('travel')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500" data-i18n="cardTravel">مکان‌ها و سفر</span>
+                        <div class="text-2xl font-bold mt-1 text-cyan-600" id="stat-tr">0</div>
+                    </div>
+                </div>
+
+                <!-- Today Tasks & Scratchpad -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-list-check text-red-500 me-1"></i> <span data-i18n="todayFocusTitle">کارهای امروز (برای باز کردن زیرمنوی جزئیات کلیک کنید)</span></h3>
+                        <div id="list-today-overview" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-2"><i class="fa-regular fa-note-sticky text-amber-500 me-1"></i> <span data-i18n="scratchpadTitle">یادداشت سریع</span></h3>
+                        <textarea id="quick-scratch" rows="5" oninput="window.saveScratch()" data-i18n-placeholder="scratchPlaceholder" placeholder="یادداشت فوری..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs focus:outline-none"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 2: ADVANCED AI CHAT PLANNER (MULTI-TASK + METHODS + CONTINGENCY) ==================== -->
+            <section id="sec-ai" class="tab-section space-y-4">
+                <div class="bg-white dark:bg-[#202020] rounded-2xl border border-purple-200 dark:border-purple-900/50 flex flex-col h-[620px] shadow-sm overflow-hidden">
+                    <!-- Top Methodology & Buffer Controls -->
+                    <div class="p-3.5 bg-purple-50/80 dark:bg-purple-950/30 border-b border-purple-100 dark:border-purple-900/40 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center"><i class="fa-solid fa-robot"></i></div>
+                            <div>
+                                <h3 class="font-bold text-xs sm:text-sm" data-i18n="aiChatHeader">دستیار هوشمند برنامه‌ریزی و مدیریت کارهای اتفاقی</h3>
+                                <p class="text-[10px] text-slate-500 dark:text-neutral-400" id="chat-mood-status">...</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <select id="ai-method-select" class="bg-white dark:bg-neutral-800 border border-purple-200 dark:border-purple-800 rounded-lg px-2.5 py-1.5 text-xs font-medium">
+                                <option value="eatfrog">🐸 متد قورباغه‌ات را قورت بده (سخت‌ترین کار اول صبح)</option>
+                                <option value="deepwork">🧠 متد کار عمیق (بلوک‌های تمرکز ۹۰ دقیقه‌ای بدون وقفه)</option>
+                                <option value="balanced">⚖️ متد متوازن (کار + تنفس + زمان کارهای اتفاقی)</option>
+                            </select>
+                            <label class="flex items-center gap-1 bg-amber-100/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2.5 py-1.5 rounded-lg cursor-pointer text-[11px] font-semibold">
+                                <input type="checkbox" id="ai-buffer-toggle" checked class="accent-amber-600">
+                                <span data-i18n="bufferToggleLabel">رزرو زمان کارهای اتفاقی ⚡</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Stream -->
+                    <div id="ai-chat-stream" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs sm:text-sm">
+                        <div class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl max-w-2xl leading-relaxed space-y-1.5">
+                            <p class="font-bold text-purple-600 dark:text-purple-400" data-i18n="aiWelcomeTitle">چطور می‌توانم روزتان را بچینم؟</p>
+                            <ul class="list-disc list-inside text-xs space-y-1 text-slate-600 dark:text-neutral-300">
+                                <li><strong>ثبت چند کار با هم:</strong> همه کارهایتان را در چند خط یا با علامت ویرگول «،» بنویسید (مثلاً: <em>طراحی سایت ۲ ساعت، تدوین ویدیو، خرید، مطالعه</em>).</li>
+                                <li><strong>دستور جابه‌جایی مستقیم:</strong> هر زمان خواستید بنویسید: <em>«طراحی سایت رو ببر ساعت ۱۶»</em> یا <em>«مطالعه رو بذار ساعت ۲۰»</em> تا فوراً جابه‌جا کنم!</li>
+                                <li><strong>پیش‌بینی کارهای اتفاقی:</strong> من به طور خودکار در برنامه شما «بلوک ذخیره کارهای پیش‌بینی‌نشده ⚡» قرار می‌دهم تا برنامه‌تان ضدضربه باشد.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Multi-line Chat Input -->
+                    <div class="p-3 bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-800 flex items-end gap-2">
+                        <textarea id="ai-chat-in" rows="2" data-i18n-placeholder="aiInputPlaceholder"
+                            placeholder="چند کار را با ویرگول یا در چند خط بنویسید... یا دستور دهید: «فلان کار رو ببر ساعت ۱۵»"
+                            class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm focus:outline-none resize-none"></textarea>
+                        <button type="button" onclick="window.sendAIChat()" class="px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold shrink-0 shadow">
+                            <i class="fa-solid fa-paper-plane me-1"></i> <span data-i18n="sendChatBtn">تحلیل و برنامه‌ریزی</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 3: MONTHLY CALENDAR -> CLICK DAY -> HOURLY GRID & EDITABLE ROUTINES ==================== -->
+            <section id="sec-timeblock" class="tab-section space-y-6">
+                
+                <!-- STEP 1: MONTHLY CALENDAR VIEW -->
+                <div id="calendar-month-box" class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="font-bold text-base flex items-center gap-2">
+                                <i class="fa-regular fa-calendar text-blue-600"></i>
+                                <span data-i18n="monthCalTitle">نمای تقویم ماهانه (روی هر روز کلیک کنید تا جدول ساعتی ۷ تا ۲۲ آن باز شود)</span>
+                            </h3>
+                        </div>
+                        <span class="text-xs bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-lg font-bold" id="selected-day-badge">روز انتخابی: روز 18 ماه</span>
+                    </div>
+                    <!-- 30-Day Grid -->
+                    <div id="month-days-grid" class="grid grid-cols-5 sm:grid-cols-7 gap-2 text-center"></div>
+                </div>
+
+                <!-- STEP 2: SELECTED DAY HOURLY SCHEDULE (7 AM to 10 PM) -->
+                <div id="calendar-day-detail-box" class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-blue-200 dark:border-blue-900/50 shadow-sm space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-neutral-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-sm" id="day-number-circle">18</span>
+                            <div>
+                                <h4 class="font-bold text-sm sm:text-base" id="day-schedule-header">جدول بلوک‌بندی ساعتی (۷ صبح تا ۲۲ شب)</h4>
+                                <p class="text-[11px] text-slate-500" data-i18n="dayScheduleSub">شامل کارهای ثابت، کارهای روز و بلوک‌های ذخیره کارهای اتفاقی</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="window.insertContingencyBuffer()" class="px-3 py-1.5 bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-400/40 rounded-lg text-xs font-bold">
+                                ⚡ + افزودن بلوک کارهای اتفاقی
+                            </button>
+                            <button type="button" onclick="window.autoSchedule()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">
+                                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> <span data-i18n="autoFillBtn">چیدمان خودکار در ساعت‌های خالی</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add Task Directly to Selected Day -->
+                    <div class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 dark:bg-neutral-900 p-2.5 rounded-xl">
+                        <input type="text" id="cal-day-task-in" placeholder="افزودن کار به این روز تقویم..." class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-3 py-1.5 text-xs">
+                        <input type="number" id="cal-day-hour-in" min="7" max="22" placeholder="ساعت (7-22)" class="w-28 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-2 py-1.5 text-xs">
+                        <button type="button" onclick="window.addTaskToSelectedDay()" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">+ ثبت در این روز</button>
+                    </div>
+
+                    <div id="grid-hours" class="divide-y divide-slate-100 dark:divide-neutral-800"></div>
+                </div>
+
+                <!-- FIXED ROUTINES WITH EDIT CAPABILITY -->
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                    <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-lock text-amber-500"></i>
+                        <span data-i18n="fixedRoutinesTitle">مدیریت و ویرایش کارهای ثابت روزانه (روتین‌ها)</span>
+                    </h3>
+                    <input type="hidden" id="rt-edit-id" value="">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                        <input type="text" id="rt-title" placeholder="عنوان کار ثابت (مثلاً: حضور در محل کار)" class="sm:col-span-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <div class="flex gap-2">
+                            <input type="number" id="rt-start" min="6" max="23" placeholder="از ساعت (8)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <input type="number" id="rt-end" min="7" max="24" placeholder="تا (14)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                        </div>
+                        <button type="button" onclick="window.saveOrUpdateRoutine()" id="btn-save-routine" class="bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold py-2">
+                            + ثبت / ذخیره روتین
+                        </button>
+                    </div>
+                    <div id="list-routines" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mt-4"></div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 4: TO-DO LIST ==================== -->
+            <section id="sec-todo" class="tab-section space-y-4">
+                <div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 flex justify-between items-center">
+                    <h3 class="font-bold text-sm" data-i18n="allTodoTitle">لیست کل کارها (برای باز کردن زیرمنوی جزئیات و ریزکارها روی هر کار کلیک کنید)</h3>
+                </div>
+                <div id="list-all-todo" class="space-y-2"></div>
+            </section>
+
+            <!-- ==================== TAB 5: NOTES ==================== -->
+            <section id="sec-notes" class="tab-section space-y-4">
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-2" data-i18n="newNoteHeader">یادداشت جدید</h3>
+                    <input type="text" id="nt-title" placeholder="عنوان یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs font-bold mb-2">
+                    <textarea id="nt-body" rows="3" placeholder="متن یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs mb-2"></textarea>
+                    <button type="button" onclick="window.addNote()" class="px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold" data-i18n="saveNoteBtn">+ ذخیره یادداشت</button>
+                </div>
+                <div id="list-notes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
+
+            <!-- ==================== TAB 6: SHOPPING & FINANCE ==================== -->
+            <section id="sec-shopping" class="tab-section space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-cart-shopping text-emerald-500 me-1"></i> <span data-i18n="shopListTitle">لیست خرید</span></h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="sh-title" placeholder="نام کالا..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                            <input type="number" id="sh-price" placeholder="قیمت" class="w-28 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <button type="button" onclick="window.addShop()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">+</button>
+                        </div>
+                        <div id="list-shop" class="space-y-2"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-wallet text-blue-500 me-1"></i> <span data-i18n="financeTitle">ثبت درآمد و هزینه</span></h3>
+                        <div class="grid grid-cols-3 gap-2 mb-3">
+                            <input type="text" id="tx-title" placeholder="شرح..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <input type="number" id="tx-amount" placeholder="مبلغ" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <select id="tx-type" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                                <option value="expense">هزینه (-)</option>
+                                <option value="income">درآمد (+)</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="window.addTx()" class="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold mb-3" data-i18n="addTxBtn">ثبت تراکنش</button>
+                        <div id="list-tx" class="space-y-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 7: WORKOUT ==================== -->
+            <section id="sec-workout" class="tab-section space-y-4">
+                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-dumbbell text-orange-500 me-1"></i> <span data-i18n="workoutTitle">ثبت جزئیات ورزش</span></h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
+                        <input type="text" id="wo-name" placeholder="نام حرکت ورزشی..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <input type="text" id="wo-sets" placeholder="ست و تکرار (مثلاً 3x12)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <input type="text" id="wo-time" placeholder="وزنه یا زمان (مثلاً ۳۰ دقیقه)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <button type="button" onclick="window.addWorkout()" class="bg-orange-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت حرکت</button>
+                    </div>
+                    <div id="list-workout" class="space-y-2"></div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 8: TRAVEL & PLACES ==================== -->
+            <section id="sec-travel" class="tab-section space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-suitcase text-cyan-500 me-1"></i> <span data-i18n="travelCheckTitle">احتیاجات و چک‌لیست قبل از سفر</span></h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="tr-item" placeholder="وسیله یا اقدام قبل سفر..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                            <button type="button" onclick="window.addTravelItem()" class="px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold">+</button>
+                        </div>
+                        <div id="list-travel-items" class="space-y-2"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-location-dot text-rose-500 me-1"></i> <span data-i18n="placesTitle">مکان‌های مورد علاقه</span></h3>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <input type="text" id="pl-name" placeholder="نام مکان / شهر..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                            <input type="text" id="pl-note" placeholder="آدرس / یادداشت..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        </div>
+                        <button type="button" onclick="window.addPlace()" class="w-full py-2 bg-rose-500 text-white rounded-xl text-xs font-bold mb-3">+ افزودن مکان</button>
+                        <div id="list-places" class="space-y-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 9: SETTINGS ==================== -->
+            <section id="sec-settings" class="tab-section space-y-6">
+                <div class="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-5 shadow-sm">
+                    <h3 class="font-bold text-base border-b border-slate-100 dark:border-neutral-800 pb-3">
+                        <i class="fa-solid fa-sliders text-blue-600 me-1"></i> <span data-i18n="settingsHeader">تنظیمات کامل برنامه (تم، زبان، پنجره پیامک شناور، قفل صفحه و منوها)</span>
+                    </h3>
+
+                    <!-- 1. Theme -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm" data-i18n="setThemeTitle">حالت نمایش روز و شب (Light / Dark Mode)</div>
+                            <div class="text-[11px] text-slate-500" data-i18n="setThemeSub">پیش‌فرض روی حالت روشن قرار دارد</div>
+                        </div>
+                        <button type="button" onclick="window.toggleTheme()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 font-bold text-xs flex items-center gap-2">
+                            <i id="theme-icon" class="fa-solid fa-moon"></i> <span data-i18n="toggleThemeBtn">تغییر تم (روز / شب)</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. Language -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm" data-i18n="setLangTitle">تغییر زبان برنامه (فارسی / English)</div>
+                            <div class="text-[11px] text-slate-500" data-i18n="setLangSub">ترجمه کامل تمامی منوها، دکمه‌ها و تغییر جهت صفحه</div>
+                        </div>
+                        <button type="button" onclick="window.toggleLang()" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs">
+                            <i class="fa-solid fa-language me-1"></i> <span id="lang-indicator-btn">Switch to English</span>
+                        </button>
+                    </div>
+
+                    <!-- 3. White SMS-Style Floating Quick Window -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm text-blue-600" data-i18n="setFloatTitle">پنجره سفید شناور (شبیه پنجره پیامک کوچک)</div>
+                            <div class="text-[11px] text-slate-500" data-i18n="setFloatSub">باز کردن کادر سفید سریع با قابلیت بستن (×) هم داخل برنامه و هم شناور روی صفحه</div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="window.openSmsFloatPopup()" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs shadow">
+                                💬 باز کردن پنجره سفید پیامکی
+                            </button>
+                            <button type="button" onclick="window.toggleInAppFab()" id="btn-inapp-fab" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs">
+                                آیکون شناور: روشن
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Lock Screen Notification -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm" data-i18n="setLockTitle">دسترسی از صفحه قفل گوشی (Lock Screen Live Bar)</div>
+                            <div class="text-[11px] text-slate-500" data-i18n="setLockSub">سنجاق کردن کار جاری روی Lock Screen گوشی</div>
+                        </div>
+                        <button type="button" onclick="window.sendLockScreenNotif()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">
+                            <i class="fa-solid fa-mobile-screen me-1"></i> فعال‌سازی قفل صفحه
+                        </button>
+                    </div>
+
+                    <!-- 5. Menu Layout Customizer -->
+                    <div class="py-2 border-b border-slate-100 dark:border-neutral-800 space-y-3">
+                        <div class="font-bold text-xs sm:text-sm" data-i18n="setMenuLayoutTitle">تغییر حالت نمایش منوهای بالای/کنار صفحه</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block text-slate-400 mb-1">محل قرارگیری منو:</label>
+                                <select id="cfg-menu-pos" onchange="window.updateMenuDisplay()" class="w-full bg-slate-100 dark:bg-neutral-800 rounded-xl p-2.5 font-medium">
+                                    <option value="side">منوی کناری (Sidebar)</option>
+                                    <option value="top">منوی بالای صفحه (Top Bar)</option>
+                                    <option value="bottom">داک پایین صفحه (Bottom Dock)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">نحوه نمایش گزینه‌ها:</label>
+                                <select id="cfg-menu-style" onchange="window.updateMenuDisplay()" class="w-full bg-slate-100 dark:bg-neutral-800 rounded-xl p-2.5 font-medium">
+                                    <option value="both">آیکون + متن</option>
+                                    <option value="icons">فقط آیکون</option>
+                                    <option value="text">فقط متن</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Tomorrow Preview Time -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm" data-i18n="setTomTimeTitle">ساعت نمایش پیش‌نمایش کارهای فردا (شب قبل)</div>
+                        </div>
+                        <input type="time" id="settings-tom-time" value="20:00" onchange="window.setTomorrowTime(this.value)" class="bg-slate-100 dark:bg-neutral-800 rounded-xl px-3 py-1.5 font-mono text-xs cursor-pointer">
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="button" onclick="window.resetAll()" class="px-4 py-2 bg-red-500/10 text-red-600 border border-red-300 rounded-xl text-xs font-bold">
+                            پاکسازی و ریست کامل حافظه
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ==================== WHITE SMS-STYLE FLOATING MINI POPUP (OPENED BY FAB CLICK) ==================== -->
+    <div id="sms-float-popup" class="fixed bottom-20 end-6 z-50 hidden w-80 bg-white text-slate-800 rounded-2xl border border-slate-200 overflow-hidden">
+        <!-- SMS Header -->
+        <div class="bg-slate-50 px-3.5 py-2.5 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="font-bold text-xs text-slate-700" data-i18n="smsPopupTitle">پنجره ثبت سریع (SMS Mode)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button type="button" onclick="window.popOutSmsWindow()" title="پرتاب روی سایر برنامه‌ها" class="text-slate-400 hover:text-blue-600 text-xs px-1">
+                    <i class="fa-solid fa-up-right-from-square"></i>
+                </button>
+                <button type="button" onclick="window.closeSmsFloatPopup()" title="بستن پنجره" class="w-6 h-6 rounded-full bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600 font-bold text-xs flex items-center justify-center transition">
+                    ×
+                </button>
+            </div>
+        </div>
+        <!-- SMS Body / Recent Pending Tasks -->
+        <div id="sms-popup-tasks" class="p-3 max-h-36 overflow-y-auto space-y-1.5 bg-white text-xs"></div>
+        <!-- SMS Input Footer -->
+        <div class="p-2.5 bg-slate-50 border-t border-slate-200 flex items-center gap-1.5">
+            <input type="text" id="sms-fast-in" placeholder="نوشتن کار فوری (مثلاً: تماس ساعت ۱۱)..."
+                class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                onkeydown="if(event.key==='Enter') window.sendFromSmsPopup()">
+            <button type="button" onclick="window.sendFromSmsPopup()" class="w-8 h-8 rounded-xl bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- FLOATING ACTION ICON WITH DIRECT CLOSE (X) -->
+    <div id="fab-container" class="fixed bottom-5 end-5 z-40 flex items-center">
+        <button type="button" onclick="window.openSmsFloatPopup()" title="باز کردن پنجره سفید پیامکی"
+            class="w-13 h-13 p-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-xl flex items-center justify-center transition">
+            <i class="fa-solid fa-comment-dots text-lg"></i>
+        </button>
+        <button type="button" onclick="window.toggleInAppFab(false)" title="بستن دکمه شناور"
+            class="w-5 h-5 -mt-9 -ms-2 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center shadow">
+            ×
+        </button>
+    </div>
+
+    <!-- SUBMENU DRAWER FOR TASK DETAILS -->
+    <div id="task-drawer" class="fixed inset-0 bg-black/50 hidden z-50 justify-end">
+        <div class="bg-white dark:bg-[#202020] w-full max-w-md h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
+            <div>
+                <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-neutral-800">
+                    <h4 class="font-bold text-sm text-blue-600" data-i18n="drawerHeader">پرونده جزئیات، یادداشت و ریزکارها</h4>
+                    <button type="button" onclick="window.closeDrawer()" class="text-slate-400 hover:text-red-500 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="space-y-4 mt-4 text-xs">
+                    <div>
+                        <label class="block text-slate-400 mb-1">عنوان کار</label>
+                        <input type="text" id="dr-title" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2.5 font-bold text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-slate-400 mb-1">ساعت شروع (7-22)</label>
+                            <input type="number" id="dr-start" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">ساعت پایان</label>
+                            <input type="number" id="dr-end" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">یادداشت و توضیحات کامل این کار</label>
+                        <textarea id="dr-notes" rows="3" placeholder="توضیحات، لینک یا جزئیات..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2.5"></textarea>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-neutral-900 p-3 rounded-xl border border-slate-200 dark:border-neutral-800">
+                        <label class="block font-bold mb-2">لیست ریزکارها (Sub-tasks)</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="dr-sub-in" placeholder="افزودن مرحله جزئی..." class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-2 py-1.5">
+                            <button type="button" onclick="window.addSubtask()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold">+</button>
+                        </div>
+                        <div id="dr-sub-list" class="space-y-1.5"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between pt-4 border-t border-slate-200 dark:border-neutral-800">
+                <button type="button" onclick="window.deleteDrawerTask()" class="px-4 py-2 text-red-500 font-bold text-xs">حذف کار</button>
+                <button type="button" onclick="window.saveDrawerTask()" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs">ذخیره تغییرات</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== COMPLETE BILINGUAL DICTIONARY ====================
+        const dict = {
+            fa: {
+                appTitle: "پلنر جامع هوشمند",
+                navOverview: "صفحه اول (پیش‌نمایش)",
+                navAI: "چت‌بات برنامه‌ریز AI",
+                navTimeblock: "تقویم ماهانه و ساعتی",
+                navTodo: "لیست کارها (To-Do)",
+                navNotes: "یادداشت‌ها (Notes)",
+                navShopping: "لیست خرید و مالی",
+                navWorkout: "باشگاه و ورزش",
+                navTravel: "سفر و مکان‌ها",
+                navSettings: "تنظیمات",
+                welcomeTitle: "پیش‌نمایش جامع و برنامه روزانه",
+                emergencyBtn: "حالت اضطراری 🚨",
+                moodLabel: "حالت روحی:",
+                emergencyActiveDesc: "حالت اضطراری فعال شد! کارهای فرعی به فردا منتقل شدند و فقط کارهای حیاتی (P1) باقی ماندند.",
+                quickAddPlaceholder: "ثبت سریع کار جدید... (مثلاً: جلسه ساعت ۱۰)",
+                todayOpt: "امروز",
+                tomorrowOpt: "فردا",
+                addBtn: "+ ثبت",
+                tomPreviewTitle: "پیش‌نمایش شبانه کارهای فردا",
+                alertTimeLabel: "ساعت نمایش:",
+                cardTodayTasks: "کارهای امروز",
+                cardBalance: "تراز مالی",
+                cardWorkout: "تمرینات ورزشی",
+                cardTravel: "مکان‌ها و سفر",
+                todayFocusTitle: "کارهای امروز (برای باز کردن زیرمنوی جزئیات کلیک کنید)",
+                scratchpadTitle: "یادداشت سریع",
+                scratchPlaceholder: "یادداشت فوری...",
+                aiChatHeader: "دستیار هوشمند برنامه‌ریزی و مدیریت کارهای اتفاقی",
+                bufferToggleLabel: "رزرو زمان کارهای اتفاقی ⚡",
+                aiWelcomeTitle: "چطور می‌توانم روزتان را بچینم؟",
+                aiInputPlaceholder: "چند کار را با ویرگول بنویسید... یا بگویید: «فلان کار رو ببر ساعت ۱۶»",
+                sendChatBtn: "تحلیل و برنامه‌ریزی",
+                monthCalTitle: "نمای تقویم ماهانه (روی هر روز کلیک کنید تا جدول ساعتی ۷ تا ۲۲ باز شود)",
+                dayScheduleSub: "شامل کارهای ثابت، کارهای روز و بلوک‌های ذخیره کارهای اتفاقی",
+                autoFillBtn: "چیدمان خودکار در ساعت‌های خالی",
+                fixedRoutinesTitle: "مدیریت و ویرایش کارهای ثابت روزانه (روتین‌ها)",
+                allTodoTitle: "لیست کل کارها (برای باز کردن زیرمنوی جزئیات روی هر کار کلیک کنید)",
+                newNoteHeader: "یادداشت جدید",
+                saveNoteBtn: "+ ذخیره یادداشت",
+                shopListTitle: "لیست خرید",
+                financeTitle: "ثبت درآمد و هزینه",
+                addTxBtn: "ثبت تراکنش",
+                workoutTitle: "ثبت جزئیات ورزش",
+                travelCheckTitle: "احتیاجات و چک‌لیست قبل از سفر",
+                placesTitle: "مکان‌های مورد علاقه",
+                settingsHeader: "تنظیمات کامل برنامه (تم، زبان، پنجره پیامک شناور، قفل صفحه و منوها)",
+                setThemeTitle: "حالت نمایش روز و شب (Light / Dark Mode)",
+                setThemeSub: "پیش‌فرض روی حالت روشن قرار دارد",
+                toggleThemeBtn: "تغییر تم (روز / شب)",
+                setLangTitle: "تغییر زبان برنامه (فارسی / English)",
+                setLangSub: "ترجمه کامل تمامی منوها، دکمه‌ها و تغییر جهت صفحه",
+                setFloatTitle: "پنجره سفید شناور (شبیه پنجره پیامک کوچک)",
+                setFloatSub: "باز کردن کادر سفید سریع با قابلیت بستن (×)",
+                setLockTitle: "دسترسی از صفحه قفل گوشی (Lock Screen)",
+                setLockSub: "سنجاق کردن کار جاری روی Lock Screen گوشی",
+                setMenuLayoutTitle: "تغییر حالت نمایش منوهای بالای/کنار صفحه",
+                setTomTimeTitle: "ساعت نمایش پیش‌نمایش کارهای فردا (شب قبل)",
+                smsPopupTitle: "پنجره ثبت سریع (SMS Mode)",
+                drawerHeader: "پرونده جزئیات، یادداشت و ریزکارها"
+            },
+            en: {
+                appTitle: "Smart Planner Pro",
+                navOverview: "Home Preview",
+                navAI: "AI Chat Planner",
+                navTimeblock: "Monthly & Hourly Calendar",
+                navTodo: "To-Do List",
+                navNotes: "Notes",
+                navShopping: "Shopping & Finance",
+                navWorkout: "Workout & Gym",
+                navTravel: "Travel & Places",
+                navSettings: "Settings",
+                welcomeTitle: "Daily Overview & Smart Schedule",
+                emergencyBtn: "Emergency Mode 🚨",
+                moodLabel: "Mood:",
+                emergencyActiveDesc: "Emergency Mode Activated! Non-urgent tasks moved to tomorrow; only critical (P1) tasks kept.",
+                quickAddPlaceholder: "Quick add task... (e.g. Call client at 10)",
+                todayOpt: "Today",
+                tomorrowOpt: "Tomorrow",
+                addBtn: "+ Add",
+                tomPreviewTitle: "Night-Before Tomorrow Preview",
+                alertTimeLabel: "Alert Time:",
+                cardTodayTasks: "Today's Tasks",
+                cardBalance: "Net Balance",
+                cardWorkout: "Workouts",
+                cardTravel: "Saved Places",
+                todayFocusTitle: "Today's Tasks (Click any item to open subtasks & notes)",
+                scratchpadTitle: "Quick Scratchpad",
+                scratchPlaceholder: "Type quick notes here...",
+                aiChatHeader: "AI Multi-Task Scheduler & Contingency Planner",
+                bufferToggleLabel: "Reserve Contingency Buffer ⚡",
+                aiWelcomeTitle: "How can I schedule your day?",
+                aiInputPlaceholder: "Enter multiple tasks separated by commas, or say: 'Move design to 16'",
+                sendChatBtn: "Plan My Day",
+                monthCalTitle: "Monthly Calendar (Click any day to open its 7 AM - 10 PM hourly grid)",
+                dayScheduleSub: "Includes fixed routines, scheduled tasks & contingency buffers",
+                autoFillBtn: "Auto-Fill Free Hours",
+                fixedRoutinesTitle: "Manage & Edit Fixed Daily Routines",
+                allTodoTitle: "All Tasks (Click any task to open details drawer)",
+                newNoteHeader: "Create New Note",
+                saveNoteBtn: "+ Save Note",
+                shopListTitle: "Shopping List",
+                financeTitle: "Income & Expense Tracker",
+                addTxBtn: "Record Transaction",
+                workoutTitle: "Workout & Exercise Log",
+                travelCheckTitle: "Pre-Trip Packing & Checklist",
+                placesTitle: "Favorite Places",
+                settingsHeader: "Application Settings (Theme, Language, SMS Float, LockScreen & Menus)",
+                setThemeTitle: "Day / Night Theme (Light / Dark Mode)",
+                setThemeSub: "Default is set to Light Mode",
+                toggleThemeBtn: "Switch Theme",
+                setLangTitle: "Application Language (فارسی / English)",
+                setLangSub: "Full translation of all menus, buttons and layout direction",
+                setFloatTitle: "White SMS-Style Floating Quick Window",
+                setFloatSub: "Open a clean white mini-messenger popup with close (×) button",
+                setLockTitle: "Lock Screen Live Notification",
+                setLockSub: "Pin current task status to your phone Lock Screen",
+                setMenuLayoutTitle: "Customize Navigation Menu Position & Style",
+                setTomTimeTitle: "Night-Before Tomorrow Preview Alert Time",
+                smsPopupTitle: "Quick SMS Capture",
+                drawerHeader: "Task Details, Notes & Sub-tasks"
+            }
+        };
+
+        function safeGet(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
+        function safeSet(k, val) { try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {} }
+
+        let cfg = safeGet('pl_cfg_v5', {
+            lang: 'fa',
+            theme: 'light',
+            fab: true,
+            tomTime: '20:00',
+            mood: 'focused',
+            menuPos: 'side',
+            menuStyle: 'both',
+            selectedCalDay: 18
+        });
+
+        let tasks = safeGet('pl_tasks', []);
+        let routines = safeGet('pl_routines', []);
+        let notes = safeGet('pl_notes', []);
+        let shops = safeGet('pl_shops', []);
+        let txs = safeGet('pl_txs', []);
+        let workouts = safeGet('pl_wo', []);
+        let travelItems = safeGet('pl_tr_items', []);
+        let places = safeGet('pl_places', []);
+        let currentTaskId = null;
+        let lastAIScenarios = [];
+
+        const moodMeta = {
+            energetic: { fa: '🔥 پرانرژی', en: '🔥 Energetic', start: 8, gap: 0 },
+            focused:   { fa: '😊 متمرکز', en: '😊 Focused', start: 9, gap: 0 },
+            calm:      { fa: '😐 عادی', en: '😐 Calm', start: 9, gap: 1 },
+            tired:     { fa: '😴 خسته', en: '😴 Tired', start: 11, gap: 1 },
+            stressed:  { fa: '🤯 استرسی', en: '🤯 Stressed', start: 10, gap: 1 }
+        };
+
+        function saveAll() {
+            safeSet('pl_cfg_v5', cfg);
+            safeSet('pl_tasks', tasks);
+            safeSet('pl_routines', routines);
+            safeSet('pl_notes', notes);
+            safeSet('pl_shops', shops);
+            safeSet('pl_txs', txs);
+            safeSet('pl_wo', workouts);
+            safeSet('pl_tr_items', travelItems);
+            safeSet('pl_places', places);
+        }
+
+        function toEnDigits(s) {
+            return String(s).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        }
+
+        // ==================== TAB SWITCHER ====================
+        window.switchTab = function(tabName) {
+            ['overview', 'ai', 'timeblock', 'todo', 'notes', 'shopping', 'workout', 'travel', 'settings'].forEach(t => {
+                const sec = document.getElementById('sec-' + t);
+                const btn = document.getElementById('btn-' + t);
+                if (sec) sec.classList.remove('active');
+                if (btn) btn.className = "nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0";
+            });
+            const targetSec = document.getElementById('sec-' + tabName);
+            const targetBtn = document.getElementById('btn-' + tabName);
+            if (targetSec) targetSec.classList.add('active');
+            if (targetBtn) targetBtn.className = "nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0";
+            window.renderAll();
+        };
+
+        // ==================== FULL LANGUAGE & THEME ENGINE ====================
+        window.applySettings = function() {
+            const html = document.documentElement;
+            const body = document.body;
+            if (cfg.theme === 'dark') html.classList.add('dark');
+            else html.classList.remove('dark');
+
+            html.lang = cfg.lang;
+            html.dir = cfg.lang === 'fa' ? 'rtl' : 'ltr';
+
+            // Translate all [data-i18n] elements
+            const d = dict[cfg.lang] || dict.fa;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (d[key]) el.innerText = d[key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (d[key]) el.placeholder = d[key];
+            });
+
+            const langBtn = document.getElementById('lang-indicator-btn');
+            if (langBtn) langBtn.innerText = cfg.lang === 'fa' ? 'Switch to English' : 'تغییر به زبان فارسی';
+
+            // Menu layout classes
+            body.classList.remove('menu-top', 'menu-bottom', 'nav-style-icons', 'nav-style-text');
+            if (cfg.menuPos === 'top') body.classList.add('menu-top');
+            if (cfg.menuPos === 'bottom') body.classList.add('menu-bottom');
+            if (cfg.menuStyle === 'icons') body.classList.add('nav-style-icons');
+            if (cfg.menuStyle === 'text') body.classList.add('nav-style-text');
+
+            document.getElementById('cfg-menu-pos').value = cfg.menuPos || 'side';
+            document.getElementById('cfg-menu-style').value = cfg.menuStyle || 'both';
+
+            // FAB state
+            const fabBox = document.getElementById('fab-container');
+            if (fabBox) fabBox.style.display = cfg.fab ? 'flex' : 'none';
+            const inAppBtn = document.getElementById('btn-inapp-fab');
+            if (inAppBtn) inAppBtn.innerText = cfg.fab ? (cfg.lang === 'fa' ? 'آیکون شناور: روشن' : 'Float Icon: ON') : (cfg.lang === 'fa' ? 'آیکون شناور: خاموش' : 'Float Icon: OFF');
+
+            // Sync Tomorrow Time Inputs
+            const ovTime = document.getElementById('overview-tom-time');
+            const stTime = document.getElementById('settings-tom-time');
+            if (ovTime) ovTime.value = cfg.tomTime || '20:00';
+            if (stTime) stTime.value = cfg.tomTime || '20:00';
+
+            // Mood highlight
+            ['energetic', 'focused', 'calm', 'tired', 'stressed'].forEach(k => {
+                const b = document.getElementById('mood-' + k);
+                if (b) b.className = (cfg.mood === k)
+                    ? "mood-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs"
+                    : "mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800";
+            });
+            const mInfo = moodMeta[cfg.mood] || moodMeta.focused;
+            const mLabel = cfg.lang === 'fa' ? mInfo.fa : mInfo.en;
+            document.getElementById('active-mood-badge').innerText = mLabel;
+            document.getElementById('chat-mood-status').innerText = cfg.lang === 'fa' ? `حالت روحی فعلی: ${mLabel}` : `Current Mood: ${mLabel}`;
+
+            const now = new Date();
+            document.getElementById('live-date').innerText = new Intl.DateTimeFormat(cfg.lang === 'en' ? 'en-US' : 'fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
+        };
+
+        window.toggleTheme = function() { cfg.theme = cfg.theme === 'light' ? 'dark' : 'light'; saveAll(); window.applySettings(); };
+        window.toggleLang = function() { cfg.lang = cfg.lang === 'fa' ? 'en' : 'fa'; saveAll(); window.applySettings(); window.renderAll(); };
+        window.setMood = function(m) { cfg.mood = m; saveAll(); window.applySettings(); };
+        window.updateMenuDisplay = function() {
+            cfg.menuPos = document.getElementById('cfg-menu-pos').value;
+            cfg.menuStyle = document.getElementById('cfg-menu-style').value;
+            saveAll();
+            window.applySettings();
+        };
+        window.toggleInAppFab = function(force) {
+            cfg.fab = typeof force === 'boolean' ? force : !cfg.fab;
+            if (!cfg.fab) window.closeSmsFloatPopup();
+            saveAll();
+            window.applySettings();
+        };
+        window.setTomorrowTime = function(val) {
+            if (!val) return;
+            cfg.tomTime = val;
+            saveAll();
+            window.applySettings();
+            window.renderAll();
+        };
+
+        // ==================== WHITE SMS-STYLE FLOATING POPUP ====================
+        window.openSmsFloatPopup = function() {
+            const box = document.getElementById('sms-float-popup');
+            box.classList.remove('hidden');
+            window.renderSmsPopupTasks();
+            setTimeout(() => document.getElementById('sms-fast-in').focus(), 80);
+        };
+
+        window.closeSmsFloatPopup = function() {
+            document.getElementById('sms-float-popup').classList.add('hidden');
+        };
+
+        window.renderSmsPopupTasks = function() {
+            const container = document.getElementById('sms-popup-tasks');
+            const openList = tasks.filter(t => !t.done && t.day !== 'tomorrow');
+            container.innerHTML = openList.length ? openList.slice(0, 4).map(t => `
+                <div class="flex items-center justify-between bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200/80">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" onchange="window.toggleTask(${t.id}, event); window.renderSmsPopupTasks();" class="accent-blue-600">
+                        <span class="font-medium text-slate-700">${t.title}</span>
+                    </label>
+                    ${t.startHour ? `<span class="text-[10px] font-mono text-blue-600">${t.startHour}:00</span>` : ''}
+                </div>
+            `).join('') : `<p class="text-[11px] text-slate-400 text-center py-2">کار بازی برای امروز نیست ✨</p>`;
+        };
+
+        window.sendFromSmsPopup = function() {
+            const inp = document.getElementById('sms-fast-in');
+            const val = inp.value.trim();
+            if (!val) return;
+            const norm = toEnDigits(val);
+            const hMatch = norm.match(/(?:ساعت|at)\s*(\d{1,2})/i);
+            const sh = hMatch ? parseInt(hMatch[1]) : null;
+            tasks.unshift({
+                id: Date.now(),
+                title: val,
+                day: 'today',
+                calDay: cfg.selectedCalDay || 18,
+                prio: 'p1',
+                done: false,
+                startHour: sh,
+                endHour: sh ? sh + 1 : null,
+                notes: '',
+                subtasks: []
+            });
+            inp.value = '';
+            saveAll();
+            window.renderSmsPopupTasks();
+            window.renderAll();
+        };
+
+        // Pop out white SMS window over other apps (PiP / Popup)
+        window.popOutSmsWindow = async function() {
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="fa" dir="rtl">
+                <head><meta charset="UTF-8"><title>SMS Quick Planner</title>
+                <style>
+                    body { margin:0; font-family:Tahoma,sans-serif; background:#ffffff; color:#1e293b; padding:12px; display:flex; flex-direction:column; gap:8px; }
+                    .hdr { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:6px; }
+                    .xbtn { background:#ef4444; color:#fff; border:none; border-radius:50%; width:22px; height:22px; cursor:pointer; font-weight:bold; }
+                    input { padding:8px 10px; border-radius:10px; border:1px solid #cbd5e1; width:100%; box-sizing:border-box; font-size:12px; }
+                    .sbtn { background:#2563eb; color:#fff; border:none; padding:7px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:12px; }
+                    .item { background:#f8fafc; border:1px solid #e2e8f0; padding:6px 8px; border-radius:8px; font-size:12px; }
+                </style></head>
+                <body>
+                    <div class="hdr"><strong style="font-size:12px;color:#2563eb;">💬 پنجره پیامک ثبت سریع</strong><button class="xbtn" onclick="window.close()">×</button></div>
+                    <div id="p-list" style="display:flex;flex-direction:column;gap:4px;max-height:110px;overflow-y:auto;"></div>
+                    <input id="p-in" placeholder="ثبت کار جدید و Enter..." onkeydown="if(event.key==='Enter') addP()"/>
+                    <button class="sbtn" onclick="addP()">+ ارسال به پلنر</button>
+                    <script>
+                        function loadP(){
+                            const l = JSON.parse(localStorage.getItem('pl_tasks')||'[]').filter(t=>!t.done);
+                            document.getElementById('p-list').innerHTML = l.slice(0,4).map(t=>'<div class="item">• '+t.title+'</div>').join('');
+                        }
+                        function addP(){
+                            const i = document.getElementById('p-in'); if(!i.value.trim()) return;
+                            const l = JSON.parse(localStorage.getItem('pl_tasks')||'[]');
+                            l.unshift({id:Date.now(), title:i.value.trim(), day:'today', calDay:18, prio:'p1', done:false, startHour:null, endHour:null, notes:'', subtasks:[]});
+                            localStorage.setItem('pl_tasks', JSON.stringify(l)); i.value=''; loadP();
+                            if(window.opener && window.opener.syncExternal) window.opener.syncExternal();
+                        }
+                        loadP();
+                    <\/script>
+                </body></html>
+            `;
+            if ('documentPictureInPicture' in window) {
+                try {
+                    const w = await window.documentPictureInPicture.requestWindow({ width: 310, height: 260 });
+                    w.document.write(htmlContent); w.document.close(); return;
+                } catch(e) {}
+            }
+            const pop = window.open('', 'SmsPlannerPopup', 'width=310,height=260');
+            if (pop) { pop.document.write(htmlContent); pop.document.close(); }
+        };
+        window.syncExternal = function() { tasks = safeGet('pl_tasks', []); window.renderAll(); };
+
+        // ==================== EMERGENCY MODE (CRISIS RE-SCHEDULER) ====================
+        window.triggerEmergencyMode = function() {
+            let movedCount = 0;
+            tasks.forEach(t => {
+                if (!t.done && t.day !== 'tomorrow' && t.prio !== 'p1') {
+                    t.day = 'tomorrow';
+                    t.startHour = null;
+                    t.endHour = null;
+                    movedCount++;
+                }
+            });
+            // Add an emergency breathing/recovery buffer block today
+            tasks.unshift({
+                id: Date.now(),
+                title: cfg.lang === 'fa' ? '🚨 مدیریت بحران و تمرکز فقط روی اولویت اول' : '🚨 Emergency Focus & Buffer Block',
+                day: 'today',
+                calDay: cfg.selectedCalDay || 18,
+                prio: 'p1',
+                isBuffer: true,
+                done: false,
+                startHour: 10,
+                endHour: 12,
+                notes: 'ایجاد شده توسط حالت اضطراری',
+                subtasks: []
+            });
+            saveAll();
+            document.getElementById('emergency-banner').classList.remove('hidden');
+            window.renderAll();
+        };
+
+        // ==================== CONTINGENCY BUFFER (PREDICT UNEXPECTED TASKS) ====================
+        window.insertContingencyBuffer = function() {
+            const busy = new Set();
+            routines.forEach(r => { for (let h = r.startHour; h < r.endHour; h++) busy.add(h); });
+            tasks.filter(t => t.day !== 'tomorrow' && t.startHour).forEach(t => {
+                for (let h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
+            });
+            let bufferHour = 12;
+            for (let h = 11; h <= 19; h++) {
+                if (!busy.has(h)) { bufferHour = h; break; }
+            }
+            tasks.unshift({
+                id: Date.now(),
+                title: cfg.lang === 'fa' ? '⚡ ذخیره پیش‌بینی کارهای اتفاقی و اورژانسی' : '⚡ Contingency Buffer (Unexpected Tasks)',
+                day: 'today',
+                calDay: cfg.selectedCalDay || 18,
+                prio: 'p2',
+                isBuffer: true,
+                done: false,
+                startHour: bufferHour,
+                endHour: bufferHour + 1,
+                notes: 'این بلوک برای جلوگیری از به هم ریختن برنامه در صورت بروز کارهای پیش‌بینی‌نشده رزرو شده است.',
+                subtasks: []
+            });
+            saveAll();
+            window.renderAll();
+        };
+
+        // ==================== MULTI-TASK AI CHATBOT + INTERACTIVE MOVE COMMANDS ====================
+        window.sendAIChat = function() {
+            const inp = document.getElementById('ai-chat-in');
+            const rawText = inp.value.trim();
+            if (!rawText) return;
+            const norm = toEnDigits(rawText);
+            const stream = document.getElementById('ai-chat-stream');
+
+            stream.innerHTML += `<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md whitespace-pre-line">${rawText}</div></div>`;
+            inp.value = '';
+
+            // 1. Check if user is commanding a move: e.g. "طراحی سایت رو ببر ساعت 16" or "move design to 16"
+            const moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|تغییر بده به|move to|set to)?\s*(?:ساعت|at)?\s*(\d{1,2})/i);
+            if (moveMatch && (norm.includes('ببر') || norm.includes('بذار') || norm.includes('ساعت') || norm.toLowerCase().includes('move'))) {
+                const targetKeyword = moveMatch[1].replace(/کار|تسک/g, '').trim();
+                const newHour = parseInt(moveMatch[2]);
+                const foundTask = tasks.find(t => t.title.includes(targetKeyword));
+                if (foundTask && newHour >= 6 && newHour <= 23) {
+                    const dur = (foundTask.endHour && foundTask.startHour) ? (foundTask.endHour - foundTask.startHour) : 1;
+                    foundTask.startHour = newHour;
+                    foundTask.endHour = newHour + dur;
+                    saveAll();
+                    window.renderAll();
+                    stream.innerHTML += `
+                        <div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 p-3.5 rounded-2xl max-w-xl text-xs">
+                            ✅ انجام شد! کار <strong>«${foundTask.title}»</strong> به <strong>ساعت ${foundTask.startHour}:00 تا ${foundTask.endHour}:00</strong> منتقل شد.
+                        </div>
+                    `;
+                    stream.scrollTop = stream.scrollHeight;
+                    return;
+                }
+            }
+
+            // 2. Multi-task parsing (commas, newlines, bullets, "و")
+            const rawItems = norm.split(/[\n،؛,]+|\s+و\s+|\s+and\s+/i)
+                .map(s => s.replace(/^[-*•\d.]+\s*/, '').trim())
+                .filter(s => s.length > 2);
+
+            const method = document.getElementById('ai-method-select').value;
+            const includeBuffer = document.getElementById('ai-buffer-toggle').checked;
+
+            const parsedTasks = rawItems.map((itemText, index) => {
+                const durMatch = itemText.match(/(\d{1,2})\s*(?:ساعت|hr|hour)/i);
+                const explicitHour = itemText.match(/(?:ساعت|at)\s*(\d{1,2})/i);
+                const dur = durMatch ? Math.min(4, parseInt(durMatch[1])) : 1;
+                const cleanTitle = itemText.replace(/(\d{1,2})\s*(?:ساعت|hr|hour)/gi, '').trim();
+                return {
+                    title: cleanTitle || itemText,
+                    duration: dur,
+                    explicitStart: explicitHour ? parseInt(explicitHour[1]) : null,
+                    weight: (itemText.includes('فوری') || itemText.includes('سخت') || index === 0) ? 3 : 1
+                };
+            });
+
+            // Build occupied hours from Fixed Routines
+            const routineBusy = new Set();
+            routines.forEach(r => { for (let h = r.startHour; h < r.endHour; h++) routineBusy.add(h); });
+
+            function generateScenario(startOffset, gapBetween, sortMode) {
+                const busy = new Set(routineBusy);
+                let listToSchedule = [...parsedTasks];
+                if (sortMode === 'frog') listToSchedule.sort((a, b) => b. duration - a.duration); // Hardest/longest first
+                if (sortMode === 'reverse') listToSchedule.reverse();
+
+                const result = [];
+                let cursor = startOffset;
+
+                listToSchedule.forEach((pt, idx) => {
+                    if (pt.explicitStart && !busy.has(pt.explicitStart)) {
+                        result.push({ title: pt.title, startHour: pt.explicitStart, endHour: pt.explicitStart + pt.duration, isBuffer: false });
+                        for (let h = pt.explicitStart; h < pt.explicitStart + pt.duration; h++) busy.add(h);
+                    } else {
+                        while (cursor <= 22 - pt.duration) {
+                            let fits = true;
+                            for (let d = 0; d < pt.duration; d++) { if (busy.has(cursor + d)) { fits = false; break; } }
+                            if (fits) break;
+                            cursor++;
+                        }
+                        if (cursor <= 22 - pt.duration) {
+                            result.push({ title: pt.title, startHour: cursor, endHour: cursor + pt.duration, isBuffer: false });
+                            for (let d = 0; d < pt.duration; d++) busy.add(cursor + d);
+                            cursor += pt.duration + gapBetween;
+                        }
+                    }
+
+                    // Insert Contingency Buffer after the 2nd task if enabled
+                    if (includeBuffer && idx === 1) {
+                        while (busy.has(cursor) && cursor < 21) cursor++;
+                        if (cursor < 21) {
+                            result.push({
+                                title: '⚡ ذخیره کارهای اتفاقی و پیش‌بینی‌نشده',
+                                startHour: cursor,
+                                endHour: cursor + 1,
+                                isBuffer: true
+                            });
+                            busy.add(cursor);
+                            cursor += 1;
+                        }
+                    }
+                });
+                return result.sort((a, b) => a.startHour - b.startHour);
+            }
+
+            const s1 = generateScenario(8, 0, 'frog');      // Method 1: Eat That Frog (Morning Deep)
+            const s2 = generateScenario(9, 1, 'normal');    // Method 2: Balanced + 1h Breaks + Buffer
+            const s3 = generateScenario(11, 1, 'reverse');  // Method 3: Gentle Start / Low Energy
+
+            lastAIScenarios = [s1, s2, s3];
+
+            function scenarioHTML(idx, name, tag, arr) {
+                const rows = arr.map(x => `
+                    <div class="flex justify-between py-1 border-b border-slate-100 dark:border-neutral-800 text-[11px] ${x.isBuffer ? 'text-amber-600 font-bold' : ''}">
+                        <span>${x.isBuffer ? '' : '• '}${x.title}</span>
+                        <span class="font-mono text-purple-600 dark:text-purple-400">${x.startHour}:00 - ${x.endHour}:00</span>
+                    </div>
+                `).join('');
+                return `
+                    <div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800/60 flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="font-bold text-xs text-purple-700 dark:text-purple-300">${name}</span>
+                                <span class="text-[10px] bg-purple-100 dark:bg-purple-950 px-2 py-0.5 rounded">${tag}</span>
+                            </div>
+                            <div>${rows}</div>
+                        </div>
+                        <button type="button" onclick="window.applyAIScenario(${idx})" class="w-full py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold">
+                            ✓ انتخاب و ثبت این برنامه (${arr.length} بلوک)
+                        </button>
+                    </div>
+                `;
+            }
+
+            stream.innerHTML += `
+                <div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl rounded-tr-none max-w-3xl space-y-3">
+                    <p class="text-xs font-bold text-purple-700 dark:text-purple-300">
+                        ✨ ${parsedTasks.length} کار استخراج شد و با توجه به روتین‌های ثابت و پیش‌بینی کارهای اتفاقی، ۳ متد چیده شد:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                        ${scenarioHTML(0, '۱. قورباغه‌ات را قورت بده', 'کار سنگین اول صبح', s1)}
+                        ${scenarioHTML(1, '۲. متوازن + ذخیره اتفاقی', 'پیشنهاد استاندارد', s2)}
+                        ${scenarioHTML(2, '۳. ملایم و منعطف', 'مناسب انرژی پایین', s3)}
+                    </div>
+                    <p class="text-[11px] text-slate-500">💡 بعد از انتخاب هر گزینه، می‌توانید در همین چت بنویسید: <em>«فلان کار رو ببر ساعت ۱۷»</em> تا جابه‌جایش کنم.</p>
+                </div>
+            `;
+            stream.scrollTop = stream.scrollHeight;
+        };
+
+        window.applyAIScenario = function(idx) {
+            const chosen = lastAIScenarios[idx];
+            if (!chosen) return;
+            chosen.forEach(item => {
+                tasks.unshift({
+                    id: Date.now() + Math.floor(Math.random() * 10000),
+                    title: item.title,
+                    day: 'today',
+                    calDay: cfg.selectedCalDay || 18,
+                    prio: item.isBuffer ? 'p2' : 'p1',
+                    isBuffer: item.isBuffer || false,
+                    done: false,
+                    startHour: item.startHour,
+                    endHour: item.endHour,
+                    notes: 'چیده‌شده توسط هوش مصنوعی',
+                    subtasks: []
+                });
+            });
+            saveAll();
+            window.renderAll();
+            window.switchTab('timeblock');
+        };
+
+        // ==================== MONTHLY CALENDAR -> DAY SELECTION ====================
+        window.selectCalendarDay = function(dayNum) {
+            cfg.selectedCalDay = dayNum;
+            saveAll();
+            window.renderAll();
+            document.getElementById('calendar-day-detail-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        window.addTaskToSelectedDay = function() {
+            const titleIn = document.getElementById('cal-day-task-in');
+            const hourIn = document.getElementById('cal-day-hour-in');
+            const title = titleIn.value.trim();
+            if (!title) return;
+            const sh = parseInt(hourIn.value);
+            tasks.unshift({
+                id: Date.now(),
+                title,
+                day: 'today',
+                calDay: cfg.selectedCalDay || 18,
+                prio: 'p1',
+                done: false,
+                startHour: !isNaN(sh) ? sh : null,
+                endHour: !isNaN(sh) ? sh + 1 : null,
+                notes: '',
+                subtasks: []
+            });
+            titleIn.value = '';
+            hourIn.value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        // ==================== EDITABLE FIXED ROUTINES ====================
+        window.saveOrUpdateRoutine = function() {
+            const editId = document.getElementById('rt-edit-id').value;
+            const title = document.getElementById('rt-title').value.trim();
+            const s = parseInt(document.getElementById('rt-start').value);
+            const e = parseInt(document.getElementById('rt-end').value);
+            if (!title || isNaN(s) || isNaN(e) || e <= s) return alert("لطفاً عنوان و ساعت معتبر وارد کنید.");
+
+            if (editId) {
+                const r = routines.find(x => String(x.id) === String(editId));
+                if (r) { r.title = title; r.startHour = s; r.endHour = e; }
+                document.getElementById('rt-edit-id').value = '';
+                document.getElementById('btn-save-routine').innerText = '+ ثبت / ذخیره روتین';
+            } else {
+                routines.push({ id: Date.now(), title, startHour: s, endHour: e });
+            }
+            document.getElementById('rt-title').value = '';
+            document.getElementById('rt-start').value = '';
+            document.getElementById('rt-end').value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.editRoutine = function(id) {
+            const r = routines.find(x => x.id === id);
+            if (!r) return;
+            document.getElementById('rt-edit-id').value = r.id;
+            document.getElementById('rt-title').value = r.title;
+            document.getElementById('rt-start').value = r.startHour;
+            document.getElementById('rt-end').value = r.endHour;
+            document.getElementById('btn-save-routine').innerText = '✓ بروزرسانی روتین';
+            document.getElementById('rt-title').focus();
+        };
+
+        window.delRoutine = function(id) {
+            routines = routines.filter(r => r.id !== id);
+            saveAll();
+            window.renderAll();
+        };
+
+        // ==================== TASKS & SUBMENU DRAWER ====================
+        window.addQuickTask = function() {
+            const inp = document.getElementById('quick-task-in');
+            const title = inp.value.trim();
+            if (!title) return;
+            const norm = toEnDigits(title);
+            const hMatch = norm.match(/(?:ساعت|at)\s*(\d{1,2})/i);
+            const sh = hMatch ? parseInt(hMatch[1]) : null;
+
+            tasks.unshift({
+                id: Date.now(),
+                title: title,
+                day: document.getElementById('quick-day-in').value,
+                calDay: cfg.selectedCalDay || 18,
+                prio: document.getElementById('quick-prio-in').value,
+                done: false,
+                startHour: sh,
+                endHour: sh ? sh + 1 : null,
+                notes: '',
+                subtasks: []
+            });
+            inp.value = '';
+            saveAll();
+            window.renderAll();
+        };
+
+        window.toggleTask = function(id, ev) {
+            if (ev) ev.stopPropagation();
+            const t = tasks.find(x => x.id === id);
+            if (t) { t.done = !t.done; saveAll(); window.renderAll(); }
+        };
+
+        window.openDrawer = function(id) {
+            currentTaskId = id;
+            const t = tasks.find(x => x.id === id);
+            if (!t) return;
+            document.getElementById('dr-title').value = t.title;
+            document.getElementById('dr-start').value = t.startHour || '';
+            document.getElementById('dr-end').value = t.endHour || '';
+            document.getElementById('dr-notes').value = t.notes || '';
+            window.renderSubtasks();
+            const dr = document.getElementById('task-drawer');
+            dr.classList.remove('hidden');
+            dr.classList.add('flex');
+        };
+
+        window.closeDrawer = function() {
+            const dr = document.getElementById('task-drawer');
+            dr.classList.add('hidden');
+            dr.classList.remove('flex');
+            currentTaskId = null;
+        };
+
+        window.renderSubtasks = function() {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (!t) return;
+            document.getElementById('dr-sub-list').innerHTML = (t.subtasks || []).map((s, i) => `
+                <div class="flex items-center justify-between bg-white dark:bg-neutral-800 p-2 rounded border border-slate-200 dark:border-neutral-700">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" ${s.done ? 'checked' : ''} onchange="window.toggleSubtask(${i})">
+                        <span class="${s.done ? 'line-through text-slate-400' : ''}">${s.text}</span>
+                    </label>
+                    <button type="button" onclick="window.delSubtask(${i})" class="text-red-500">×</button>
+                </div>
+            `).join('');
+        };
+
+        window.addSubtask = function() {
+            const inp = document.getElementById('dr-sub-in');
+            const txt = inp.value.trim();
+            if (!txt || !currentTaskId) return;
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (!t.subtasks) t.subtasks = [];
+            t.subtasks.push({ text: txt, done: false });
+            inp.value = '';
+            saveAll();
+            window.renderSubtasks();
+            window.renderAll();
+        };
+
+        window.toggleSubtask = function(i) {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (t && t.subtasks[i]) { t.subtasks[i].done = !t.subtasks[i].done; saveAll(); window.renderSubtasks(); window.renderAll(); }
+        };
+
+        window.delSubtask = function(i) {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (t) { t.subtasks.splice(i, 1); saveAll(); window.renderSubtasks(); window.renderAll(); }
+        };
+
+        window.saveDrawerTask = function() {
+            const t = tasks.find(x => x.id === currentTaskId);
+            if (!t) return;
+            t.title = document.getElementById('dr-title').value.trim() || t.title;
+            const sh = parseInt(document.getElementById('dr-start').value);
+            const eh = parseInt(document.getElementById('dr-end').value);
+            t.startHour = !isNaN(sh) ? sh : null;
+            t.endHour = !isNaN(eh) ? eh : (!isNaN(sh) ? sh + 1 : null);
+            t.notes = document.getElementById('dr-notes').value;
+            saveAll();
+            window.closeDrawer();
+            window.renderAll();
+        };
+
+        window.deleteDrawerTask = function() {
+            tasks = tasks.filter(x => x.id !== currentTaskId);
+            saveAll();
+            window.closeDrawer();
+            window.renderAll();
+        };
+
+        window.autoSchedule = function() {
+            const busy = new Set();
+            routines.forEach(r => { for (let h = r.startHour; h < r.endHour; h++) busy.add(h); });
+            tasks.filter(t => t.day !== 'tomorrow' && !t.done && t.startHour).forEach(t => {
+                for (let h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
+            });
+            const mInfo = moodMeta[cfg.mood] || moodMeta.focused;
+            let cur = mInfo.start;
+            tasks.filter(t => t.day !== 'tomorrow' && !t.done && !t.startHour).forEach(t => {
+                while (busy.has(cur) && cur < 22) cur++;
+                if (cur < 22) {
+                    t.startHour = cur;
+                    t.endHour = cur + 1;
+                    busy.add(cur);
+                    cur += (1 + mInfo.gap);
+                }
+            });
+            saveAll();
+            window.renderAll();
+        };
+
+        // OTHER MODULES
+        window.addNote = function() {
+            const title = document.getElementById('nt-title').value.trim();
+            const body = document.getElementById('nt-body').value.trim();
+            if (!title && !body) return;
+            notes.unshift({ id: Date.now(), title: title || 'Note', body });
+            document.getElementById('nt-title').value = '';
+            document.getElementById('nt-body').value = '';
+            saveAll(); window.renderAll();
+        };
+        window.addShop = function() {
+            const title = document.getElementById('sh-title').value.trim();
+            const price = parseFloat(document.getElementById('sh-price').value) || 0;
+            if (!title) return;
+            shops.unshift({ id: Date.now(), title, price });
+            document.getElementById('sh-title').value = '';
+            document.getElementById('sh-price').value = '';
+            saveAll(); window.renderAll();
+        };
+        window.addTx = function() {
+            const title = document.getElementById('tx-title').value.trim();
+            const amount = parseFloat(document.getElementById('tx-amount').value) || 0;
+            const type = document.getElementById('tx-type').value;
+            if (!title || amount <= 0) return;
+            txs.unshift({ id: Date.now(), title, amount, type });
+            document.getElementById('tx-title').value = '';
+            document.getElementById('tx-amount').value = '';
+            saveAll(); window.renderAll();
+        };
+        window.addWorkout = function() {
+            const name = document.getElementById('wo-name').value.trim();
+            const sets = document.getElementById('wo-sets').value.trim();
+            const time = document.getElementById('wo-time').value.trim();
+            if (!name) return;
+            workouts.unshift({ id: Date.now(), name, sets: sets || '-', time: time || '-' });
+            document.getElementById('wo-name').value = '';
+            document.getElementById('wo-sets').value = '';
+            document.getElementById('wo-time').value = '';
+            saveAll(); window.renderAll();
+        };
+        window.addTravelItem = function() {
+            const txt = document.getElementById('tr-item').value.trim();
+            if (!txt) return;
+            travelItems.unshift({ id: Date.now(), txt });
+            document.getElementById('tr-item').value = '';
+            saveAll(); window.renderAll();
+        };
+        window.addPlace = function() {
+            const name = document.getElementById('pl-name').value.trim();
+            const note = document.getElementById('pl-note').value.trim();
+            if (!name) return;
+            places.unshift({ id: Date.now(), name, note });
+            document.getElementById('pl-name').value = '';
+            document.getElementById('pl-note').value = '';
+            saveAll(); window.renderAll();
+        };
+        window.saveScratch = function() { localStorage.setItem('pl_scratch', document.getElementById('quick-scratch').value); };
+
+        window.sendLockScreenNotif = async function() {
+            if (!("Notification" in window)) return alert("Not supported");
+            const p = await Notification.requestPermission();
+            if (p === "granted") {
+                const open = tasks.filter(t => !t.done && t.day !== 'tomorrow');
+                new Notification("Smart Planner | پلنر هوشمند", {
+                    body: open[0] ? `Current: ${open[0].title} (${open.length} left)` : "All tasks completed!",
+                    requireInteraction: true
+                });
+            }
+        };
+
+        window.resetAll = function() { if (confirm("Reset all data?")) { localStorage.clear(); location.reload(); } };
+
+        // ==================== RENDER ENGINE ====================
+        function taskRowHTML(t) {
+            const subCount = (t.subtasks || []).length;
+            const bufferStyle = t.isBuffer ? 'border-amber-400 bg-amber-50/60 dark:bg-amber-950/30' : 'border-slate-200 dark:border-neutral-800 bg-slate-50 dark:bg-neutral-900';
+            return `
+                <div onclick="window.openDrawer(${t.id})" class="cursor-pointer hover:border-blue-400 p-3 rounded-xl border ${bufferStyle} flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onclick="window.toggleTask(${t.id}, event)" class="w-4 h-4 accent-red-500">
+                        <div>
+                            <div class="text-xs sm:text-sm font-bold ${t.done ? 'line-through text-slate-400' : ''}">${t.title}</div>
+                            <div class="text-[11px] text-slate-500 flex flex-wrap gap-2 mt-0.5">
+                                <span>${t.day === 'tomorrow' ? '🌙 Tomorrow' : '☀️ Today'}</span>
+                                ${t.startHour ? `<span class="text-blue-600 font-semibold">⏰ ${t.startHour}:00 -${t.endHour}:00</span>` : ''}
+                                ${subCount ? `<span>(${subCount} subtasks)</span>` : ''}
+                                ${t.notes ? `<span class="text-amber-600">📝 Notes</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-xs text-blue-500">Details ❮</span>
+                </div>
+            `;
+        }
+
+        window.renderAll = function() {
+            const todayList = tasks.filter(t => t.day !== 'tomorrow');
+            const tomList = tasks.filter(t => t.day === 'tomorrow');
+            const inc = txs.filter(x => x.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const exp = txs.filter(x => x.type === 'expense').reduce((a, b) => a + b.amount, 0) + shops.reduce((a, b) => a + b.price, 0);
+
+            document.getElementById('stat-tasks').innerText = todayList.length;
+            document.getElementById('stat-net').innerText = (inc - exp).toLocaleString();
+            document.getElementById('stat-wo').innerText = workouts.length;
+            document.getElementById('stat-tr').innerText = places.length;
+
+            const subTom = document.getElementById('txt-tom-sub');
+            if (subTom) {
+                subTom.innerText = cfg.lang === 'fa'
+                    ? `تنظیم‌شده برای نمایش شب قبل ساعت ${cfg.tomTime} (${tomList.length} کار برای فردا)`
+                    : `Scheduled for Night Preview at ${cfg.tomTime} (${tomList.length} tasks for tomorrow)`;
+            }
+
+            document.getElementById('list-tomorrow-preview').innerHTML = tomList.length ? tomList.map(taskRowHTML).join('') : `<p class="text-xs text-slate-400">${cfg.lang==='fa'?'کاری برای فردا ثبت نشده است.':'No tasks scheduled for tomorrow.'}</p>`;
+            document.getElementById('list-today-overview').innerHTML = todayList.length ? todayList.map(taskRowHTML).join('') : `<p class="text-xs text-slate-400">${cfg.lang==='fa'?'کاری برای امروز ثبت نشده است.':'No tasks for today.'}</p>`;
+            document.getElementById('list-all-todo').innerHTML = tasks.length ? tasks.map(taskRowHTML).join('') : `<p class="text-xs text-slate-400">Empty</p>`;
+
+            // Render 30-Day Monthly Calendar Grid
+            const selDay = cfg.selectedCalDay || 18;
+            document.getElementById('selected-day-badge').innerText = cfg.lang === 'fa' ? `روز انتخاب‌شده: روز ${selDay} ماه` : `Selected Day: Day ${selDay}`;
+            document.getElementById('day-number-circle').innerText = selDay;
+            document.getElementById('day-schedule-header').innerText = cfg.lang === 'fa'
+                ? `جدول بلوک‌بندی ساعتی روز ${selDay} ماه (۷ صبح تا ۲۲ شب)`
+                : `Hourly Schedule for Day ${selDay} (7:00 AM - 10:00 PM)`;
+
+            let monthHTML = '';
+            for (let d = 1; d <= 30; d++) {
+                const dayTasksCount = tasks.filter(t => (t.calDay || 18) === d && t.day !== 'tomorrow').length;
+                const isSelected = d === selDay;
+                monthHTML += `
+                    <button type="button" onclick="window.selectCalendarDay(${d})"
+                        class="p-2.5 rounded-xl border transition flex flex-col items-center justify-center gap-1 ${isSelected ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-md' : 'bg-slate-50 dark:bg-neutral-900 border-slate-200 dark:border-neutral-800 hover:border-blue-400'}">
+                        <span class="text-xs">${d}</span>
+                        ${dayTasksCount > 0 ? `<span class="text-[10px] px-1.5 rounded-full ${isSelected ? 'bg-white text-blue-600' : 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300'}">${dayTasksCount} کار</span>` : `<span class="text-[9px] opacity-40">-</span>`}
+                    </button>
+                `;
+            }
+            document.getElementById('month-days-grid').innerHTML = monthHTML;
+
+            // Render Editable Fixed Routines
+            document.getElementById('list-routines').innerHTML = routines.map(r => `
+                <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between text-xs">
+                    <div>
+                        <div class="font-bold text-amber-900 dark:text-amber-200">🔒 ${r.title}</div>
+                        <div class="text-[11px] text-amber-700 dark:text-amber-400 font-mono">${r.startHour}:00 - ${r.endHour}:00</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="window.editRoutine(${r.id})" class="px-2 py-1 rounded bg-amber-200/70 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-bold" title="ویرایش">✏️ ویرایش</button>
+                        <button type="button" onclick="window.delRoutine(${r.id})" class="text-red-500 font-bold px-1">×</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Selected Day Hourly Grid (7 to 22)
+            const dayTasks = tasks.filter(t => t.day !== 'tomorrow' && (t.calDay || 18) === selDay);
+            let hoursHTML = '';
+            for (let h = 7; h <= 22; h++) {
+                const rIn = routines.filter(r => h >= r.startHour && h < r.endHour);
+                const tIn = dayTasks.filter(t => t.startHour && h >= t.startHour && h < (t.endHour || t.startHour + 1));
+                hoursHTML += `
+                    <div class="flex items-center gap-3 py-2 text-xs">
+                        <div class="w-14 font-mono text-slate-400">${h}:00</div>
+                        <div class="flex-1 flex flex-wrap gap-2">
+                            ${rIn.map(r => `
+                                <span onclick="window.editRoutine(${r.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold flex items-center gap-1.5">
+                                    🔒 ${r.title} <i class="fa-solid fa-pen text-[9px] opacity-60"></i>
+                                </span>
+                            `).join('')}
+                            ${tIn.map(t => `
+                                <span onclick="window.openDrawer(${t.id})" class="cursor-pointer px-2.5 py-1 rounded-lg ${t.isBuffer ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-400/40' : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300'} font-bold">
+                                    ${t.title}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('grid-hours').innerHTML = hoursHTML;
+
+            document.getElementById('list-notes').innerHTML = notes.map(n => `<div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800"><h4 class="font-bold text-sm mb-1">${n.title}</h4><p class="text-xs text-slate-500 whitespace-pre-line">${n.body}</p></div>`).join('');
+            document.getElementById('list-shop').innerHTML = shops.map(s => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${s.title}</span><span class="font-mono text-emerald-600">${s.price.toLocaleString()}</span></div>`).join('');
+            document.getElementById('list-tx').innerHTML = txs.map(x => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${x.title}</span><span class="font-mono font-bold ${x.type==='income'?'text-emerald-600':'text-red-500'}">${x.type==='income'?'+':'-'}${x.amount.toLocaleString()}</span></div>`).join('');
+            document.getElementById('list-workout').innerHTML = workouts.map(w => `<div class="flex justify-between p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span class="font-bold">${w.name}</span><span>Sets: ${w.sets} | ${w.time}</span></div>`).join('');
+            document.getElementById('list-travel-items').innerHTML = travelItems.map(tr => `<div class="p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">${tr.txt}</div>`).join('');
+            document.getElementById('list-places').innerHTML = places.map(p => `<div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><div class="font-bold text-rose-500">📍 ${p.name}</div><div class="text-slate-500">${p.note}</div></div>`).join('');
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('quick-scratch').value = localStorage.getItem('pl_scratch') || '';
+            window.applySettings();
+            window.renderAll();
+        });
+    </script>
+</body>
+</html>
