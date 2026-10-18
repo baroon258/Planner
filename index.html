@@ -8,29 +8,6 @@
     <title>پلنر جامع هوشمند | Smart Planner Pro</title>
     <link rel="manifest" href="manifest.json">
     
-    <!-- FAIL-SAFE NAVIGATION ENGINE AT VERY TOP -->
-    <script>
-        window.openPage = function(pageName) {
-            var screens = ['home', 'calendar', 'todo', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'];
-            for (var i = 0; i < screens.length; i++) {
-                var el = document.getElementById('screen-' + screens[i]);
-                if (el) {
-                    el.classList.remove('active');
-                    el.style.display = 'none';
-                }
-            }
-            var target = document.getElementById('screen-' + pageName);
-            if (target) {
-                target.classList.add('active');
-                target.style.display = 'block';
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (typeof window.renderAll === 'function') {
-                try { window.renderAll(); } catch (e) { console.error(e); }
-            }
-        };
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
@@ -48,37 +25,36 @@
     <style>
         body { transition: background-color 0.2s, color 0.2s; }
         .page-screen { display: none; }
-        .page-screen.active { display: block; animation: fadeIn 0.18s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .page-screen.active { display: block; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.45); border-radius: 4px; }
         #sms-float-popup { box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.25); }
         @keyframes ringPulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.06); }
+            50% { transform: scale(1.05); }
         }
         .alarm-ringing { animation: ringPulse 0.8s infinite; }
     </style>
 </head>
 <body class="bg-[#f8fafc] dark:bg-[#121212] text-slate-800 dark:text-slate-100 min-h-screen font-sans pb-16">
 
-    <!-- ==================== AUDIO ALARM MODAL (POPS UP WHEN TIME ARRIVES) ==================== -->
-    <div id="alarm-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 items-center justify-center p-4">
+    <!-- ==================== AUDIO ALARM MODAL ==================== -->
+    <div id="alarm-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm hidden z-50 items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1e1e1e] max-w-sm w-full rounded-3xl p-6 border-2 border-amber-500 shadow-2xl text-center space-y-4 alarm-ringing">
             <div class="w-16 h-16 mx-auto rounded-full bg-amber-100 dark:bg-amber-950 text-amber-500 flex items-center justify-center text-3xl shadow-md">
-                <i class="fa-solid fa-bell fa-shake"></i>
+                <i class="fa-solid fa-bell"></i>
             </div>
             <div>
-                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400" id="alarm-modal-time">10:30</span>
+                <span class="text-sm font-mono font-bold text-amber-600 dark:text-amber-400" id="alarm-modal-time">10:30</span>
                 <h3 class="text-lg font-extrabold mt-1" id="alarm-modal-title">زمان انجام کار فرا رسید!</h3>
                 <p class="text-xs text-slate-500 dark:text-neutral-400 mt-1" id="alarm-modal-sub">یادآور هوشمند برنامه</p>
             </div>
             <div class="flex gap-2 pt-2">
                 <button type="button" onclick="window.snoozeAlarm()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 text-xs font-bold">
-                    💤 ۵ دقیقه دیگر (Snooze)
+                    💤 ۵ دقیقه دیگر
                 </button>
                 <button type="button" onclick="window.stopAlarm()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg">
-                    🔕 قطع زنگ هشدار
+                    🔕 قطع زنگ
                 </button>
             </div>
         </div>
@@ -86,8 +62,8 @@
 
     <div class="max-w-5xl mx-auto w-full p-3.5 sm:p-6">
 
-        <!-- ==================== HOME SCREEN (LAUNCHER VIEW) ==================== -->
-        <div id="screen-home" class="page-screen active space-y-6" style="display: block;">
+        <!-- ==================== HOME SCREEN ==================== -->
+        <div id="screen-home" class="page-screen active space-y-6">
 
             <!-- Top Status Header -->
             <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-[#1e1e1e] px-4 py-3 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs">
@@ -102,12 +78,10 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <!-- Quick Alarm Enable/Test Button -->
-                    <button type="button" onclick="window.testAndEnableAlarm()" title="فعال‌سازی و تست صدای آلارم" class="px-2.5 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-[11px] font-bold flex items-center gap-1">
-                        <i class="fa-solid fa-bell"></i> <span data-i18n="alarmBadge">آلارم فعال</span>
+                    <button type="button" onclick="window.testAndEnableAlarm()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-bell"></i> <span data-i18n="alarmBadge">تست زنگ و اعلان</span>
                     </button>
 
-                    <!-- Mood Selector -->
                     <div class="flex items-center gap-0.5 bg-slate-100 dark:bg-neutral-800 p-1 rounded-xl text-xs">
                         <button type="button" onclick="window.setMood('energetic')" id="mood-energetic" class="px-1.5 py-0.5 rounded-lg">🔥</button>
                         <button type="button" onclick="window.setMood('focused')" id="mood-focused" class="px-1.5 py-0.5 rounded-lg">😊</button>
@@ -122,56 +96,56 @@
             <div class="bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs">
                 <div class="grid grid-cols-4 sm:grid-cols-8 gap-2.5 sm:gap-3 text-center">
                     <button type="button" onclick="window.openPage('calendar')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-indigo-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-regular fa-calendar-days"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconCalendar">تقویم و روتین</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('todo')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-red-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-list-check"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconTodo">لیست کارها</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('ai')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-purple-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-robot"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconAI">چت‌بات AI</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('notes')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-amber-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-regular fa-note-sticky"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconNotes">یادداشت‌ها</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('shopping')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-emerald-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconShopping">خرید و مالی</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('workout')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-dumbbell"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconWorkout">ورزش</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('travel')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-cyan-50 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-950/80 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-950/80 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-earth-americas"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconTravel">سفر و مکان‌ها</span>
                     </button>
 
                     <button type="button" onclick="window.openPage('settings')" class="cursor-pointer group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-neutral-800 active:scale-95 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-sliders"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconSettings">تنظیمات</span>
@@ -179,7 +153,7 @@
                 </div>
             </div>
 
-            <!-- 2. QUICK ADD TASK BAR (WITH EXACT DATE, HOUR:MINUTE & PROGRESS %) -->
+            <!-- 2. QUICK ADD TASK BAR -->
             <div class="bg-white dark:bg-[#1e1e1e] rounded-2xl p-3.5 border border-slate-200/90 dark:border-neutral-800 shadow-xs space-y-2.5">
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
                     <i class="fa-solid fa-bolt text-blue-600 px-1"></i>
@@ -197,10 +171,10 @@
                     </div>
 
                     <div class="flex items-center gap-1 bg-slate-50 dark:bg-neutral-900 px-2 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
-                        <i class="fa-solid fa-bell text-amber-500" title="ساعت آلارم و شروع"></i>
-                        <input type="time" id="quick-start-time" title="ساعت و دقیقه شروع (آلارم)" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
+                        <i class="fa-solid fa-bell text-amber-500" title="ساعت و دقیقه آلارم"></i>
+                        <input type="time" id="quick-start-time" title="زمان شروع و آلارم" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
                         <span class="text-slate-400">-</span>
-                        <input type="time" id="quick-end-time" title="ساعت و دقیقه پایان" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
+                        <input type="time" id="quick-end-time" title="زمان پایان" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
                     </div>
 
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
@@ -242,13 +216,11 @@
                     </button>
                 </div>
 
-                <!-- Today's Calendar Occasion Banner -->
                 <div class="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/50 rounded-xl p-2.5 px-3 flex items-center gap-2 text-xs text-amber-900 dark:text-amber-200">
                     <i class="fa-solid fa-star text-amber-500"></i>
                     <span id="home-today-occasion">...</span>
                 </div>
 
-                <!-- Night-Before Tomorrow Preview Alert Box -->
                 <div class="bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/50 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-moon text-indigo-600 dark:text-indigo-400"></i>
@@ -261,7 +233,6 @@
                     </div>
                 </div>
 
-                <!-- Upcoming Tasks List -->
                 <div id="home-upcoming-list" class="space-y-2.5"></div>
             </div>
 
@@ -279,7 +250,7 @@
 
         </div>
 
-        <!-- ==================== DEDICATED PAGE 1: CALENDAR ==================== -->
+        <!-- ==================== DEDICATED PAGE 1: CALENDAR (7-DAY TRIPLE DATES + 03:00 TO 24:00) ==================== -->
         <div id="screen-calendar" class="page-screen space-y-6">
             <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
@@ -313,7 +284,7 @@
                 <div id="triple-calendar-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
             </div>
 
-            <!-- SELECTED DAY VIEW: SOLAR/LUNAR OCCASIONS BANNER + 03:00 TO 24:00 GRID -->
+            <!-- SELECTED DAY VIEW: OCCASIONS BANNER + 03:00 TO 24:00 GRID -->
             <div id="selected-day-panel" class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border-2 border-blue-500/30 shadow-sm space-y-4">
                 <div class="bg-gradient-to-l from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/30 p-4 rounded-xl border border-blue-200/70 dark:border-blue-800/50 space-y-2.5">
                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -546,7 +517,6 @@
             </div>
 
             <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-4">
-                <!-- Audio Alarm & Notification Settings -->
                 <div class="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-slate-100 dark:border-neutral-800">
                     <div>
                         <div class="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400" data-i18n="setAlarmTitle">آلارم صوتی و نوتیفیکیشن خودکار سررسید کارها</div>
@@ -557,7 +527,7 @@
                             🔔 تست صدای زنگ و مجوز اعلان
                         </button>
                         <button type="button" onclick="window.toggleAlarmSetting()" id="btn-alarm-state" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold">
-                            وضعیت: روشن
+                            آلارم: روشن
                         </button>
                     </div>
                 </div>
@@ -689,11 +659,69 @@
     </div>
 
     <script>
-        // ==================== BILINGUAL DICTIONARY ====================
-        const i18nDict = {
+        // ==================== 1. CORE HELPERS (DEFINED FIRST SO CALENDAR NEVER FAILS) ====================
+        function safeGet(k, def) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
+        function safeSet(k, val) { try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {} }
+        function toEnDigits(s) { return String(s || '').replace(/[۰-۹]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); }).replace(/[٠-٩]/g, function(d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }); }
+
+        function toISODate(d) {
+            var yr = d.getFullYear();
+            var mo = String(d.getMonth() + 1).padStart(2, '0');
+            var da = String(d.getDate()).padStart(2, '0');
+            return yr + '-' + mo + '-' + da;
+        }
+
+        function parseTimeStr(timeStr, fallbackH) {
+            if (!timeStr) {
+                if (fallbackH !== null && fallbackH !== undefined && !isNaN(fallbackH)) {
+                    return { h: fallbackH, m: 0, str: String(fallbackH).padStart(2,'0') + ':00' };
+                }
+                return null;
+            }
+            var clean = toEnDigits(String(timeStr)).trim();
+            var match = clean.match(/^(\d{1,2})(?::(\d{1,2}))?$/);
+            if (!match) return null;
+            var h = Math.min(24, Math.max(0, parseInt(match[1], 10)));
+            var m = match[2] ? Math.min(59, Math.max(0, parseInt(match[2], 10))) : 0;
+            return { h: h, m: m, str: String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') };
+        }
+
+        function getTripleDateParts(dateObj) {
+            var jDay = "۱", jMonth = "مهر", jMonthNum = 7, jDayNum = 1;
+            var gDay = dateObj.getDate(), gMonthNum = dateObj.getMonth() + 1, gMonth = "Oct";
+            var hDay = "۱", hMonth = "ربیع", hMonthNum = 3, hDayNum = 1;
+
+            try {
+                jDay = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric' }).format(dateObj);
+                jMonth = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { month: 'long' }).format(dateObj);
+                jMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-persian', { month: 'numeric' }).format(dateObj)), 10) || 1;
+                jDayNum = parseInt(toEnDigits(jDay), 10) || 1;
+            } catch (e) {}
+
+            try { gMonth = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(dateObj); } catch (e) {}
+
+            try {
+                hDay = new Intl.DateTimeFormat('fa-IR-u-ca-islamic-civ', { day: 'numeric' }).format(dateObj);
+                hMonth = new Intl.DateTimeFormat('fa-IR-u-ca-islamic-civ', { month: 'long' }).format(dateObj);
+                hMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-islamic-civ', { month: 'numeric' }).format(dateObj)), 10) || 1;
+                hDayNum = parseInt(toEnDigits(hDay), 10) || 1;
+            } catch (e) {
+                try {
+                    hDay = new Intl.DateTimeFormat('fa-IR-u-ca-islamic', { day: 'numeric' }).format(dateObj);
+                    hMonth = new Intl.DateTimeFormat('fa-IR-u-ca-islamic', { month: 'long' }).format(dateObj);
+                    hMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-islamic', { month: 'numeric' }).format(dateObj)), 10) || 1;
+                    hDayNum = parseInt(toEnDigits(hDay), 10) || 1;
+                } catch (e2) {}
+            }
+
+            return { jDay: jDay, jMonth: jMonth, jMonthNum: jMonthNum, jDayNum: jDayNum, gDay: gDay, gMonth: gMonth, gMonthNum: gMonthNum, hDay: hDay, hMonth: hMonth, hMonthNum: hMonthNum, hDayNum: hDayNum };
+        }
+
+        // ==================== 2. BILINGUAL DICTIONARY ====================
+        var i18nDict = {
             fa: {
                 appTitle: "پلنر جامع هوشمند",
-                alarmBadge: "تست زنگ",
+                alarmBadge: "تست زنگ و اعلان",
                 iconCalendar: "تقویم و روتین",
                 iconTodo: "لیست کارها",
                 iconAI: "چت‌بات AI",
@@ -833,69 +861,8 @@
             }
         };
 
-        // ==================== SAFE HELPERS & CRASH-PROOF DATE ENGINE ====================
-        function safeGet(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
-        function safeSet(k, val) { try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {} }
-        function toEnDigits(s) { return String(s).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)); }
-
-        function toISODate(d) {
-            const yr = d.getFullYear();
-            const mo = String(d.getMonth() + 1).padStart(2, '0');
-            const da = String(d.getDate()).padStart(2, '0');
-            return `${yr}-${mo}-${da}`;
-        }
-
-        function parseTimeStr(timeStr, fallbackH = null) {
-            if (!timeStr) {
-                if (fallbackH !== null && !isNaN(fallbackH)) {
-                    return { h: fallbackH, m: 0, str: `${String(fallbackH).padStart(2,'0')}:00` };
-                }
-                return null;
-            }
-            const clean = toEnDigits(String(timeStr)).trim();
-            const match = clean.match(/^(\d{1,2})(?::(\d{1,2}))?$/);
-            if (!match) return null;
-            const h = Math.min(24, Math.max(0, parseInt(match[1])));
-            const m = match[2] ? Math.min(59, Math.max(0, parseInt(match[2]))) : 0;
-            return { h, m, str: `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` };
-        }
-
-        // Crash-proof Triple Date Formatter (Works on all mobile/desktop browsers)
-        function getTripleDateParts(dateObj) {
-            let jDay = "۱", jMonth = "مهر", jMonthNum = 7, jDayNum = 1;
-            let gDay = dateObj.getDate(), gMonthNum = dateObj.getMonth() + 1, gMonth = "Oct";
-            let hDay = "۱", hMonth = "ربیع", hMonthNum = 3, hDayNum = 1;
-
-            try {
-                jDay = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric' }).format(dateObj);
-                jMonth = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { month: 'long' }).format(dateObj);
-                jMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-persian', { month: 'numeric' }).format(dateObj))) || 1;
-                jDayNum = parseInt(toEnDigits(jDay)) || 1;
-            } catch (e) {}
-
-            try {
-                gMonth = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(dateObj);
-            } catch (e) {}
-
-            try {
-                hDay = new Intl.DateTimeFormat('fa-IR-u-ca-islamic-civ', { day: 'numeric' }).format(dateObj);
-                hMonth = new Intl.DateTimeFormat('fa-IR-u-ca-islamic-civ', { month: 'long' }).format(dateObj);
-                hMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-islamic-civ', { month: 'numeric' }).format(dateObj))) || 1;
-                hDayNum = parseInt(toEnDigits(hDay)) || 1;
-            } catch (e) {
-                try {
-                    hDay = new Intl.DateTimeFormat('fa-IR-u-ca-islamic', { day: 'numeric' }).format(dateObj);
-                    hMonth = new Intl.DateTimeFormat('fa-IR-u-ca-islamic', { month: 'long' }).format(dateObj);
-                    hMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-islamic', { month: 'numeric' }).format(dateObj))) || 1;
-                    hDayNum = parseInt(toEnDigits(hDay)) || 1;
-                } catch (e2) {}
-            }
-
-            return { jDay, jMonth, jMonthNum, jDayNum, gDay, gMonth, gMonthNum, hDay, hMonth, hMonthNum, hDayNum };
-        }
-
-        // ==================== CALENDAR OCCASIONS ====================
-        const solarOccasions = {
+        // ==================== 3. OCCASIONS DATABASE ====================
+        var solarOccasions = {
             "1-1": "جشن نوروز و آغاز سال نو خورشیدی (تعطیل)", "1-2": "عید نوروز (تعطیل)", "1-3": "عید نوروز (تعطیل)", "1-4": "عید نوروز (تعطیل)",
             "1-12": "روز جمهوری اسلامی (تعطیل)", "1-13": "جشن سیزده‌بدر و روز طبیعت (تعطیل)", "2-1": "روز بزرگداشت سعدی",
             "2-10": "روز ملی خلیج فارس", "2-12": "روز معلم", "2-25": "بزرگداشت حکیم فردوسی", "3-14": "رحلت امام خمینی (تعطیل)",
@@ -906,7 +873,7 @@
             "12-5": "بزرگداشت خواجه نصیرالدین طوسی و روز مهندس", "12-15": "روز درختکاری", "12-29": "روز ملی شدن صنعت نفت (تعطیل)"
         };
 
-        const lunarOccasions = {
+        var lunarOccasions = {
             "1-9": "تاسوعای حسینی (تعطیل)", "1-10": "عاشورای حسینی (تعطیل)", "2-20": "اربعین حسینی (تعطیل)",
             "2-28": "رحلت پیامبر اکرم و شهادت امام حسن مجتبی (تعطیل)", "2-30": "شهادت امام رضا (تعطیل)",
             "3-17": "میلاد پیامبر اکرم و امام جعفر صادق (تعطیل)", "6-3": "شهادت حضرت فاطمه زهرا (تعطیل)",
@@ -915,9 +882,9 @@
             "10-25": "شهادت امام جعفر صادق (تعطیل)", "11-11": "ولادت امام رضا", "12-10": "عید سعید قربان (تعطیل)", "12-18": "عید سعید غدیر خم (تعطیل)"
         };
 
-        // ==================== STATE MANAGEMENT ====================
-        const todayISO = toISODate(new Date());
-        let cfg = safeGet('pl_cfg_v8', {
+        // ==================== 4. STATE INITIALIZATION ====================
+        var todayISO = toISODate(new Date());
+        var cfg = safeGet('pl_cfg_v9', {
             lang: 'fa',
             theme: 'light',
             fab: true,
@@ -927,21 +894,22 @@
             selectedISO: todayISO,
             calMonthOffset: 0
         });
+        if (!cfg.selectedISO) cfg.selectedISO = todayISO;
 
-        let tasks = safeGet('pl_tasks', []);
-        let routines = safeGet('pl_routines', []);
-        let customOccasions = safeGet('pl_custom_occasions', {});
-        let notes = safeGet('pl_notes', []);
-        let shops = safeGet('pl_shops', []);
-        let txs = safeGet('pl_txs', []);
-        let workouts = safeGet('pl_wo', []);
-        let travelItems = safeGet('pl_tr_items', []);
-        let places = safeGet('pl_places', []);
-        let currentTaskId = null;
-        let lastAIScenarios = [];
+        var tasks = safeGet('pl_tasks', []);
+        var routines = safeGet('pl_routines', []);
+        var customOccasions = safeGet('pl_custom_occasions', {});
+        var notes = safeGet('pl_notes', []);
+        var shops = safeGet('pl_shops', []);
+        var txs = safeGet('pl_txs', []);
+        var workouts = safeGet('pl_wo', []);
+        var travelItems = safeGet('pl_tr_items', []);
+        var places = safeGet('pl_places', []);
+        var currentTaskId = null;
+        var lastAIScenarios = [];
 
         function saveAll() {
-            safeSet('pl_cfg_v8', cfg);
+            safeSet('pl_cfg_v9', cfg);
             safeSet('pl_tasks', tasks);
             safeSet('pl_routines', routines);
             safeSet('pl_custom_occasions', customOccasions);
@@ -953,55 +921,129 @@
             safeSet('pl_places', places);
         }
 
-        // ==================== WEB AUDIO API SYNTHESIZER ALARM & NOTIFICATION ENGINE ====================
-        let audioCtx = null;
-        let alarmBeepTimer = null;
-        let triggeredAlarms = safeGet('pl_triggered_alarms', {});
-        let activeRingingTitle = "";
+        // ==================== 5. PAGE NAVIGATION ====================
+        window.openPage = function(pageName) {
+            var screens = ['home', 'calendar', 'todo', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'];
+            for (var i = 0; i < screens.length; i++) {
+                var el = document.getElementById('screen-' + screens[i]);
+                if (el) {
+                    el.classList.remove('active');
+                    el.style.display = 'none';
+                }
+            }
+            var target = document.getElementById('screen-' + pageName);
+            if (target) {
+                target.classList.add('active');
+                target.style.display = 'block';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.renderAll();
+        };
 
-        function playChimeMelody() {
+        // ==================== 6. RELIABLE AUDIO ALARM + WAV GENERATOR + NOTIFICATION ====================
+        var audioCtx = null;
+        var alarmBeepTimer = null;
+        var html5AudioRing = null;
+        var triggeredAlarms = safeGet('pl_triggered_alarms', {});
+        var activeRingingTitle = "";
+
+        // Generate an embedded WAV beep data URI so mobile <audio> elements play reliably
+        function createBeepWavDataUri() {
+            var sampleRate = 8000;
+            var durationSeconds = 0.6;
+            var numSamples = sampleRate * durationSeconds;
+            var buffer = new ArrayBuffer(44 + numSamples * 2);
+            var view = new DataView(buffer);
+            function writeString(v, offset, str) {
+                for (var i = 0; i < str.length; i++) v.setUint8(offset + i, str.charCodeAt(i));
+            }
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + numSamples * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, numSamples * 2, true);
+            for (var i = 0; i < numSamples; i++) {
+                var t = i / sampleRate;
+                var freq = (i < numSamples / 2) ? 660 : 880;
+                var sample = Math.sin(2 * Math.PI * freq * t) * 0.6;
+                view.setInt16(44 + i * 2, sample * 32767, true);
+            }
+            var bytes = new Uint8Array(buffer);
+            var binary = '';
+            for (var b = 0; b < bytes.byteLength; b++) binary += String.fromCharCode(bytes[b]);
+            return 'data:audio/wav;base64,' + btoa(binary);
+        }
+
+        function playSoundRing() {
+            // 1. HTML5 Audio (works on mobile WebViews & browsers)
             try {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContextClass) return;
-                if (!audioCtx) audioCtx = new AudioContextClass();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
+                if (!html5AudioRing) {
+                    html5AudioRing = new Audio(createBeepWavDataUri());
+                }
+                html5AudioRing.currentTime = 0;
+                html5AudioRing.play().catch(function(){});
+            } catch (e) {}
 
-                const notesFreq = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-                notesFreq.forEach((freq, idx) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.16);
-                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime + idx * 0.16);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.16 + 0.4);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(audioCtx.currentTime + idx * 0.16);
-                    osc.stop(audioCtx.currentTime + idx * 0.16 + 0.42);
-                });
+            // 2. Web Audio API Chime Backup
+            try {
+                var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    if (!audioCtx) audioCtx = new AudioContextClass();
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    var freqs = [523.25, 659.25, 783.99, 1046.50];
+                    freqs.forEach(function(f, idx) {
+                        var osc = audioCtx.createOscillator();
+                        var gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(f, audioCtx.currentTime + idx * 0.14);
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime + idx * 0.14);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.14 + 0.35);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(audioCtx.currentTime + idx * 0.14);
+                        osc.stop(audioCtx.currentTime + idx * 0.14 + 0.36);
+                    });
+                }
             } catch (e) {}
         }
+
+        // Unlock audio on first user touch anywhere in the app
+        document.addEventListener('click', function unlockAudioOnce() {
+            try {
+                if (!html5AudioRing) html5AudioRing = new Audio(createBeepWavDataUri());
+                var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass && !audioCtx) audioCtx = new AudioContextClass();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            } catch (e) {}
+            document.removeEventListener('click', unlockAudioOnce);
+        });
 
         window.triggerAlarmNow = function(title, timeStr, subtitle) {
             activeRingingTitle = title;
             document.getElementById('alarm-modal-title').innerText = title;
-            document.getElementById('alarm-modal-time').innerText = `⏰ ${timeStr}`;
-            document.getElementById('alarm-modal-sub').innerText = subtitle || 'یادآور هوشمند پلنر';
+            document.getElementById('alarm-modal-time').innerText = '⏰ ' + timeStr;
+            document.getElementById('alarm-modal-sub').innerText = subtitle || 'یادآور هوشمند برنامه';
             
-            const modal = document.getElementById('alarm-modal');
+            var modal = document.getElementById('alarm-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
-            // Play Repeating Melody + Vibration
-            playChimeMelody();
+            playSoundRing();
             if (alarmBeepTimer) clearInterval(alarmBeepTimer);
-            alarmBeepTimer = setInterval(playChimeMelody, 2200);
-            if ('vibrate' in navigator) navigator.vibrate([400, 200, 400, 200, 500]);
+            alarmBeepTimer = setInterval(playSoundRing, 1800);
+            if ('vibrate' in navigator) { try { navigator.vibrate([400, 200, 400, 200, 500]); } catch(e){} }
 
-            // Push System Notification
             if ("Notification" in window && Notification.permission === "granted") {
                 try {
-                    new Notification(`🔔 آلارم پلنر (${timeStr})`, {
+                    new Notification('🔔 آلارم پلنر (' + timeStr + ')', {
                         body: title,
                         requireInteraction: true
                     });
@@ -1011,28 +1053,29 @@
 
         window.stopAlarm = function() {
             if (alarmBeepTimer) { clearInterval(alarmBeepTimer); alarmBeepTimer = null; }
-            if ('vibrate' in navigator) navigator.vibrate(0);
-            const modal = document.getElementById('alarm-modal');
+            if (html5AudioRing) { try { html5AudioRing.pause(); } catch(e){} }
+            if ('vibrate' in navigator) { try { navigator.vibrate(0); } catch(e){} }
+            var modal = document.getElementById('alarm-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         };
 
         window.snoozeAlarm = function() {
-            const titleToSnooze = activeRingingTitle || 'یادآور کار';
+            var titleToSnooze = activeRingingTitle || 'یادآور کار';
             window.stopAlarm();
-            const snoozeDate = new Date(Date.now() + 5 * 60000);
-            const hh = String(snoozeDate.getHours()).padStart(2, '0');
-            const mm = String(snoozeDate.getMinutes()).padStart(2, '0');
+            var snoozeDate = new Date(Date.now() + 5 * 60000);
+            var hh = String(snoozeDate.getHours()).padStart(2, '0');
+            var mm = String(snoozeDate.getMinutes()).padStart(2, '0');
             tasks.unshift({
                 id: Date.now(),
-                title: `💤 (یادآور مجدد) ${titleToSnooze}`,
+                title: '💤 ' + titleToSnooze,
                 dateISO: toISODate(snoozeDate),
                 project: 'پروژه اصلی',
                 prio: 'p1',
                 progress: 0,
                 done: false,
-                startTime: `${hh}:${mm}`,
-                endTime: `${hh}:${mm}`,
+                startTime: hh + ':' + mm,
+                endTime: hh + ':' + mm,
                 startHour: snoozeDate.getHours(),
                 endHour: snoozeDate.getHours() + 1,
                 notes: '',
@@ -1044,14 +1087,14 @@
 
         window.testAndEnableAlarm = async function() {
             if ("Notification" in window && Notification.permission !== "granted") {
-                await Notification.requestPermission();
+                try { await Notification.requestPermission(); } catch (e) {}
             }
-            const now = new Date();
-            const hm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            var now = new Date();
+            var hm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
             window.triggerAlarmNow(
-                cfg.lang === 'en' ? 'Audio Alarm & Notification Active!' : 'تست آلارم صوتی و نوتیفیکیشن با موفقیت انجام شد!',
+                cfg.lang === 'en' ? 'Audio Alarm & Notification Active!' : 'تست زنگ هشدار و نوتیفیکیشن فعال شد!',
                 hm,
-                cfg.lang === 'en' ? 'Your tasks will ring right on time.' : 'در سررسید ساعت و دقیقه هر کار، این زنگ و اعلان پخش می‌شود.'
+                cfg.lang === 'en' ? 'Your tasks will ring on time.' : 'در سررسید ساعت و دقیقه هر کار، زنگ پخش می‌شود.'
             );
         };
 
@@ -1061,83 +1104,84 @@
             window.applySettings();
         };
 
-        // Background Watcher (Checks every 15 seconds for exact HH:MM match)
+        // Check every 2 seconds so alarms never miss the minute
         setInterval(function() {
             if (!cfg.alarmEnabled) return;
-            const now = new Date();
-            const curISO = toISODate(now);
-            const curHM = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-            const jsDay = now.getDay();
+            var now = new Date();
+            var curISO = toISODate(now);
+            var curHM = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+            var jsDay = now.getDay();
 
-            // 1. Check Tasks due right now
-            tasks.forEach(t => {
-                if (!t.done && t.dateISO === curISO && t.startTime === curHM) {
-                    const key = `task_${t.id}_${curISO}_${curHM}`;
+            tasks.forEach(function(t) {
+                var st = parseTimeStr(t.startTime, t.startHour);
+                var taskHM = st ? st.str : null;
+                if (!t.done && (t.dateISO || todayISO) === curISO && taskHM === curHM) {
+                    var key = 'task_' + t.id + '_' + curISO + '_' + curHM;
                     if (!triggeredAlarms[key]) {
                         triggeredAlarms[key] = true;
                         safeSet('pl_triggered_alarms', triggeredAlarms);
-                        window.triggerAlarmNow(t.title, curHM, `📁 ${t.project || 'پروژه اصلی'}`);
+                        window.triggerAlarmNow(t.title, curHM, '📁 ' + (t.project || 'پروژه اصلی'));
                     }
                 }
             });
 
-            // 2. Check Fixed Routines due right now
-            routines.forEach(r => {
-                const days = r.daysOfWeek || [6,0,1,2,3,4];
-                if (days.includes(jsDay) && r.startTime === curHM) {
-                    const key = `routine_${r.id}_${curISO}_${curHM}`;
+            routines.forEach(function(r) {
+                var days = r.daysOfWeek || [6,0,1,2,3,4];
+                var st = parseTimeStr(r.startTime, r.startHour);
+                var rHM = st ? st.str : null;
+                if (days.indexOf(jsDay) !== -1 && rHM === curHM) {
+                    var key = 'routine_' + r.id + '_' + curISO + '_' + curHM;
                     if (!triggeredAlarms[key]) {
                         triggeredAlarms[key] = true;
                         safeSet('pl_triggered_alarms', triggeredAlarms);
-                        window.triggerAlarmNow(`🔒 شروع روتین ثابت: ${r.title}`, curHM, 'کار ثابت روزانه');
+                        window.triggerAlarmNow('🔒 روتین ثابت: ' + r.title, curHM, 'کار ثابت روزانه');
                     }
                 }
             });
 
-            // 3. Check Night-Before Tomorrow Preview Time
             if (cfg.tomTime === curHM) {
-                const key = `tom_preview_${curISO}_${curHM}`;
+                var key = 'tom_' + curISO + '_' + curHM;
                 if (!triggeredAlarms[key]) {
                     triggeredAlarms[key] = true;
                     safeSet('pl_triggered_alarms', triggeredAlarms);
-                    const tomObj = new Date(); tomObj.setDate(tomObj.getDate() + 1);
-                    const tomCount = tasks.filter(t => t.dateISO === toISODate(tomObj)).length;
-                    window.triggerAlarmNow(`🌙 پیش‌نمایش شبانه: ${tomCount} کار برای فردا دارید`, curHM, 'یادآور بررسی برنامه فردا');
+                    var tomObj = new Date(); tomObj.setDate(tomObj.getDate() + 1);
+                    var tomCount = tasks.filter(function(t) { return t.dateISO === toISODate(tomObj); }).length;
+                    window.triggerAlarmNow('🌙 پیش‌نمایش شبانه: ' + tomCount + ' کار برای فردا دارید', curHM, 'یادآور برنامه فردا');
                 }
             }
-        }, 12000);
+        }, 2000);
 
-        // ==================== OCCASION HELPER ====================
+        // ==================== 7. OCCASIONS & SETTINGS ====================
         function getOccasionDetails(parts, isoStr, jsDayOfWeek) {
-            const list = [];
-            let isHoliday = (jsDayOfWeek === 5);
-            const sKey = `${parts.jMonthNum}-${parts.jDayNum}`;
-            const lKey = `${parts.hMonthNum}-${parts.hDayNum}`;
+            var list = [];
+            var isHoliday = (jsDayOfWeek === 5);
+            var sKey = parts.jMonthNum + '-' + parts.jDayNum;
+            var lKey = parts.hMonthNum + '-' + parts.hDayNum;
 
-            if (customOccasions[isoStr]) list.push(`📌 ${customOccasions[isoStr]}`);
+            if (customOccasions[isoStr]) list.push('📌 ' + customOccasions[isoStr]);
             if (solarOccasions[sKey]) {
-                list.push(`☀️ ${solarOccasions[sKey]}`);
-                if (solarOccasions[sKey].includes('تعطیل')) isHoliday = true;
+                list.push('☀️ ' + solarOccasions[sKey]);
+                if (solarOccasions[sKey].indexOf('تعطیل') !== -1) isHoliday = true;
             }
             if (lunarOccasions[lKey]) {
-                list.push(`🌙 ${lunarOccasions[lKey]}`);
-                if (lunarOccasions[lKey].includes('تعطیل')) isHoliday = true;
+                list.push('🌙 ' + lunarOccasions[lKey]);
+                if (lunarOccasions[lKey].indexOf('تعطیل') !== -1) isHoliday = true;
             }
 
-            const hasEvent = list.length > 0;
+            var hasEvent = list.length > 0;
             if (!hasEvent && jsDayOfWeek === 5) list.push(cfg.lang === 'en' ? 'Friday Weekend' : 'جمعه (تعطیل آخر هفته)');
 
             return {
-                hasEvent,
-                isHoliday,
-                text: list.length ? list.join(' | ') : (cfg.lang === 'en' ? `No official occasion (${parts.jDay} ${parts.jMonth})` : `مناسبت رسمی خاصی ثبت نشده است (${parts.jDay} ${parts.jMonth} / ${parts.hDay} ${parts.hMonth})`)
+                hasEvent: hasEvent,
+                isHoliday: isHoliday,
+                text: list.length ? list.join(' | ') : (cfg.lang === 'en' ? 'No official occasion (' + parts.jDay + ' ' + parts.jMonth + ')' : 'مناسبت رسمی خاصی ثبت نشده است (' + parts.jDay + ' ' + parts.jMonth + ' / ' + parts.hDay + ' ' + parts.hMonth + ')')
             };
         }
 
         window.addCustomOccasionPrompt = function() {
-            const iso = cfg.selectedISO || todayISO;
-            const current = customOccasions[iso] || '';
-            const val = prompt("مناسبت شخصی، تولد یا رویداد این تاریخ را وارد کنید:", current);
+            var iso = cfg.selectedISO || todayISO;
+            var current = customOccasions[iso] || '';
+            var val = prompt("مناسبت شخصی، تولد یا رویداد این تاریخ را وارد کنید:", current);
             if (val !== null) {
                 if (val.trim() === '') delete customOccasions[iso];
                 else customOccasions[iso] = val.trim();
@@ -1146,50 +1190,49 @@
             }
         };
 
-        // ==================== SETTINGS & BILINGUAL ENGINE ====================
         window.applySettings = function() {
-            const html = document.documentElement;
+            var html = document.documentElement;
             if (cfg.theme === 'dark') html.classList.add('dark');
             else html.classList.remove('dark');
 
             html.lang = cfg.lang;
             html.dir = cfg.lang === 'fa' ? 'rtl' : 'ltr';
 
-            const d = i18nDict[cfg.lang] || i18nDict.fa;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const k = el.getAttribute('data-i18n');
+            var d = i18nDict[cfg.lang] || i18nDict.fa;
+            document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                var k = el.getAttribute('data-i18n');
                 if (d[k]) el.innerText = d[k];
             });
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const k = el.getAttribute('data-i18n-placeholder');
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+                var k = el.getAttribute('data-i18n-placeholder');
                 if (d[k]) el.placeholder = d[k];
             });
 
-            const langSwitchBtn = document.getElementById('lang-switch-btn');
+            var langSwitchBtn = document.getElementById('lang-switch-btn');
             if (langSwitchBtn) langSwitchBtn.innerText = cfg.lang === 'fa' ? 'Switch to English' : 'تغییر به زبان فارسی';
 
-            const alarmBtn = document.getElementById('btn-alarm-state');
+            var alarmBtn = document.getElementById('btn-alarm-state');
             if (alarmBtn) alarmBtn.innerText = cfg.alarmEnabled ? (cfg.lang === 'en' ? 'Alarm: ON 🔔' : 'آلارم: روشن 🔔') : (cfg.lang === 'en' ? 'Alarm: OFF 🔕' : 'آلارم: خاموش 🔕');
 
-            const fabBox = document.getElementById('fab-container');
+            var fabBox = document.getElementById('fab-container');
             if (fabBox) fabBox.style.display = cfg.fab ? 'flex' : 'none';
-            const inAppBtn = document.getElementById('btn-inapp-fab');
+            var inAppBtn = document.getElementById('btn-inapp-fab');
             if (inAppBtn) inAppBtn.innerText = cfg.fab ? (cfg.lang === 'fa' ? 'آیکون شناور: روشن' : 'Float Icon: ON') : (cfg.lang === 'fa' ? 'آیکون شناور: خاموش' : 'Float Icon: OFF');
 
-            const now = new Date();
-            const p = getTripleDateParts(now);
+            var now = new Date();
+            var p = getTripleDateParts(now);
             document.getElementById('live-header-dates').innerText = cfg.lang === 'fa'
-                ? `شمسی: ${p.jDay} ${p.jMonth} | میلادی: ${p.gDay} ${p.gMonth} | قمری: ${p.hDay} ${p.hMonth}`
-                : `Solar: ${p.jDay} ${p.jMonth} | Gregorian: ${p.gDay} ${p.gMonth} | Hijri: ${p.hDay} ${p.hMonth}`;
+                ? 'شمسی: ' + p.jDay + ' ' + p.jMonth + ' | میلادی: ' + p.gDay + ' ' + p.gMonth + ' | قمری: ' + p.hDay + ' ' + p.hMonth
+                : 'Solar: ' + p.jDay + ' ' + p.jMonth + ' | Gregorian: ' + p.gDay + ' ' + p.gMonth + ' | Hijri: ' + p.hDay + ' ' + p.hMonth;
 
-            const todayOcc = getOccasionDetails(p, todayISO, now.getDay());
+            var todayOcc = getOccasionDetails(p, todayISO, now.getDay());
             document.getElementById('home-today-occasion').innerText = (cfg.lang === 'fa' ? 'مناسبت امروز: ' : 'Today Occasion: ') + todayOcc.text;
 
-            const tomIn = document.getElementById('home-tom-time');
+            var tomIn = document.getElementById('home-tom-time');
             if (tomIn) tomIn.value = cfg.tomTime || '20:00';
 
-            ['energetic', 'focused', 'calm', 'tired', 'stressed'].forEach(k => {
-                const b = document.getElementById('mood-' + k);
+            ['energetic', 'focused', 'calm', 'tired', 'stressed'].forEach(function(k) {
+                var b = document.getElementById('mood-' + k);
                 if (b) b.className = (cfg.mood === k) ? "px-2 py-0.5 rounded-lg bg-blue-600 text-white shadow-xs" : "px-1.5 py-0.5 rounded-lg opacity-60 hover:opacity-100";
             });
         };
@@ -1208,33 +1251,33 @@
             saveAll(); window.applySettings(); window.renderAll();
         };
 
-        // ==================== QUICK ADD & TASKS ====================
+        // ==================== 8. TASKS & SUBMENU DRAWER ====================
         window.addQuickTask = function() {
-            const inp = document.getElementById('quick-task-in');
-            const title = inp.value.trim();
+            var inp = document.getElementById('quick-task-in');
+            var title = inp.value.trim();
             if (!title) return;
-            const dateVal = document.getElementById('quick-date-in').value || todayISO;
-            const projVal = document.getElementById('quick-proj-in').value || 'پروژه اصلی';
-            const prioVal = document.getElementById('quick-prio-in').value || 'p2';
-            const progVal = parseInt(document.getElementById('quick-prog-in').value) || 0;
+            var dateVal = document.getElementById('quick-date-in').value || todayISO;
+            var projVal = document.getElementById('quick-proj-in').value || 'پروژه اصلی';
+            var prioVal = document.getElementById('quick-prio-in').value || 'p2';
+            var progVal = parseInt(document.getElementById('quick-prog-in').value, 10) || 0;
 
-            let startT = document.getElementById('quick-start-time').value;
-            let endT = document.getElementById('quick-end-time').value;
+            var startT = document.getElementById('quick-start-time').value;
+            var endT = document.getElementById('quick-end-time').value;
 
-            const norm = toEnDigits(title);
-            const tMatch = norm.match(/(?:ساعت|at)\s*(\d{1,2})(?::(\d{1,2}))?/i);
+            var norm = toEnDigits(title);
+            var tMatch = norm.match(/(?:ساعت|at)?\s*(\d{1,2}):(\d{1,2})/i) || norm.match(/(?:ساعت|at)\s*(\d{1,2})/i);
             if (!startT && tMatch) {
-                const hh = String(tMatch[1]).padStart(2, '0');
-                const mm = tMatch[2] ? String(tMatch[2]).padStart(2, '0') : '00';
-                startT = `${hh}:${mm}`;
+                var hh = String(tMatch[1]).padStart(2, '0');
+                var mm = tMatch[2] ? String(tMatch[2]).padStart(2, '0') : '00';
+                startT = hh + ':' + mm;
             }
 
-            const parsedStart = parseTimeStr(startT);
-            const parsedEnd = parseTimeStr(endT) || (parsedStart ? { h: Math.min(24, parsedStart.h + 1), m: parsedStart.m, str: `${String(Math.min(24, parsedStart.h + 1)).padStart(2,'0')}:${String(parsedStart.m).padStart(2,'0')}` } : null);
+            var parsedStart = parseTimeStr(startT);
+            var parsedEnd = parseTimeStr(endT) || (parsedStart ? { h: Math.min(24, parsedStart.h + 1), m: parsedStart.m, str: String(Math.min(24, parsedStart.h + 1)).padStart(2,'0') + ':' + String(parsedStart.m).padStart(2,'0') } : null);
 
             tasks.unshift({
                 id: Date.now(),
-                title,
+                title: title,
                 dateISO: dateVal,
                 project: projVal,
                 prio: prioVal,
@@ -1258,9 +1301,9 @@
 
         window.updateTaskProgressInline = function(id, val, ev) {
             if (ev) ev.stopPropagation();
-            const t = tasks.find(x => x.id === id);
+            var t = tasks.find(function(x) { return x.id === id; });
             if (t) {
-                t.progress = parseInt(val) || 0;
+                t.progress = parseInt(val, 10) || 0;
                 t.done = t.progress === 100;
                 saveAll();
                 window.renderAll();
@@ -1269,7 +1312,7 @@
 
         window.toggleTask = function(id, ev) {
             if (ev) ev.stopPropagation();
-            const t = tasks.find(x => x.id === id);
+            var t = tasks.find(function(x) { return x.id === id; });
             if (t) {
                 t.done = !t.done;
                 t.progress = t.done ? 100 : 0;
@@ -1278,10 +1321,9 @@
             }
         };
 
-        // ==================== SUBMENU DRAWER ====================
         window.openDrawer = function(id) {
             currentTaskId = id;
-            const t = tasks.find(x => x.id === id);
+            var t = tasks.find(function(x) { return x.id === id; });
             if (!t) return;
             document.getElementById('dr-title').value = t.title;
             document.getElementById('dr-date').value = t.dateISO || todayISO;
@@ -1289,44 +1331,44 @@
             document.getElementById('dr-prog').value = t.progress || 0;
             document.getElementById('dr-prog-label').innerText = (t.progress || 0) + '%';
 
-            const st = parseTimeStr(t.startTime, t.startHour);
-            const et = parseTimeStr(t.endTime, t.endHour);
+            var st = parseTimeStr(t.startTime, t.startHour);
+            var et = parseTimeStr(t.endTime, t.endHour);
             document.getElementById('dr-start-time').value = st ? st.str : '';
             document.getElementById('dr-end-time').value = et ? et.str : '';
 
             document.getElementById('dr-notes').value = t.notes || '';
             window.renderSubtasks();
-            const dr = document.getElementById('task-drawer');
+            var dr = document.getElementById('task-drawer');
             dr.classList.remove('hidden');
             dr.classList.add('flex');
         };
 
         window.closeDrawer = function() {
-            const dr = document.getElementById('task-drawer');
+            var dr = document.getElementById('task-drawer');
             dr.classList.add('hidden');
             dr.classList.remove('flex');
             currentTaskId = null;
         };
 
         window.renderSubtasks = function() {
-            const t = tasks.find(x => x.id === currentTaskId);
+            var t = tasks.find(function(x) { return x.id === currentTaskId; });
             if (!t) return;
-            document.getElementById('dr-sub-list').innerHTML = (t.subtasks || []).map((s, i) => `
-                <div class="flex items-center justify-between bg-white dark:bg-neutral-800 p-2 rounded border border-slate-200 dark:border-neutral-700">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" ${s.done ? 'checked' : ''} onchange="window.toggleSubtask(${i})">
-                        <span class="${s.done ? 'line-through text-slate-400' : ''}">${s.text}</span>
-                    </label>
-                    <button type="button" onclick="window.delSubtask(${i})" class="text-red-500">×</button>
-                </div>
-            `).join('');
+            document.getElementById('dr-sub-list').innerHTML = (t.subtasks || []).map(function(s, i) {
+                return '<div class="flex items-center justify-between bg-white dark:bg-neutral-800 p-2 rounded border border-slate-200 dark:border-neutral-700">' +
+                    '<label class="flex items-center gap-2 cursor-pointer">' +
+                    '<input type="checkbox" ' + (s.done ? 'checked' : '') + ' onchange="window.toggleSubtask(' + i + ')">' +
+                    '<span class="' + (s.done ? 'line-through text-slate-400' : '') + '">' + s.text + '</span>' +
+                    '</label>' +
+                    '<button type="button" onclick="window.delSubtask(' + i + ')" class="text-red-500">×</button>' +
+                    '</div>';
+            }).join('');
         };
 
         window.addSubtask = function() {
-            const inp = document.getElementById('dr-sub-in');
-            const txt = inp.value.trim();
+            var inp = document.getElementById('dr-sub-in');
+            var txt = inp.value.trim();
             if (!txt || !currentTaskId) return;
-            const t = tasks.find(x => x.id === currentTaskId);
+            var t = tasks.find(function(x) { return x.id === currentTaskId; });
             if (!t.subtasks) t.subtasks = [];
             t.subtasks.push({ text: txt, done: false });
             inp.value = '';
@@ -1334,10 +1376,10 @@
         };
 
         window.toggleSubtask = function(i) {
-            const t = tasks.find(x => x.id === currentTaskId);
+            var t = tasks.find(function(x) { return x.id === currentTaskId; });
             if (t && t.subtasks[i]) {
                 t.subtasks[i].done = !t.subtasks[i].done;
-                const doneCount = t.subtasks.filter(s => s.done).length;
+                var doneCount = t.subtasks.filter(function(s) { return s.done; }).length;
                 t.progress = Math.round((doneCount / t.subtasks.length) * 100);
                 t.done = t.progress === 100;
                 document.getElementById('dr-prog').value = t.progress;
@@ -1347,21 +1389,21 @@
         };
 
         window.delSubtask = function(i) {
-            const t = tasks.find(x => x.id === currentTaskId);
+            var t = tasks.find(function(x) { return x.id === currentTaskId; });
             if (t) { t.subtasks.splice(i, 1); saveAll(); window.renderSubtasks(); window.renderAll(); }
         };
 
         window.saveDrawerTask = function() {
-            const t = tasks.find(x => x.id === currentTaskId);
+            var t = tasks.find(function(x) { return x.id === currentTaskId; });
             if (!t) return;
             t.title = document.getElementById('dr-title').value.trim() || t.title;
             t.dateISO = document.getElementById('dr-date').value || todayISO;
             t.project = document.getElementById('dr-proj').value;
-            t.progress = parseInt(document.getElementById('dr-prog').value) || 0;
+            t.progress = parseInt(document.getElementById('dr-prog').value, 10) || 0;
             t.done = t.progress === 100;
 
-            const st = parseTimeStr(document.getElementById('dr-start-time').value);
-            const et = parseTimeStr(document.getElementById('dr-end-time').value) || (st ? { h: Math.min(24, st.h + 1), m: st.m, str: `${String(Math.min(24, st.h + 1)).padStart(2,'0')}:${String(st.m).padStart(2,'0')}` } : null);
+            var st = parseTimeStr(document.getElementById('dr-start-time').value);
+            var et = parseTimeStr(document.getElementById('dr-end-time').value) || (st ? { h: Math.min(24, st.h + 1), m: st.m, str: String(Math.min(24, st.h + 1)).padStart(2,'0') + ':' + String(st.m).padStart(2,'0') } : null);
 
             t.startTime = st ? st.str : null;
             t.endTime = et ? et.str : null;
@@ -1372,24 +1414,24 @@
         };
 
         window.deleteDrawerTask = function() {
-            tasks = tasks.filter(x => x.id !== currentTaskId);
+            tasks = tasks.filter(function(x) { return x.id !== currentTaskId; });
             saveAll(); window.closeDrawer(); window.renderAll();
         };
 
-        // ==================== ROUTINES ====================
-        const weekDayNamesFA = { 6: 'ش', 0: 'ی', 1: 'د', 2: 'س', 3: 'چ', 4: 'پ', 5: 'ج' };
+        // ==================== 9. ROUTINES & CALENDAR ====================
+        var weekDayNamesFA = { 6: 'ش', 0: 'ی', 1: 'د', 2: 'س', 3: 'چ', 4: 'پ', 5: 'ج' };
 
         window.saveOrUpdateRoutine = function() {
-            const editId = document.getElementById('rt-edit-id').value;
-            const title = document.getElementById('rt-title').value.trim();
-            const st = parseTimeStr(document.getElementById('rt-start').value);
-            const et = parseTimeStr(document.getElementById('rt-end').value);
+            var editId = document.getElementById('rt-edit-id').value;
+            var title = document.getElementById('rt-title').value.trim();
+            var st = parseTimeStr(document.getElementById('rt-start').value);
+            var et = parseTimeStr(document.getElementById('rt-end').value);
             if (!title || !st || !et) return alert("لطفاً عنوان و زمان شروع و پایان را وارد کنید.");
 
-            const selectedDays = Array.from(document.querySelectorAll('.rt-day-chk:checked')).map(cb => parseInt(cb.value));
+            var selectedDays = Array.from(document.querySelectorAll('.rt-day-chk:checked')).map(function(cb) { return parseInt(cb.value, 10); });
 
             if (editId) {
-                const r = routines.find(x => String(x.id) === String(editId));
+                var r = routines.find(function(x) { return String(x.id) === String(editId); });
                 if (r) {
                     r.title = title;
                     r.startTime = st.str;
@@ -1403,7 +1445,7 @@
             } else {
                 routines.push({
                     id: Date.now(),
-                    title,
+                    title: title,
                     startTime: st.str,
                     endTime: et.str,
                     startHour: st.h,
@@ -1417,28 +1459,27 @@
         };
 
         window.editRoutine = function(id) {
-            const r = routines.find(x => x.id === id);
+            var r = routines.find(function(x) { return x.id === id; });
             if (!r) return;
             document.getElementById('rt-edit-id').value = r.id;
             document.getElementById('rt-title').value = r.title;
-            const st = parseTimeStr(r.startTime, r.startHour);
-            const et = parseTimeStr(r.endTime, r.endHour);
+            var st = parseTimeStr(r.startTime, r.startHour);
+            var et = parseTimeStr(r.endTime, r.endHour);
             document.getElementById('rt-start').value = st ? st.str : '08:00';
             document.getElementById('rt-end').value = et ? et.str : '14:00';
-            const rDays = r.daysOfWeek || [6,0,1,2,3,4];
-            document.querySelectorAll('.rt-day-chk').forEach(cb => {
-                cb.checked = rDays.includes(parseInt(cb.value));
+            var rDays = r.daysOfWeek || [6,0,1,2,3,4];
+            document.querySelectorAll('.rt-day-chk').forEach(function(cb) {
+                cb.checked = rDays.indexOf(parseInt(cb.value, 10)) !== -1;
             });
             document.getElementById('btn-save-routine').innerText = '✓ بروزرسانی روتین';
             document.getElementById('rt-title').focus();
         };
 
         window.delRoutine = function(id) {
-            routines = routines.filter(r => r.id !== id);
+            routines = routines.filter(function(r) { return r.id !== id; });
             saveAll(); window.renderAll();
         };
 
-        // ==================== CALENDAR & DAY ACTIONS ====================
         window.changeCalMonth = function(delta) {
             cfg.calMonthOffset = (cfg.calMonthOffset || 0) + delta;
             saveAll();
@@ -1449,18 +1490,19 @@
             cfg.selectedISO = isoStr;
             saveAll();
             window.renderAll();
-            document.getElementById('selected-day-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            var panel = document.getElementById('selected-day-panel');
+            if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
         window.addTaskToSelectedDay = function() {
-            const tIn = document.getElementById('day-specific-task-in');
-            const st = parseTimeStr(document.getElementById('day-specific-start-in').value);
-            const et = parseTimeStr(document.getElementById('day-specific-end-in').value);
-            const title = tIn.value.trim();
+            var tIn = document.getElementById('day-specific-task-in');
+            var st = parseTimeStr(document.getElementById('day-specific-start-in').value);
+            var et = parseTimeStr(document.getElementById('day-specific-end-in').value);
+            var title = tIn.value.trim();
             if (!title) return;
             tasks.unshift({
                 id: Date.now(),
-                title,
+                title: title,
                 dateISO: cfg.selectedISO || todayISO,
                 project: 'پروژه اصلی',
                 prio: 'p1',
@@ -1479,10 +1521,10 @@
         };
 
         window.insertContingencyBuffer = function() {
-            const iso = cfg.selectedISO || todayISO;
+            var iso = cfg.selectedISO || todayISO;
             tasks.unshift({
                 id: Date.now(),
-                title: cfg.lang === 'en' ? '⚡ Contingency Buffer (Unexpected Tasks)' : '⚡ ذخیره کارهای اتفاقی و پیش‌بینی‌نشده',
+                title: cfg.lang === 'en' ? '⚡ Contingency Buffer' : '⚡ ذخیره کارهای اتفاقی و پیش‌بینی‌نشده',
                 dateISO: iso,
                 project: 'مدیریت ریسک',
                 prio: 'p2',
@@ -1493,7 +1535,7 @@
                 endTime: '13:30',
                 startHour: 12,
                 endHour: 13,
-                notes: 'رزرو شده برای اتفاقات غیرمنتظره',
+                notes: '',
                 subtasks: []
             });
             saveAll();
@@ -1501,26 +1543,26 @@
         };
 
         window.autoScheduleSelectedDay = function() {
-            const iso = cfg.selectedISO || todayISO;
-            const selDateObj = new Date(iso + 'T12:00:00');
-            const jsDay = selDateObj.getDay();
+            var iso = cfg.selectedISO || todayISO;
+            var selDateObj = new Date(iso + 'T12:00:00');
+            var jsDay = selDateObj.getDay();
 
-            const busy = new Set();
-            routines.filter(r => (r.daysOfWeek || [6,0,1,2,3,4]).includes(jsDay)).forEach(r => {
-                for (let h = r.startHour; h < r.endHour; h++) busy.add(h);
+            var busy = new Set();
+            routines.filter(function(r) { return (r.daysOfWeek || [6,0,1,2,3,4]).indexOf(jsDay) !== -1; }).forEach(function(r) {
+                for (var h = r.startHour; h < r.endHour; h++) busy.add(h);
             });
-            tasks.filter(t => t.dateISO === iso && !t.done && t.startHour).forEach(t => {
-                for (let h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
+            tasks.filter(function(t) { return (t.dateISO || todayISO) === iso && !t.done && t.startHour; }).forEach(function(t) {
+                for (var h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
             });
 
-            let cursor = 8;
-            tasks.filter(t => t.dateISO === iso && !t.done && !t.startHour).forEach(t => {
+            var cursor = 8;
+            tasks.filter(function(t) { return (t.dateISO || todayISO) === iso && !t.done && !t.startHour; }).forEach(function(t) {
                 while (busy.has(cursor) && cursor < 24) cursor++;
                 if (cursor < 24) {
                     t.startHour = cursor;
                     t.endHour = Math.min(24, cursor + 1);
-                    t.startTime = `${String(cursor).padStart(2,'0')}:00`;
-                    t.endTime = `${String(Math.min(24, cursor + 1)).padStart(2,'0')}:00`;
+                    t.startTime = String(cursor).padStart(2,'0') + ':00';
+                    t.endTime = String(Math.min(24, cursor + 1)).padStart(2,'0') + ':00';
                     busy.add(cursor);
                 }
             });
@@ -1528,69 +1570,64 @@
             window.renderAll();
         };
 
-        // ==================== AI CHATBOT ====================
+        // ==================== 10. AI CHATBOT ====================
         window.sendAIChat = function() {
-            const inp = document.getElementById('ai-chat-in');
-            const rawText = inp.value.trim();
+            var inp = document.getElementById('ai-chat-in');
+            var rawText = inp.value.trim();
             if (!rawText) return;
-            const norm = toEnDigits(rawText);
-            const stream = document.getElementById('ai-chat-stream');
+            var norm = toEnDigits(rawText);
+            var stream = document.getElementById('ai-chat-stream');
 
-            stream.innerHTML += `<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">${rawText}</div></div>`;
+            stream.innerHTML += '<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">' + rawText + '</div></div>';
             inp.value = '';
 
-            const moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
-            if (moveMatch && (norm.includes('ببر') || norm.includes('بذار') || norm.includes('ساعت') || norm.toLowerCase().includes('move'))) {
-                const kw = moveMatch[1].trim();
-                const newH = parseInt(moveMatch[2]);
-                const newM = moveMatch[3] ? parseInt(moveMatch[3]) : 0;
-                const found = tasks.find(t => t.title.includes(kw));
+            var moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
+            if (moveMatch && (norm.indexOf('ببر') !== -1 || norm.indexOf('بذار') !== -1 || norm.indexOf('ساعت') !== -1 || norm.toLowerCase().indexOf('move') !== -1)) {
+                var kw = moveMatch[1].trim();
+                var newH = parseInt(moveMatch[2], 10);
+                var newM = moveMatch[3] ? parseInt(moveMatch[3], 10) : 0;
+                var found = tasks.find(function(t) { return t.title.indexOf(kw) !== -1; });
                 if (found && newH >= 3 && newH <= 24) {
                     found.startHour = newH;
                     found.endHour = Math.min(24, newH + 1);
-                    found.startTime = `${String(newH).padStart(2,'0')}:${String(newM).padStart(2,'0')}`;
-                    found.endTime = `${String(Math.min(24, newH + 1)).padStart(2,'0')}:${String(newM).padStart(2,'0')}`;
+                    found.startTime = String(newH).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
+                    found.endTime = String(Math.min(24, newH + 1)).padStart(2,'0') + ':' + String(newM).padStart(2,'0');
                     saveAll(); window.renderAll();
-                    stream.innerHTML += `<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«${found.title}»</strong> به ساعت <strong>${found.startTime}</strong> منتقل شد.</div>`;
+                    stream.innerHTML += '<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«' + found.title + '»</strong> به ساعت <strong>' + found.startTime + '</strong> منتقل شد.</div>';
                     stream.scrollTop = stream.scrollHeight;
                     return;
                 }
             }
 
-            const items = norm.split(/[\n،؛,]+|\s+و\s+/).map(s => s.trim()).filter(s => s.length > 2);
-            const s1 = items.map((title, i) => ({ title, startHour: 8 + i, endHour: 9 + i, startTime: `${String(8+i).padStart(2,'0')}:00`, endTime: `${String(9+i).padStart(2,'0')}:00` }));
-            const s2 = items.map((title, i) => ({ title, startHour: 9 + (i * 2), endHour: 10 + (i * 2), startTime: `${String(9+i*2).padStart(2,'0')}:30`, endTime: `${String(10+i*2).padStart(2,'0')}:30` }));
+            var items = norm.split(/[\n،؛,]+|\s+و\s+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 2; });
+            var s1 = items.map(function(title, i) { return { title: title, startHour: 8 + i, endHour: 9 + i, startTime: String(8+i).padStart(2,'0') + ':00', endTime: String(9+i).padStart(2,'0') + ':00' }; });
+            var s2 = items.map(function(title, i) { return { title: title, startHour: 9 + (i * 2), endHour: 10 + (i * 2), startTime: String(9+i*2).padStart(2,'0') + ':30', endTime: String(10+i*2).padStart(2,'0') + ':30' }; });
             s2.push({ title: '⚡ ذخیره کارهای اتفاقی', startHour: 14, endHour: 15, startTime: '14:15', endTime: '15:00', isBuffer: true });
-            const s3 = items.map((title, i) => ({ title, startHour: 15 + i, endHour: 16 + i, startTime: `${String(15+i).padStart(2,'0')}:00`, endTime: `${String(16+i).padStart(2,'0')}:00` }));
+            var s3 = items.map(function(title, i) { return { title: title, startHour: 15 + i, endHour: 16 + i, startTime: String(15+i).padStart(2,'0') + ':00', endTime: String(16+i).padStart(2,'0') + ':00' }; });
 
             lastAIScenarios = [s1, s2, s3];
 
             function boxHTML(idx, name, list) {
-                return `
-                    <div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2">
-                        <div class="font-bold text-xs text-purple-600">${name}</div>
-                        <div class="space-y-1">${list.map(x => `<div class="flex justify-between text-[11px]"><span>• ${x.title}</span><span class="font-mono">${x.startTime}</span></div>`).join('')}</div>
-                        <button type="button" onclick="window.applyAIScenario(${idx})" class="w-full py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold">✓ انتخاب این برنامه</button>
-                    </div>
-                `;
+                return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2">' +
+                    '<div class="font-bold text-xs text-purple-600">' + name + '</div>' +
+                    '<div class="space-y-1">' + list.map(function(x) { return '<div class="flex justify-between text-[11px]"><span>• ' + x.title + '</span><span class="font-mono">' + x.startTime + '</span></div>'; }).join('') + '</div>' +
+                    '<button type="button" onclick="window.applyAIScenario(' + idx + ')" class="w-full py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold">✓ انتخاب این برنامه</button>' +
+                    '</div>';
             }
 
-            stream.innerHTML += `
-                <div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-                        ${boxHTML(0, '۱. متد قورباغه (صبحگاهی)', s1)}
-                        ${boxHTML(1, '۲. متوازن + ذخیره اتفاقی', s2)}
-                        ${boxHTML(2, '۳. عصرگاهی و سبک', s3)}
-                    </div>
-                </div>
-            `;
+            stream.innerHTML += '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
+                '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">' +
+                boxHTML(0, '۱. متد قورباغه (صبحگاهی)', s1) +
+                boxHTML(1, '۲. متوازن + ذخیره اتفاقی', s2) +
+                boxHTML(2, '۳. عصرگاهی و سبک', s3) +
+                '</div></div>';
             stream.scrollTop = stream.scrollHeight;
         };
 
         window.applyAIScenario = function(idx) {
-            const list = lastAIScenarios[idx];
+            var list = lastAIScenarios[idx];
             if (!list) return;
-            list.forEach(item => {
+            list.forEach(function(item) {
                 tasks.unshift({
                     id: Date.now() + Math.floor(Math.random() * 10000),
                     title: item.title,
@@ -1612,28 +1649,28 @@
             window.openPage('calendar');
         };
 
-        // ==================== SMS POPUP & OTHER MODULES ====================
+        // ==================== 11. SMS POPUP & OTHER MODULES ====================
         window.openSmsFloatPopup = function() {
             document.getElementById('sms-float-popup').classList.remove('hidden');
             window.renderSmsPopupTasks();
         };
         window.closeSmsFloatPopup = function() { document.getElementById('sms-float-popup').classList.add('hidden'); };
         window.renderSmsPopupTasks = function() {
-            const list = tasks.filter(t => !t.done);
-            document.getElementById('sms-popup-tasks').innerHTML = list.slice(0, 4).map(t => `
-                <div class="flex justify-between bg-slate-50 p-1.5 rounded border border-slate-200">
-                    <span>• ${t.title}</span>
-                    <span class="text-[10px] font-mono text-blue-600">${t.startTime || (t.progress || 0) + '%'}</span>
-                </div>
-            `).join('') || `<p class="text-center text-slate-400">✨</p>`;
+            var list = tasks.filter(function(t) { return !t.done; });
+            document.getElementById('sms-popup-tasks').innerHTML = list.slice(0, 4).map(function(t) {
+                return '<div class="flex justify-between bg-slate-50 p-1.5 rounded border border-slate-200">' +
+                    '<span>• ' + t.title + '</span>' +
+                    '<span class="text-[10px] font-mono text-blue-600">' + (t.startTime || (t.progress || 0) + '%') + '</span>' +
+                    '</div>';
+            }).join('') || '<p class="text-center text-slate-400">✨</p>';
         };
         window.sendFromSmsPopup = function() {
-            const inp = document.getElementById('sms-fast-in');
-            const raw = inp.value.trim();
+            var inp = document.getElementById('sms-fast-in');
+            var raw = inp.value.trim();
             if (!raw) return;
-            const norm = toEnDigits(raw);
-            const tMatch = norm.match(/(\d{1,2}):(\d{1,2})/);
-            const st = tMatch ? parseTimeStr(`${tMatch[1]}:${tMatch[2]}`) : null;
+            var norm = toEnDigits(raw);
+            var tMatch = norm.match(/(\d{1,2}):(\d{1,2})/);
+            var st = tMatch ? parseTimeStr(tMatch[1] + ':' + tMatch[2]) : null;
             tasks.unshift({
                 id: Date.now(),
                 title: raw,
@@ -1643,7 +1680,7 @@
                 progress: 0,
                 done: false,
                 startTime: st ? st.str : null,
-                endTime: st ? `${String(Math.min(24, st.h + 1)).padStart(2,'0')}:${String(st.m).padStart(2,'0')}` : null,
+                endTime: st ? String(Math.min(24, st.h + 1)).padStart(2,'0') + ':' + String(st.m).padStart(2,'0') : null,
                 startHour: st ? st.h : null,
                 endHour: st ? Math.min(24, st.h + 1) : null,
                 notes: '',
@@ -1653,53 +1690,53 @@
             saveAll(); window.renderSmsPopupTasks(); window.renderAll();
         };
 
-        window.popOutSmsWindow = async function() {
-            const pop = window.open('', 'SmsPlannerPopup', 'width=310,height=260');
+        window.popOutSmsWindow = function() {
+            var pop = window.open('', 'SmsPlannerPopup', 'width=310,height=260');
             if (pop) {
-                pop.document.write(`<!DOCTYPE html><html dir="rtl"><body style="font-family:Tahoma;padding:12px;background:#fff;"><h4>💬 ثبت سریع</h4><input id="i" style="width:100%;padding:8px;box-sizing:border-box;" placeholder="عنوان کار..."><button onclick="window.close()" style="margin-top:8px;background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;">بستن ×</button></body></html>`);
+                pop.document.write('<!DOCTYPE html><html dir="rtl"><body style="font-family:Tahoma;padding:12px;background:#fff;"><h4>💬 ثبت سریع</h4><input id="i" style="width:100%;padding:8px;box-sizing:border-box;" placeholder="عنوان کار..."><button onclick="window.close()" style="margin-top:8px;background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;">بستن ×</button></body></html>');
                 pop.document.close();
             }
         };
 
         window.addNote = function() {
-            const t = document.getElementById('nt-title').value.trim();
-            const b = document.getElementById('nt-body').value.trim();
+            var t = document.getElementById('nt-title').value.trim();
+            var b = document.getElementById('nt-body').value.trim();
             if (!t && !b) return;
             notes.unshift({ id: Date.now(), title: t || 'یادداشت', body: b });
             document.getElementById('nt-title').value = ''; document.getElementById('nt-body').value = '';
             saveAll(); window.renderAll();
         };
         window.addShop = function() {
-            const t = document.getElementById('sh-title').value.trim();
-            const p = parseFloat(document.getElementById('sh-price').value) || 0;
+            var t = document.getElementById('sh-title').value.trim();
+            var p = parseFloat(document.getElementById('sh-price').value) || 0;
             if (!t) return;
             shops.unshift({ id: Date.now(), title: t, price: p });
             document.getElementById('sh-title').value = ''; document.getElementById('sh-price').value = '';
             saveAll(); window.renderAll();
         };
         window.addTx = function() {
-            const t = document.getElementById('tx-title').value.trim();
-            const a = parseFloat(document.getElementById('tx-amount').value) || 0;
-            const tp = document.getElementById('tx-type').value;
+            var t = document.getElementById('tx-title').value.trim();
+            var a = parseFloat(document.getElementById('tx-amount').value) || 0;
+            var tp = document.getElementById('tx-type').value;
             if (!t || a <= 0) return;
             txs.unshift({ id: Date.now(), title: t, amount: a, type: tp });
             document.getElementById('tx-title').value = ''; document.getElementById('tx-amount').value = '';
             saveAll(); window.renderAll();
         };
         window.addWorkout = function() {
-            const n = document.getElementById('wo-name').value.trim();
+            var n = document.getElementById('wo-name').value.trim();
             if (!n) return;
             workouts.unshift({ id: Date.now(), name: n, sets: document.getElementById('wo-sets').value || '-', time: document.getElementById('wo-time').value || '-' });
             document.getElementById('wo-name').value = ''; saveAll(); window.renderAll();
         };
         window.addTravelItem = function() {
-            const txt = document.getElementById('tr-item').value.trim();
+            var txt = document.getElementById('tr-item').value.trim();
             if (!txt) return;
-            travelItems.unshift({ id: Date.now(), txt });
+            travelItems.unshift({ id: Date.now(), txt: txt });
             document.getElementById('tr-item').value = ''; saveAll(); window.renderAll();
         };
         window.addPlace = function() {
-            const n = document.getElementById('pl-name').value.trim();
+            var n = document.getElementById('pl-name').value.trim();
             if (!n) return;
             places.unshift({ id: Date.now(), name: n, note: document.getElementById('pl-note').value });
             document.getElementById('pl-name').value = ''; saveAll(); window.renderAll();
@@ -1707,220 +1744,192 @@
         window.sendLockScreenNotif = async function() {
             if (!("Notification" in window)) return;
             if (await Notification.requestPermission() === "granted") {
-                const open = tasks.filter(t => !t.done);
-                new Notification("Smart Planner", { body: open[0] ? `${open[0].title} (${open[0].startTime || (open[0].progress||0)+'%'})` : "All tasks done!" });
+                var open = tasks.filter(function(t) { return !t.done; });
+                new Notification("Smart Planner", { body: open[0] ? open[0].title + ' (' + (open[0].startTime || (open[0].progress||0)+'%') + ')' : "All tasks done!" });
             }
         };
-        window.resetAll = function() { if (confirm("Reset all data?")) { localStorage.clear(); location.reload(); } };
+        window.resetAll = function() { if (confirm("پاکسازی کامل حافظه؟")) { localStorage.clear(); location.reload(); } };
 
-        // ==================== MASTER RENDER ENGINE ====================
+        // ==================== 12. MASTER RENDER ENGINE ====================
         function formatTaskTimeBadge(t) {
-            const st = parseTimeStr(t.startTime, t.startHour);
-            const et = parseTimeStr(t.endTime, t.endHour);
+            var st = parseTimeStr(t.startTime, t.startHour);
+            var et = parseTimeStr(t.endTime, t.endHour);
             if (!st) return '';
-            return `<span class="text-amber-600 dark:text-amber-400 font-mono font-bold">🔔 ${st.str}${et ? ' - ' + et.str : ''}</span>`;
+            return '<span class="text-amber-600 dark:text-amber-400 font-mono font-bold">🔔 ' + st.str + (et ? ' - ' + et.str : '') + '</span>';
         }
 
         function taskCardHTML(t) {
-            const prog = t.progress || 0;
-            const dObj = new Date((t.dateISO || todayISO) + 'T12:00:00');
-            const p = getTripleDateParts(dObj);
-            return `
-                <div onclick="window.openDrawer(${t.id})" class="cursor-pointer bg-slate-50 dark:bg-neutral-900 hover:border-blue-400 p-3.5 rounded-2xl border border-slate-200/90 dark:border-neutral-800 space-y-2 transition">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5">
-                            <input type="checkbox" ${t.done ? 'checked' : ''} onclick="window.toggleTask(${t.id}, event)" class="w-4 h-4 accent-blue-600">
-                            <div>
-                                <div class="text-xs sm:text-sm font-bold ${t.done ? 'line-through text-slate-400' : ''}">${t.title}</div>
-                                <div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 mt-0.5">
-                                    <span class="text-indigo-600 dark:text-indigo-400 font-semibold">📅 ${p.jDay} ${p.jMonth} (${t.dateISO})</span>
-                                    <span>📁 ${t.project || 'پروژه اصلی'}</span>
-                                    ${formatTaskTimeBadge(t)}
-                                </div>
-                            </div>
-                        </div>
-                        <span class="text-xs font-mono font-bold text-blue-600 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-lg">${prog}%</span>
-                    </div>
-                    <div class="flex items-center gap-2" onclick="event.stopPropagation()">
-                        <div class="flex-1 bg-slate-200 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-blue-600 h-full rounded-full transition-all" style="width: ${prog}%"></div>
-                        </div>
-                        <input type="range" min="0" max="100" step="10" value="${prog}"
-                            onchange="window.updateTaskProgressInline(${t.id}, this.value, event)"
-                            class="w-20 accent-blue-600 cursor-pointer h-1">
-                    </div>
-                </div>
-            `;
+            var prog = t.progress || 0;
+            var dObj = new Date((t.dateISO || todayISO) + 'T12:00:00');
+            var p = getTripleDateParts(dObj);
+            return '<div onclick="window.openDrawer(' + t.id + ')" class="cursor-pointer bg-slate-50 dark:bg-neutral-900 hover:border-blue-400 p-3.5 rounded-2xl border border-slate-200/90 dark:border-neutral-800 space-y-2 transition">' +
+                '<div class="flex items-center justify-between gap-2">' +
+                '<div class="flex items-center gap-2.5">' +
+                '<input type="checkbox" ' + (t.done ? 'checked' : '') + ' onclick="window.toggleTask(' + t.id + ', event)" class="w-4 h-4 accent-blue-600">' +
+                '<div>' +
+                '<div class="text-xs sm:text-sm font-bold ' + (t.done ? 'line-through text-slate-400' : '') + '">' + t.title + '</div>' +
+                '<div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 mt-0.5">' +
+                '<span class="text-indigo-600 dark:text-indigo-400 font-semibold">📅 ' + p.jDay + ' ' + p.jMonth + ' (' + (t.dateISO || todayISO) + ')</span>' +
+                '<span>📁 ' + (t.project || 'پروژه اصلی') + '</span>' +
+                formatTaskTimeBadge(t) +
+                '</div></div></div>' +
+                '<span class="text-xs font-mono font-bold text-blue-600 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-lg">' + prog + '%</span>' +
+                '</div>' +
+                '<div class="flex items-center gap-2" onclick="event.stopPropagation()">' +
+                '<div class="flex-1 bg-slate-200 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden">' +
+                '<div class="bg-blue-600 h-full rounded-full transition-all" style="width: ' + prog + '%"></div>' +
+                '</div>' +
+                '<input type="range" min="0" max="100" step="10" value="' + prog + '" onchange="window.updateTaskProgressInline(' + t.id + ', this.value, event)" class="w-20 accent-blue-600 cursor-pointer h-1">' +
+                '</div></div>';
         }
 
         window.renderAll = function() {
-            const sortedUpcoming = [...tasks].sort((a, b) => {
-                const dA = a.dateISO || todayISO;
-                const dB = b.dateISO || todayISO;
+            var sortedUpcoming = tasks.slice().sort(function(a, b) {
+                var dA = a.dateISO || todayISO;
+                var dB = b.dateISO || todayISO;
                 if (dA !== dB) return dA.localeCompare(dB);
                 return (a.startHour || 99) - (b.startHour || 99);
             });
 
             document.getElementById('home-upcoming-list').innerHTML = sortedUpcoming.length
                 ? sortedUpcoming.map(taskCardHTML).join('')
-                : `<p class="text-xs text-slate-400 text-center py-6">${cfg.lang==='en'?'No upcoming tasks scheduled.':'هنوز برنامه‌ای در تقویم ثبت نشده است.'}</p>`;
+                : '<p class="text-xs text-slate-400 text-center py-6">' + (cfg.lang==='en'?'No upcoming tasks scheduled.':'هنوز برنامه‌ای در تقویم ثبت نشده است.') + '</p>';
 
             document.getElementById('list-all-todo').innerHTML = sortedUpcoming.length
                 ? sortedUpcoming.map(taskCardHTML).join('')
-                : `<p class="text-xs text-slate-400 text-center py-6">${cfg.lang==='en'?'Task list is empty.':'لیست کارها خالی است.'}</p>`;
+                : '<p class="text-xs text-slate-400 text-center py-6">' + (cfg.lang==='en'?'Task list is empty.':'لیست کارها خالی است.') + '</p>';
 
-            const tomObj = new Date(); tomObj.setDate(tomObj.getDate() + 1);
-            const tomISO = toISODate(tomObj);
-            const tomCount = tasks.filter(t => t.dateISO === tomISO).length;
+            var tomObj = new Date(); tomObj.setDate(tomObj.getDate() + 1);
+            var tomISO = toISODate(tomObj);
+            var tomCount = tasks.filter(function(t) { return t.dateISO === tomISO; }).length;
             document.getElementById('home-tomorrow-summary').innerText = cfg.lang === 'en'
-                ? `Tomorrow Preview (${tomISO}): ${tomCount} tasks (Audio Alert at ${cfg.tomTime})`
-                : `پیش‌نمایش فردا (${tomISO}): ${tomCount} کار ثبت‌شده (آلارم شبانه ساعت ${cfg.tomTime})`;
+                ? 'Tomorrow Preview (' + tomISO + '): ' + tomCount + ' tasks (Audio Alert at ' + cfg.tomTime + ')'
+                : 'پیش‌نمایش فردا (' + tomISO + '): ' + tomCount + ' کار ثبت‌شده (آلارم شبانه ساعت ' + cfg.tomTime + ')';
 
             // Projects Progress Overview
-            const projectGroups = {};
-            tasks.forEach(t => {
-                const pName = t.project || 'پروژه اصلی';
+            var projectGroups = {};
+            tasks.forEach(function(t) {
+                var pName = t.project || 'پروژه اصلی';
                 if (!projectGroups[pName]) projectGroups[pName] = [];
                 projectGroups[pName].push(t.progress || (t.done ? 100 : 0));
             });
 
-            const projKeys = Object.keys(projectGroups);
-            const totalAvg = tasks.length ? Math.round(tasks.reduce((a, b) => a + (b.progress || 0), 0) / tasks.length) : 0;
-            document.getElementById('overall-progress-badge').innerText = `${totalAvg}%`;
+            var projKeys = Object.keys(projectGroups);
+            var totalAvg = tasks.length ? Math.round(tasks.reduce(function(a, b) { return a + (b.progress || 0); }, 0) / tasks.length) : 0;
+            document.getElementById('overall-progress-badge').innerText = totalAvg + '%';
 
-            document.getElementById('home-projects-progress').innerHTML = projKeys.length ? projKeys.map(pk => {
-                const arr = projectGroups[pk];
-                const avg = Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
-                return `
-                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200/70 dark:border-neutral-800 space-y-2">
-                        <div class="flex justify-between text-xs font-bold">
-                            <span>📁 ${pk} (${arr.length})</span>
-                            <span class="font-mono text-emerald-600">${avg}%</span>
-                        </div>
-                        <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
-                            <div class="bg-emerald-500 h-full rounded-full transition-all" style="width: ${avg}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('') : `<p class="text-xs text-slate-400 col-span-2 text-center py-3">---</p>`;
+            document.getElementById('home-projects-progress').innerHTML = projKeys.length ? projKeys.map(function(pk) {
+                var arr = projectGroups[pk];
+                var avg = Math.round(arr.reduce(function(a, b) { return a + b; }, 0) / arr.length);
+                return '<div class="p-3.5 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200/70 dark:border-neutral-800 space-y-2">' +
+                    '<div class="flex justify-between text-xs font-bold"><span>📁 ' + pk + ' (' + arr.length + ')</span><span class="font-mono text-emerald-600">' + avg + '%</span></div>' +
+                    '<div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full rounded-full transition-all" style="width: ' + avg + '%"></div></div>' +
+                    '</div>';
+            }).join('') : '<p class="text-xs text-slate-400 col-span-2 text-center py-3">---</p>';
 
             // Render 7-Day Triple Calendar
-            const baseDate = new Date();
+            var baseDate = new Date();
             baseDate.setMonth(baseDate.getMonth() + (cfg.calMonthOffset || 0));
             baseDate.setDate(1);
 
-            const monthSampleParts = getTripleDateParts(new Date(baseDate.getFullYear(), baseDate.getMonth(), 15));
-            document.getElementById('cal-month-title').innerText = `${monthSampleParts.jMonth} | ${monthSampleParts.gMonth} | ${monthSampleParts.hMonth}`;
+            var monthSampleParts = getTripleDateParts(new Date(baseDate.getFullYear(), baseDate.getMonth(), 15));
+            document.getElementById('cal-month-title').innerText = monthSampleParts.jMonth + ' | ' + monthSampleParts.gMonth + ' | ' + monthSampleParts.hMonth;
 
-            const firstJsDay = baseDate.getDay();
-            const satOffset = (firstJsDay + 1) % 7;
-            const daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate();
+            var firstJsDay = baseDate.getDay();
+            var satOffset = (firstJsDay + 1) % 7;
+            var daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate();
 
-            let calCellsHTML = '';
-            for (let empty = 0; empty < satOffset; empty++) {
-                calCellsHTML += `<div class="p-2 rounded-xl bg-transparent"></div>`;
+            var calCellsHTML = '';
+            for (var empty = 0; empty < satOffset; empty++) {
+                calCellsHTML += '<div class="p-2 rounded-xl bg-transparent"></div>';
             }
 
-            const selISO = cfg.selectedISO || todayISO;
+            var selISO = cfg.selectedISO || todayISO;
 
-            for (let d = 1; d <= daysInMonth; d++) {
-                const cellDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), d, 12, 0, 0);
-                const cellISO = toISODate(cellDate);
-                const parts = getTripleDateParts(cellDate);
-                const occ = getOccasionDetails(parts, cellISO, cellDate.getDay());
-                const isSelected = cellISO === selISO;
-                const isToday = cellISO === todayISO;
-                const dayTasksCount = tasks.filter(t => t.dateISO === cellISO).length;
+            for (var d = 1; d <= daysInMonth; d++) {
+                var cellDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), d, 12, 0, 0);
+                var cellISO = toISODate(cellDate);
+                var parts = getTripleDateParts(cellDate);
+                var occ = getOccasionDetails(parts, cellISO, cellDate.getDay());
+                var isSelected = (cellISO === selISO);
+                var isToday = (cellISO === todayISO);
+                var dayTasksCount = tasks.filter(function(t) { return (t.dateISO || todayISO) === cellISO; }).length;
 
-                calCellsHTML += `
-                    <button type="button" onclick="window.selectCalendarDate('${cellISO}')"
-                        class="p-1.5 sm:p-2 rounded-2xl border transition flex flex-col justify-between min-h-[70px] sm:min-h-[80px] ${isSelected ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 dark:bg-blue-950/50 border-blue-400' : 'bg-slate-50 dark:bg-neutral-900 border-slate-200/80 dark:border-neutral-800 hover:border-blue-400')}">
-                        <div class="w-full flex justify-between items-center text-[9px] sm:text-[10px] ${isSelected ? 'text-blue-100' : 'text-slate-400'} font-mono px-0.5">
-                            <span>${parts.gDay}</span>
-                            <span>${parts.hDay}</span>
-                        </div>
-                        <div class="text-base sm:text-xl font-extrabold my-0.5 leading-none ${(!isSelected && occ.isHoliday) ? 'text-red-500' : ''}">${parts.jDay}</div>
-                        <div class="w-full flex items-center justify-center gap-1">
-                            ${occ.hasEvent ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-amber-300' : 'bg-amber-500'}"></span>` : ''}
-                            ${dayTasksCount > 0 ? `<span class="text-[9px] px-1.5 rounded-full ${isSelected ? 'bg-white text-blue-600 font-bold' : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300'}">${dayTasksCount}</span>` : `<span class="text-[8px] opacity-30">•</span>`}
-                        </div>
-                    </button>
-                `;
+                var btnClass = isSelected
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-md'
+                    : (isToday ? 'bg-blue-50 dark:bg-blue-950/50 border-blue-400' : 'bg-slate-50 dark:bg-neutral-900 border-slate-200/80 dark:border-neutral-800 hover:border-blue-400');
+
+                calCellsHTML += '<button type="button" onclick="window.selectCalendarDate(\'' + cellISO + '\')" class="p-1.5 sm:p-2 rounded-2xl border transition flex flex-col justify-between min-h-[70px] sm:min-h-[80px] ' + btnClass + '">' +
+                    '<div class="w-full flex justify-between items-center text-[9px] sm:text-[10px] ' + (isSelected ? 'text-blue-100' : 'text-slate-400') + ' font-mono px-0.5">' +
+                    '<span>' + parts.gDay + '</span><span>' + parts.hDay + '</span></div>' +
+                    '<div class="text-base sm:text-xl font-extrabold my-0.5 leading-none ' + ((!isSelected && occ.isHoliday) ? 'text-red-500' : '') + '">' + parts.jDay + '</div>' +
+                    '<div class="w-full flex items-center justify-center gap-1">' +
+                    (occ.hasEvent ? '<span class="w-1.5 h-1.5 rounded-full ' + (isSelected ? 'bg-amber-300' : 'bg-amber-500') + '"></span>' : '') +
+                    (dayTasksCount > 0 ? '<span class="text-[9px] px-1.5 rounded-full ' + (isSelected ? 'bg-white text-blue-600 font-bold' : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300') + '">' + dayTasksCount + '</span>' : '<span class="text-[8px] opacity-30">•</span>') +
+                    '</div></button>';
             }
             document.getElementById('triple-calendar-grid').innerHTML = calCellsHTML;
 
             // Selected Day Occasions + Hourly Table (03:00 to 24:00)
-            const selDateObj = new Date(selISO + 'T12:00:00');
-            const selParts = getTripleDateParts(selDateObj);
-            const selJsDay = selDateObj.getDay();
-            const weekdayStr = new Intl.DateTimeFormat(cfg.lang === 'en' ? 'en-US' : 'fa-IR', { weekday: 'long' }).format(selDateObj);
-            const selOcc = getOccasionDetails(selParts, selISO, selJsDay);
+            var selDateObj = new Date(selISO + 'T12:00:00');
+            var selParts = getTripleDateParts(selDateObj);
+            var selJsDay = selDateObj.getDay();
+            var weekdayStr = new Intl.DateTimeFormat(cfg.lang === 'en' ? 'en-US' : 'fa-IR', { weekday: 'long' }).format(selDateObj);
+            var selOcc = getOccasionDetails(selParts, selISO, selJsDay);
 
-            document.getElementById('sel-day-full-dates').innerText = `${weekdayStr} ${selParts.jDay} ${selParts.jMonth} (${selParts.gDay} ${selParts.gMonth} | ${selParts.hDay} ${selParts.hMonth})`;
+            document.getElementById('sel-day-full-dates').innerText = weekdayStr + ' ' + selParts.jDay + ' ' + selParts.jMonth + ' (' + selParts.gDay + ' ' + selParts.gMonth + ' | ' + selParts.hDay + ' ' + selParts.hMonth + ')';
             document.getElementById('sel-day-occasions').innerText = selOcc.text;
 
-            const dayRoutines = routines.filter(r => (r.daysOfWeek || [6,0,1,2,3,4]).includes(selJsDay));
-            const dayTasks = tasks.filter(t => t.dateISO === selISO);
+            var dayRoutines = routines.filter(function(r) { return (r.daysOfWeek || [6,0,1,2,3,4]).indexOf(selJsDay) !== -1; });
+            var dayTasks = tasks.filter(function(t) { return (t.dateISO || todayISO) === selISO; });
 
-            let hoursHTML = '';
-            for (let h = 3; h <= 24; h++) {
-                const rIn = dayRoutines.filter(r => h >= r.startHour && h < r.endHour);
-                const tIn = dayTasks.filter(t => t.startHour && h >= t.startHour && h < (t.endHour || t.startHour + 1));
-                hoursHTML += `
-                    <div class="flex items-center gap-3 py-2 text-xs">
-                        <div class="w-14 font-mono text-slate-400 shrink-0">${String(h).padStart(2, '0')}:00</div>
-                        <div class="flex-1 flex flex-wrap gap-2">
-                            ${rIn.map(r => `
-                                <span onclick="window.editRoutine(${r.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
-                                    🔒 ${r.title} (${r.startTime \vert{}\vert{} r.startHour + ':00'} -${r.endTime || r.endHour + ':00'}) ✏️
-                                </span>
-                            `).join('')}
-                            ${tIn.map(t => {
-                                const st = parseTimeStr(t.startTime, t.startHour);
-                                const et = parseTimeStr(t.endTime, t.endHour);
-                                const timeLabel = st ? `${st.str}${et ? '-' + et.str : ''}` : '';
-                                return `
-                                    <span onclick="window.openDrawer(${t.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">
-                                        🔔 ${t.title}${timeLabel ? `<strong class="font-mono text-[10px] underline">(${timeLabel})</strong>` : ''} (${t.progress || 0}%)
-                                    </span>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                `;
+            var hoursHTML = '';
+            for (var h = 3; h <= 24; h++) {
+                var rIn = dayRoutines.filter(function(r) { return h >= r.startHour && h < r.endHour; });
+                var tIn = dayTasks.filter(function(t) { return t.startHour && h >= t.startHour && h < (t.endHour || t.startHour + 1); });
+                hoursHTML += '<div class="flex items-center gap-3 py-2 text-xs">' +
+                    '<div class="w-14 font-mono text-slate-400 shrink-0">' + String(h).padStart(2, '0') + ':00</div>' +
+                    '<div class="flex-1 flex flex-wrap gap-2">' +
+                    rIn.map(function(r) {
+                        return '<span onclick="window.editRoutine(' + r.id + ')" class="cursor-pointer px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">🔒 ' + r.title + ' (' + (r.startTime || r.startHour + ':00') + ' - ' + (r.endTime || r.endHour + ':00') + ') ✏️</span>';
+                    }).join('') +
+                    tIn.map(function(t) {
+                        var st = parseTimeStr(t.startTime, t.startHour);
+                        var et = parseTimeStr(t.endTime, t.endHour);
+                        var timeLabel = st ? (st.str + (et ? '-' + et.str : '')) : '';
+                        return '<span onclick="window.openDrawer(' + t.id + ')" class="cursor-pointer px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">🔔 ' + t.title + ' ' + (timeLabel ? '<strong class="font-mono text-[10px] underline">(' + timeLabel + ')</strong>' : '') + ' (' + (t.progress || 0) + '%)</span>';
+                    }).join('') +
+                    '</div></div>';
             }
             document.getElementById('hourly-grid-3to24').innerHTML = hoursHTML;
 
-            document.getElementById('list-routines').innerHTML = routines.map(r => {
-                const dBadges = (r.daysOfWeek || [6,0,1,2,3,4]).map(d => weekDayNamesFA[d]).join('، ');
-                return `
-                    <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between text-xs">
-                        <div>
-                            <div class="font-bold text-amber-900 dark:text-amber-200">🔒 ${r.title} (${r.startTime || r.startHour+':00'} - ${r.endTime || r.endHour+':00'})</div>
-                            <div class="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">${dBadges}</div>
-                        </div>
-                        <div class="flex gap-1.5">
-                            <button type="button" onclick="window.editRoutine(${r.id})" class="px-2 py-1 rounded bg-amber-200/80 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-bold">✏️</button>
-                            <button type="button" onclick="window.delRoutine(${r.id})" class="text-red-500 font-bold px-1.5">×</button>
-                        </div>
-                    </div>
-                `;
+            document.getElementById('list-routines').innerHTML = routines.map(function(r) {
+                var dBadges = (r.daysOfWeek || [6,0,1,2,3,4]).map(function(d) { return weekDayNamesFA[d]; }).join('، ');
+                return '<div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between text-xs">' +
+                    '<div><div class="font-bold text-amber-900 dark:text-amber-200">🔒 ' + r.title + ' (' + (r.startTime || r.startHour+':00') + ' - ' + (r.endTime || r.endHour+':00') + ')</div>' +
+                    '<div class="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">' + dBadges + '</div></div>' +
+                    '<div class="flex gap-1.5">' +
+                    '<button type="button" onclick="window.editRoutine(' + r.id + ')" class="px-2 py-1 rounded bg-amber-200/80 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-bold">✏️</button>' +
+                    '<button type="button" onclick="window.delRoutine(' + r.id + ')" class="text-red-500 font-bold px-1.5">×</button>' +
+                    '</div></div>';
             }).join('');
 
-            const inc = txs.filter(x => x.type === 'income').reduce((a, b) => a + b.amount, 0);
-            const exp = txs.filter(x => x.type === 'expense').reduce((a, b) => a + b.amount, 0) + shops.reduce((a, b) => a + b.price, 0);
-            document.getElementById('fin-net-badge').innerText = `${(inc - exp).toLocaleString()}`;
+            var inc = txs.filter(function(x) { return x.type === 'income'; }).reduce(function(a, b) { return a + b.amount; }, 0);
+            var exp = txs.filter(function(x) { return x.type === 'expense'; }).reduce(function(a, b) { return a + b.amount; }, 0) + shops.reduce(function(a, b) { return a + b.price; }, 0);
+            document.getElementById('fin-net-badge').innerText = (inc - exp).toLocaleString();
 
-            document.getElementById('list-notes').innerHTML = notes.map(n => `<div class="bg-white dark:bg-[#1e1e1e] p-4 rounded-xl border border-slate-200 dark:border-neutral-800"><h4 class="font-bold text-sm mb-1">${n.title}</h4><p class="text-xs text-slate-500 whitespace-pre-line">${n.body}</p></div>`).join('');
-            document.getElementById('list-shop').innerHTML = shops.map(s => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${s.title}</span><span class="font-mono text-emerald-600">${s.price.toLocaleString()}</span></div>`).join('');
-            document.getElementById('list-tx').innerHTML = txs.map(x => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${x.title}</span><span class="font-mono font-bold ${x.type==='income'?'text-emerald-600':'text-red-500'}">${x.type==='income'?'+':'-'}${x.amount.toLocaleString()}</span></div>`).join('');
-            document.getElementById('list-workout').innerHTML = workouts.map(w => `<div class="flex justify-between p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span class="font-bold">${w.name}</span><span>${w.sets} | ${w.time}</span></div>`).join('');
-            document.getElementById('list-travel-items').innerHTML = travelItems.map(tr => `<div class="p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">${tr.txt}</div>`).join('');
-            document.getElementById('list-places').innerHTML = places.map(p => `<div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><div class="font-bold text-rose-500">📍 ${p.name}</div><div class="text-slate-500">${p.note}</div></div>`).join('');
+            document.getElementById('list-notes').innerHTML = notes.map(function(n) { return '<div class="bg-white dark:bg-[#1e1e1e] p-4 rounded-xl border border-slate-200 dark:border-neutral-800"><h4 class="font-bold text-sm mb-1">' + n.title + '</h4><p class="text-xs text-slate-500 whitespace-pre-line">' + n.body + '</p></div>'; }).join('');
+            document.getElementById('list-shop').innerHTML = shops.map(function(s) { return '<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>' + s.title + '</span><span class="font-mono text-emerald-600">' + s.price.toLocaleString() + '</span></div>'; }).join('');
+            document.getElementById('list-tx').innerHTML = txs.map(function(x) { return '<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>' + x.title + '</span><span class="font-mono font-bold ' + (x.type==='income'?'text-emerald-600':'text-red-500') + '">' + (x.type==='income'?'+':'-') + x.amount.toLocaleString() + '</span></div>'; }).join('');
+            document.getElementById('list-workout').innerHTML = workouts.map(function(w) { return '<div class="flex justify-between p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span class="font-bold">' + w.name + '</span><span>' + w.sets + ' | ' + w.time + '</span></div>'; }).join('');
+            document.getElementById('list-travel-items').innerHTML = travelItems.map(function(tr) { return '<div class="p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">' + tr.txt + '</div>'; }).join('');
+            document.getElementById('list-places').innerHTML = places.map(function(p) { return '<div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><div class="font-bold text-rose-500">📍 ' + p.name + '</div><div class="text-slate-500">' + p.note + '</div></div>'; }).join('');
         };
 
+        // Initialize immediately on load
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('quick-date-in').value = todayISO;
+            var qDate = document.getElementById('quick-date-in');
+            if (qDate) qDate.value = todayISO;
             window.applySettings();
             window.renderAll();
         });
