@@ -34,13 +34,12 @@
 </head>
 <body class="bg-[#f8fafc] dark:bg-[#121212] text-slate-800 dark:text-slate-100 min-h-screen font-sans pb-16">
 
-    <!-- MAIN CONTAINER -->
     <div class="max-w-5xl mx-auto w-full p-3.5 sm:p-6">
 
-        <!-- ==================== HOME SCREEN (DEFAULT LAUNCHER VIEW) ==================== -->
+        <!-- ==================== HOME SCREEN (LAUNCHER VIEW) ==================== -->
         <div id="screen-home" class="page-screen active space-y-6">
 
-            <!-- Top Status Header (Compact) -->
+            <!-- Top Status Header -->
             <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-[#1e1e1e] px-4 py-3 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center shadow-sm">
@@ -48,77 +47,74 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-sm sm:text-base" data-i18n="appTitle">پلنر جامع هوشمند</h1>
-                        <p class="text-[11px] text-slate-500 dark:text-neutral-400" id="live-header-dates">در حال محاسبه تاریخ شمسی، میلادی و قمری...</p>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400" id="live-header-dates">...</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="window.triggerEmergencyMode()" class="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold flex items-center gap-1 shadow-xs">
-                        <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> <span data-i18n="emergencyBtn">حالت اضطراری</span>
-                    </button>
-                    <div class="flex items-center gap-0.5 bg-slate-100 dark:bg-neutral-800 p-1 rounded-xl text-xs">
-                        <button type="button" onclick="window.setMood('energetic')" id="mood-energetic" class="px-1.5 py-0.5 rounded-lg">🔥</button>
-                        <button type="button" onclick="window.setMood('focused')" id="mood-focused" class="px-1.5 py-0.5 rounded-lg">😊</button>
-                        <button type="button" onclick="window.setMood('calm')" id="mood-calm" class="px-1.5 py-0.5 rounded-lg">😐</button>
-                        <button type="button" onclick="window.setMood('tired')" id="mood-tired" class="px-1.5 py-0.5 rounded-lg">😴</button>
-                        <button type="button" onclick="window.setMood('stressed')" id="mood-stressed" class="px-1.5 py-0.5 rounded-lg">🤯</button>
-                    </div>
+                <!-- Mood Selector Only (Emergency Removed) -->
+                <div class="flex items-center gap-1 bg-slate-100 dark:bg-neutral-800 p-1.5 rounded-xl text-xs">
+                    <span class="text-[11px] text-slate-500 dark:text-neutral-400 px-1" data-i18n="moodLabel">حالت روحی:</span>
+                    <button type="button" onclick="window.setMood('energetic')" id="mood-energetic" class="px-1.5 py-0.5 rounded-lg">🔥</button>
+                    <button type="button" onclick="window.setMood('focused')" id="mood-focused" class="px-1.5 py-0.5 rounded-lg">😊</button>
+                    <button type="button" onclick="window.setMood('calm')" id="mood-calm" class="px-1.5 py-0.5 rounded-lg">😐</button>
+                    <button type="button" onclick="window.setMood('tired')" id="mood-tired" class="px-1.5 py-0.5 rounded-lg">😴</button>
+                    <button type="button" onclick="window.setMood('stressed')" id="mood-stressed" class="px-1.5 py-0.5 rounded-lg">🤯</button>
                 </div>
             </div>
 
-            <!-- 1. ICON LAUNCHER GRID AT TOP OF PAGE (Opens Dedicated Pages) -->
+            <!-- 1. ICON LAUNCHER GRID AT TOP OF PAGE -->
             <div class="bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs">
                 <div class="grid grid-cols-4 sm:grid-cols-8 gap-2.5 sm:gap-3 text-center">
-                    <button type="button" onclick="window.openPage('calendar')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-indigo-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('calendar')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-indigo-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-regular fa-calendar-days"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconCalendar">تقویم و روتین</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('todo')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-red-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('todo')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-red-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-solid fa-list-check"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconTodo">لیست کارها</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('ai')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-purple-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('ai')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-purple-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-solid fa-robot"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconAI">چت‌بات AI</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('notes')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-amber-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('notes')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-amber-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-regular fa-note-sticky"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconNotes">یادداشت‌ها</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('shopping')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-emerald-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('shopping')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-emerald-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconShopping">خرید و مالی</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('workout')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-orange-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('workout')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-solid fa-dumbbell"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconWorkout">ورزش</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('travel')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-cyan-50 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('travel')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-cyan-50 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-950/80 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-solid fa-earth-americas"></i>
                         </div>
                         <span class="text-[11px] font-bold" data-i18n="iconTravel">سفر و مکان‌ها</span>
                     </button>
 
-                    <button type="button" onclick="window.openPage('settings')" class="group flex flex-col items-center gap-1.5 p-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-neutral-800 transition">
+                    <button type="button" onclick="window.openPage('settings')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-neutral-800 transition">
                         <div class="w-12 h-12 rounded-2xl bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 transition">
                             <i class="fa-solid fa-sliders"></i>
                         </div>
@@ -127,47 +123,55 @@
                 </div>
             </div>
 
-            <!-- 2. QUICK ADD TASK BAR (UNDER THE ICONS - WITH DATE PICKER & PROGRESS %) -->
+            <!-- 2. QUICK ADD TASK BAR (WITH EXACT DATE, HOUR:MINUTE & PROGRESS %) -->
             <div class="bg-white dark:bg-[#1e1e1e] rounded-2xl p-3.5 border border-slate-200/90 dark:border-neutral-800 shadow-xs space-y-2.5">
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
                     <i class="fa-solid fa-bolt text-blue-600 px-1"></i>
                     <input type="text" id="quick-task-in" data-i18n-placeholder="quickAddPlaceholder"
-                        placeholder="ثبت سریع کار یا پروژه جدید... (مثلاً: طراحی رابط کاربری ساعت ۱۰)" 
+                        placeholder="ثبت سریع کار یا پروژه جدید..." 
                         class="flex-1 min-w-[200px] bg-transparent text-xs sm:text-sm px-2 py-1 focus:outline-none"
                         onkeydown="if(event.key==='Enter') window.addQuickTask()">
                     <button type="button" onclick="window.addQuickTask()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shrink-0 shadow-xs" data-i18n="addBtn">+ ثبت کار</button>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-100 dark:border-neutral-800 text-xs">
-                    <!-- Date Picker instead of Today/Tomorrow -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 border-t border-slate-100 dark:border-neutral-800 text-xs">
+                    <!-- Date Picker -->
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <i class="fa-regular fa-calendar text-blue-500"></i>
                         <input type="date" id="quick-date-in" class="bg-transparent w-full text-[11px] focus:outline-none cursor-pointer">
                     </div>
 
-                    <!-- Category / Project Name -->
+                    <!-- Start & End Time with Minute Precision (HH:MM) -->
+                    <div class="flex items-center gap-1 bg-slate-50 dark:bg-neutral-900 px-2 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
+                        <i class="fa-regular fa-clock text-emerald-500"></i>
+                        <input type="time" id="quick-start-time" title="ساعت و دقیقه شروع" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
+                        <span class="text-slate-400">-</span>
+                        <input type="time" id="quick-end-time" title="ساعت و دقیقه پایان" class="bg-transparent w-full text-[11px] font-mono focus:outline-none">
+                    </div>
+
+                    <!-- Category / Project -->
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <i class="fa-regular fa-folder text-indigo-500"></i>
                         <select id="quick-proj-in" class="bg-transparent w-full text-[11px] focus:outline-none">
-                            <option value="پروژه اصلی">پروژه اصلی / کاری</option>
-                            <option value="تولید محتوا و طراحی">تولید محتوا و طراحی</option>
-                            <option value="آموزش و مطالعه">آموزش و مطالعه</option>
-                            <option value="امور شخصی و اداری">امور شخصی و اداری</option>
+                            <option value="پروژه اصلی" data-i18n="projMain">پروژه اصلی / کاری</option>
+                            <option value="تولید محتوا و طراحی" data-i18n="projContent">تولید محتوا و طراحی</option>
+                            <option value="آموزش و مطالعه" data-i18n="projStudy">آموزش و مطالعه</option>
+                            <option value="امور شخصی و اداری" data-i18n="projPersonal">امور شخصی و اداری</option>
                         </select>
                     </div>
 
                     <!-- Priority -->
                     <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
                         <select id="quick-prio-in" class="bg-transparent w-full text-[11px] focus:outline-none">
-                            <option value="p1">🔴 اولویت فوری (P1)</option>
-                            <option value="p2" selected>🟡 اولویت مهم (P2)</option>
-                            <option value="p3">🔵 اولویت عادی (P3)</option>
+                            <option value="p1">🔴 P1</option>
+                            <option value="p2" selected>🟡 P2</option>
+                            <option value="p3">🔵 P3</option>
                         </select>
                     </div>
 
-                    <!-- Initial Progress % -->
-                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
-                        <span class="text-[11px] text-slate-500 shrink-0">پیشرفت: <strong id="quick-prog-val" class="text-blue-600">0%</strong></span>
+                    <!-- Progress % -->
+                    <div class="col-span-2 sm:col-span-1 flex items-center gap-2 bg-slate-50 dark:bg-neutral-900 px-2.5 py-1.5 rounded-xl border border-slate-200/60 dark:border-neutral-800">
+                        <span class="text-[11px] text-slate-500 shrink-0"><strong id="quick-prog-val" class="text-blue-600">0%</strong></span>
                         <input type="range" id="quick-prog-in" min="0" max="100" step="10" value="0"
                             oninput="document.getElementById('quick-prog-val').innerText = this.value + '%'"
                             class="w-full accent-blue-600 cursor-pointer">
@@ -175,159 +179,179 @@
                 </div>
             </div>
 
-            <!-- 3. UPCOMING SCHEDULE BASED ON CALENDAR (UNDER QUICK ADD) -->
+            <!-- 3. UPCOMING SCHEDULE BASED ON CALENDAR -->
             <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-calendar-check text-blue-600 text-base"></i>
-                        <h2 class="font-bold text-sm sm:text-base" data-i18n="upcomingHeader">برنامه‌های پیش‌رو بر اساس تقویم (روی هر کار برای زیرمنوی جزئیات کلیک کنید)</h2>
+                        <h2 class="font-bold text-sm sm:text-base" data-i18n="upcomingHeader">برنامه‌های پیش‌رو بر اساس تقویم</h2>
                     </div>
-                    <button type="button" onclick="window.openPage('calendar')" class="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline">
-                        باز کردن تقویم کامل ❮
+                    <button type="button" onclick="window.openPage('calendar')" class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-neutral-800 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <i class="fa-regular fa-calendar"></i>
                     </button>
+                </div>
+
+                <!-- Today's Calendar Occasion Banner on Home -->
+                <div class="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/50 rounded-xl p-2.5 px-3 flex items-center gap-2 text-xs text-amber-900 dark:text-amber-200">
+                    <i class="fa-solid fa-star text-amber-500"></i>
+                    <span id="home-today-occasion">...</span>
                 </div>
 
                 <!-- Night-Before Tomorrow Preview Alert Box -->
                 <div class="bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/50 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-moon text-indigo-600 dark:text-indigo-400"></i>
-                        <span id="home-tomorrow-summary" class="font-medium text-indigo-950 dark:text-indigo-200">پیش‌نمایش شبانه فردا</span>
+                        <span id="home-tomorrow-summary" class="font-medium text-indigo-950 dark:text-indigo-200">...</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="text-[11px] text-indigo-700 dark:text-indigo-300">ساعت یادآوری شبانه:</span>
+                        <span class="text-[11px] text-indigo-700 dark:text-indigo-300" data-i18n="alertTimeLabel">ساعت یادآوری شبانه:</span>
                         <input type="time" id="home-tom-time" value="20:00" onchange="window.setTomorrowTime(this.value)"
                             class="bg-white dark:bg-neutral-900 border border-indigo-300 dark:border-indigo-700 rounded px-2 py-0.5 font-mono text-[11px]">
                     </div>
                 </div>
 
-                <!-- Upcoming Tasks List Sorted by Calendar Date -->
+                <!-- Upcoming Tasks List -->
                 <div id="home-upcoming-list" class="space-y-2.5"></div>
             </div>
 
-            <!-- 4. PROJECTS & TASKS PROGRESS OVERVIEW (AT THE BOTTOM OF HOME) -->
+            <!-- 4. PROJECTS & TASKS PROGRESS OVERVIEW -->
             <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200/80 dark:border-neutral-800 shadow-xs space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-sm sm:text-base flex items-center gap-2">
                         <i class="fa-solid fa-chart-pie text-emerald-500"></i>
-                        <span data-i18n="projectsProgressHeader">نمای کلی از درصد پیشرفت پروژه‌ها و اهداف</span>
+                        <span data-i18n="projectsProgressHeader">نمای کلی از درصد پیشرفت پروژه‌ها</span>
                     </h2>
-                    <span id="overall-progress-badge" class="text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full">0% کل</span>
+                    <span id="overall-progress-badge" class="text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full">0%</span>
                 </div>
                 <div id="home-projects-progress" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </div>
 
         </div>
 
-        <!-- ==================== DEDICATED PAGE 1: CALENDAR (7-DAY WEEK + TRIPLE DATES + 3:00 TO 24:00 + ROUTINES) ==================== -->
+        <!-- ==================== DEDICATED PAGE 1: CALENDAR (ICON-ONLY NAV + OCCASIONS + HH:MM) ==================== -->
         <div id="screen-calendar" class="page-screen space-y-6">
-            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
+            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white text-xs font-bold flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-arrow-right"></i> بازگشت به صفحه اصلی
+                    <!-- Icon Only Back Button -->
+                    <button type="button" onclick="window.openPage('home')" title="Home" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                        <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
                     </button>
-                    <h2 class="font-bold text-sm sm:text-base">تقویم سه‌گانه (شمسی، میلادی، قمری) و بلوک‌بندی ساعتی</h2>
+                    <h2 class="font-bold text-sm sm:text-base" data-i18n="calPageHeader">تقویم سه‌گانه، مناسبت‌ها و بلوک‌بندی ساعتی</h2>
                 </div>
+                <!-- Icon Only Prev / Next Month Buttons -->
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="window.changeCalMonth(-1)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-neutral-800 text-xs font-bold">❮ ماه قبل</button>
-                    <span id="cal-month-title" class="font-bold text-xs sm:text-sm text-blue-600 dark:text-blue-400">...</span>
-                    <button type="button" onclick="window.changeCalMonth(1)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-neutral-800 text-xs font-bold">ماه بعد ❯</button>
+                    <button type="button" onclick="window.changeCalMonth(-1)" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center text-xs transition">
+                        <i class="fa-solid fa-chevron-right rtl:rotate-0 ltr:rotate-180"></i>
+                    </button>
+                    <span id="cal-month-title" class="font-bold text-xs sm:text-sm text-blue-600 dark:text-blue-400 min-w-[140px] text-center">...</span>
+                    <button type="button" onclick="window.changeCalMonth(1)" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center text-xs transition">
+                        <i class="fa-solid fa-chevron-left rtl:rotate-0 ltr:rotate-180"></i>
+                    </button>
                 </div>
             </div>
 
             <!-- 7-Day Week Header + Triple Date Calendar Grid -->
             <div class="bg-white dark:bg-[#1e1e1e] p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 shadow-xs">
-                <!-- 7 Days of the Week Header -->
                 <div class="grid grid-cols-7 gap-1.5 sm:gap-2 text-center text-[11px] sm:text-xs font-bold text-slate-500 dark:text-neutral-400 pb-2 mb-2 border-b border-slate-100 dark:border-neutral-800">
-                    <div>شنبه</div>
-                    <div>یکشنبه</div>
-                    <div>دوشنبه</div>
-                    <div>سه‌شنبه</div>
-                    <div>چهارشنبه</div>
-                    <div>پنجشنبه</div>
-                    <div class="text-red-500">جمعه</div>
+                    <div data-i18n="wdSat">شنبه</div>
+                    <div data-i18n="wdSun">یکشنبه</div>
+                    <div data-i18n="wdMon">دوشنبه</div>
+                    <div data-i18n="wdTue">سه‌شنبه</div>
+                    <div data-i18n="wdWed">چهارشنبه</div>
+                    <div data-i18n="wdThu">پنجشنبه</div>
+                    <div class="text-red-500" data-i18n="wdFri">جمعه</div>
                 </div>
-                <!-- Calendar Days Cells -->
                 <div id="triple-calendar-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
             </div>
 
             <!-- SELECTED DAY VIEW: SOLAR/LUNAR OCCASIONS BANNER + 03:00 TO 24:00 GRID -->
             <div id="selected-day-panel" class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border-2 border-blue-500/30 shadow-sm space-y-4">
-                <!-- Day Header + Occasions Box -->
-                <div class="bg-gradient-to-l from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/30 p-4 rounded-xl border border-blue-200/70 dark:border-blue-800/50 space-y-2">
+                <div class="bg-gradient-to-l from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/30 p-4 rounded-xl border border-blue-200/70 dark:border-blue-800/50 space-y-2.5">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <h3 class="font-bold text-sm sm:text-base text-blue-950 dark:text-blue-200" id="sel-day-full-dates">...</h3>
                         <div class="flex gap-2">
-                            <button type="button" onclick="window.insertContingencyBuffer()" class="px-3 py-1 bg-amber-500 text-white rounded-lg text-xs font-bold">⚡ + بلوک کارهای اتفاقی</button>
-                            <button type="button" onclick="window.autoScheduleSelectedDay()" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold">چیدمان خودکار روز</button>
+                            <button type="button" onclick="window.insertContingencyBuffer()" class="px-3 py-1 bg-amber-500 text-white rounded-lg text-xs font-bold" data-i18n="bufferBtn">⚡ + ذخیره اتفاقی</button>
+                            <button type="button" onclick="window.autoScheduleSelectedDay()" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold" data-i18n="autoFillBtn">چیدمان خودکار روز</button>
                         </div>
                     </div>
-                    <!-- Solar & Lunar Occasions Display -->
-                    <div class="flex items-center gap-2 text-xs text-indigo-800 dark:text-indigo-300 pt-1 border-t border-blue-200/50 dark:border-blue-800/40">
-                        <i class="fa-solid fa-star-and-crescent text-amber-500"></i>
-                        <strong>مناسبت‌های شمسی و قمری این روز:</strong>
-                        <span id="sel-day-occasions" class="font-semibold">...</span>
+                    <!-- Solar, Lunar & Custom Occasions Display -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-indigo-800 dark:text-indigo-300 pt-2 border-t border-blue-200/50 dark:border-blue-800/40">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-star-and-crescent text-amber-500"></i>
+                            <strong data-i18n="occasionsLabel">مناسبت‌های این روز:</strong>
+                            <span id="sel-day-occasions" class="font-semibold">...</span>
+                        </div>
+                        <button type="button" onclick="window.addCustomOccasionPrompt()" class="text-[11px] bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-neutral-700 font-bold text-indigo-600 dark:text-indigo-300">
+                            + ثبت مناسبت شخصی
+                        </button>
                     </div>
                 </div>
 
-                <!-- Quick Add to This Specific Day (3:00 to 24:00) -->
-                <div class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 dark:bg-neutral-900 p-2.5 rounded-xl text-xs">
-                    <input type="text" id="day-specific-task-in" placeholder="ثبت کار جدید در این روز..." class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-3 py-1.5">
-                    <input type="number" id="day-specific-hour-in" min="3" max="24" placeholder="ساعت (3 تا 24)" class="w-32 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-2.5 py-1.5">
-                    <button type="button" onclick="window.addTaskToSelectedDay()" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-bold">+ افزودن به جدول</button>
+                <!-- Quick Add to This Specific Day with Hour & Minute (HH:MM) -->
+                <div class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 dark:bg-neutral-900 p-2.5 rounded-xl text-xs items-center">
+                    <input type="text" id="day-specific-task-in" data-i18n-placeholder="dayTaskPlaceholder" placeholder="ثبت کار جدید در این روز..." class="flex-1 min-w-[160px] bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-3 py-1.5">
+                    <div class="flex items-center gap-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-2 py-1">
+                        <span class="text-[10px] text-slate-400" data-i18n="fromLabel">از:</span>
+                        <input type="time" id="day-specific-start-in" value="09:00" class="bg-transparent font-mono text-xs focus:outline-none">
+                        <span class="text-[10px] text-slate-400" data-i18n="toLabel">تا:</span>
+                        <input type="time" id="day-specific-end-in" value="10:30" class="bg-transparent font-mono text-xs focus:outline-none">
+                    </div>
+                    <button type="button" onclick="window.addTaskToSelectedDay()" class="px-4 py-1.5 bg-blue-600 text-white rounded-lg font-bold shrink-0" data-i18n="addBtn">+ ثبت</button>
                 </div>
 
                 <!-- Hourly Timeblocking Table (03:00 AM to 24:00 Midnight) -->
                 <div class="border border-slate-200 dark:border-neutral-800 rounded-xl overflow-hidden">
                     <div class="bg-slate-100 dark:bg-neutral-800 px-4 py-2 text-xs font-bold flex justify-between">
-                        <span>جدول بلوک‌بندی ساعتی (از ساعت ۳ بامداد تا ۲۴ شب)</span>
-                        <span class="text-slate-500">🔒 طلایی: روتین ثابت | 🔵 آبی: کار روز</span>
+                        <span data-i18n="hourlyTableTitle">جدول بلوک‌بندی ساعتی و دقیقه‌ای (۰۳:۰۰ بامداد تا ۲۴:۰۰ شب)</span>
+                        <span class="text-slate-500 text-[11px]">🔒 روتین ثابت | 🔵 کار روز</span>
                     </div>
                     <div id="hourly-grid-3to24" class="divide-y divide-slate-100 dark:divide-neutral-800 max-h-[520px] overflow-y-auto px-3"></div>
                 </div>
             </div>
 
-            <!-- FIXED ROUTINES WITH DAY-OF-WEEK SELECTION & EDITING -->
+            <!-- FIXED ROUTINES WITH HH:MM PRECISION & DAY-OF-WEEK SELECTION -->
             <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-4">
                 <h3 class="font-bold text-sm flex items-center gap-2">
                     <i class="fa-solid fa-lock text-amber-500"></i>
-                    <span>مدیریت و ویرایش کارهای ثابت (روتین‌ها) با انتخاب روزهای هفته</span>
+                    <span data-i18n="fixedRoutinesTitle">مدیریت و ویرایش کارهای ثابت (روتین‌ها) با ساعت، دقیقه و روز هفته</span>
                 </h3>
                 <input type="hidden" id="rt-edit-id" value="">
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-xs">
-                    <input type="text" id="rt-title" placeholder="عنوان کار ثابت (مثلاً: کلاس، ورزش، محل کار)" class="sm:col-span-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2">
-                    <div class="flex gap-2">
-                        <input type="number" id="rt-start" min="3" max="23" placeholder="از ساعت (3-23)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2">
-                        <input type="number" id="rt-end" min="4" max="24" placeholder="تا ساعت (4-24)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2">
+                    <input type="text" id="rt-title" data-i18n-placeholder="routinePlaceholder" placeholder="عنوان کار ثابت (مثلاً: کلاس، ورزش، محل کار)" class="sm:col-span-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2">
+                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2.5 py-1.5">
+                        <input type="time" id="rt-start" value="08:00" class="w-full bg-transparent font-mono text-xs focus:outline-none">
+                        <span>-</span>
+                        <input type="time" id="rt-end" value="14:00" class="w-full bg-transparent font-mono text-xs focus:outline-none">
                     </div>
-                    <button type="button" onclick="window.saveOrUpdateRoutine()" id="btn-save-routine" class="bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold py-2">
+                    <button type="button" onclick="window.saveOrUpdateRoutine()" id="btn-save-routine" class="bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold py-2" data-i18n="saveRoutineBtn">
                         + ذخیره روتین ثابت
                     </button>
                 </div>
 
-                <!-- Days of Week Checkboxes for Routine -->
+                <!-- Days of Week Checkboxes -->
                 <div class="flex flex-wrap items-center gap-2 text-xs bg-slate-50 dark:bg-neutral-900 p-3 rounded-xl">
-                    <span class="font-bold text-slate-500 ml-2">روزهای تکرار این روتین:</span>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="6" checked> شنبه</label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="0" checked> یکشنبه</label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="1" checked> دوشنبه</label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="2" checked> سه‌شنبه</label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="3" checked> چهارشنبه</label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="4" checked> پنجشنبه</label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="5"> جمعه</label>
+                    <span class="font-bold text-slate-500 me-2" data-i18n="repeatDaysLabel">روزهای هفته:</span>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="6" checked> <span data-i18n="wdSat">شنبه</span></label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="0" checked> <span data-i18n="wdSun">یکشنبه</span></label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="1" checked> <span data-i18n="wdMon">دوشنبه</span></label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="2" checked> <span data-i18n="wdTue">سه‌شنبه</span></label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="3" checked> <span data-i18n="wdWed">چهارشنبه</span></label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="4" checked> <span data-i18n="wdThu">پنجشنبه</span></label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-white dark:bg-neutral-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-neutral-700"><input type="checkbox" class="rt-day-chk accent-amber-500" value="5"> <span data-i18n="wdFri">جمعه</span></label>
                 </div>
 
                 <div id="list-routines" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
             </div>
         </div>
 
-        <!-- ==================== DEDICATED PAGE 2: TO-DO LIST (WITH DATE PICKER & PROGRESS %) ==================== -->
+        <!-- ==================== DEDICATED PAGE 2: TO-DO LIST ==================== -->
         <div id="screen-todo" class="page-screen space-y-5">
-            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
+            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white text-xs font-bold flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-right"></i> صفحه اصلی
+                    <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                        <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
                     </button>
-                    <h2 class="font-bold text-sm sm:text-base">مدیریت کارها (بر اساس تاریخ و درصد پیشرفت)</h2>
+                    <h2 class="font-bold text-sm sm:text-base" data-i18n="todoPageHeader">مدیریت کارها (بر اساس تاریخ، ساعت دقیق و درصد پیشرفت)</h2>
                 </div>
             </div>
             <div id="list-all-todo" class="space-y-2.5"></div>
@@ -335,60 +359,64 @@
 
         <!-- ==================== DEDICATED PAGE 3: AI CHAT PLANNER ==================== -->
         <div id="screen-ai" class="page-screen space-y-4">
-            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
+            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white text-xs font-bold flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-right"></i> صفحه اصلی
+                    <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                        <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
                     </button>
-                    <h2 class="font-bold text-sm sm:text-base">چت‌بات هوشمند برنامه‌ریزی (چندکاره + متد روز دنیا)</h2>
+                    <h2 class="font-bold text-sm sm:text-base" data-i18n="aiPageHeader">چت‌بات هوشمند برنامه‌ریزی (چندکاره + متد روز دنیا)</h2>
                 </div>
                 <select id="ai-method-select" class="bg-purple-50 dark:bg-neutral-800 border border-purple-200 dark:border-purple-800 rounded-xl px-3 py-1.5 text-xs font-bold text-purple-700 dark:text-purple-300">
-                    <option value="frog">🐸 متد قورباغه‌ات را قورت بده</option>
-                    <option value="deep">🧠 متد کار عمیق (Deep Work)</option>
-                    <option value="balanced">⚖️ متد متوازن + ذخیره کارهای اتفاقی</option>
+                    <option value="frog">🐸 Eat That Frog</option>
+                    <option value="deep">🧠 Deep Work</option>
+                    <option value="balanced">⚖️ Balanced + Buffer</option>
                 </select>
             </div>
 
             <div class="bg-white dark:bg-[#1e1e1e] rounded-2xl border border-purple-200 dark:border-purple-900/50 flex flex-col h-[540px] overflow-hidden">
                 <div id="ai-chat-stream" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs sm:text-sm">
-                    <div class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl max-w-2xl leading-relaxed">
-                        سلام! 👋 لیست کارهای خود را با علامت ویرگول «،» یا در چند خط بنویسید (مثلاً: <em>طراحی سایت ۲ ساعت، تدوین ویدیو، مطالعه</em>). من ۳ سناریوی زمان‌بندی پیشنهاد می‌دهم و هر زمان بگویید <em>«فلان کار رو ببر ساعت ۱۶»</em> جای آن را در جدول عوض می‌کنم!
+                    <div class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl max-w-2xl leading-relaxed" data-i18n="aiWelcomeMsg">
+                        سلام! 👋 لیست کارهای خود را با علامت ویرگول «،» یا در چند خط بنویسید (مثلاً: طراحی سایت، تدوین ویدیو، مطالعه). من ۳ سناریوی زمان‌بندی پیشنهاد می‌دهم و هر زمان بگویید «فلان کار رو ببر ساعت ۱۶:۳۰» جای آن را در جدول عوض می‌کنم!
                     </div>
                 </div>
                 <div class="p-3 bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-800 flex items-end gap-2">
-                    <textarea id="ai-chat-in" rows="2" placeholder="کارها را با ویرگول بنویسید... یا دستور دهید: «طراحی سایت رو ببر ساعت ۱۶»"
+                    <textarea id="ai-chat-in" rows="2" data-i18n-placeholder="aiInputPlaceholder" placeholder="کارها را با ویرگول بنویسید... یا دستور دهید: «طراحی سایت رو ببر ساعت ۱۶:۳۰»"
                         class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none resize-none"></textarea>
-                    <button type="button" onclick="window.sendAIChat()" class="px-5 py-3 bg-purple-600 text-white rounded-xl text-xs font-bold shrink-0">ارسال و تحلیل</button>
+                    <button type="button" onclick="window.sendAIChat()" class="px-5 py-3 bg-purple-600 text-white rounded-xl text-xs font-bold shrink-0" data-i18n="sendChatBtn">ارسال و تحلیل</button>
                 </div>
             </div>
         </div>
 
         <!-- ==================== DEDICATED PAGE 4: NOTES ==================== -->
         <div id="screen-notes" class="page-screen space-y-4">
-            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold"><i class="fa-solid fa-arrow-right"></i> صفحه اصلی</button>
-                <h2 class="font-bold text-sm sm:text-base">دفترچه یادداشت‌ها (Notes)</h2>
+            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
+                </button>
+                <h2 class="font-bold text-sm sm:text-base" data-i18n="notesPageHeader">دفترچه یادداشت‌ها (Notes)</h2>
             </div>
             <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <input type="text" id="nt-title" placeholder="عنوان یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs font-bold mb-2">
                 <textarea id="nt-body" rows="3" placeholder="متن یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs mb-2"></textarea>
-                <button type="button" onclick="window.addNote()" class="px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold">+ ذخیره یادداشت</button>
+                <button type="button" onclick="window.addNote()" class="px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold" data-i18n="saveNoteBtn">+ ذخیره یادداشت</button>
             </div>
             <div id="list-notes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
         <!-- ==================== DEDICATED PAGE 5: SHOPPING & FINANCE ==================== -->
         <div id="screen-shopping" class="page-screen space-y-5">
-            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
+            <div class="flex items-center justify-between bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold"><i class="fa-solid fa-arrow-right"></i> صفحه اصلی</button>
-                    <h2 class="font-bold text-sm sm:text-base">لیست خرید و مدیریت مالی</h2>
+                    <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                        <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
+                    </button>
+                    <h2 class="font-bold text-sm sm:text-base" data-i18n="shopPageHeader">لیست خرید و مدیریت مالی</h2>
                 </div>
-                <span class="text-xs font-bold text-emerald-600" id="fin-net-badge">تراز: 0</span>
+                <span class="text-xs font-bold text-emerald-600" id="fin-net-badge">0</span>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3">لیست خرید</h3>
+                    <h3 class="font-bold text-sm mb-3" data-i18n="shopListTitle">لیست خرید</h3>
                     <div class="flex gap-2 mb-3">
                         <input type="text" id="sh-title" placeholder="نام کالا..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
                         <input type="number" id="sh-price" placeholder="قیمت" class="w-28 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
@@ -397,7 +425,7 @@
                     <div id="list-shop" class="space-y-2"></div>
                 </div>
                 <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3">ثبت تراکنش مالی (درآمد و هزینه)</h3>
+                    <h3 class="font-bold text-sm mb-3" data-i18n="financeTitle">ثبت تراکنش مالی (درآمد و هزینه)</h3>
                     <div class="grid grid-cols-3 gap-2 mb-3">
                         <input type="text" id="tx-title" placeholder="شرح..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
                         <input type="number" id="tx-amount" placeholder="مبلغ" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
@@ -406,7 +434,7 @@
                             <option value="income">درآمد (+)</option>
                         </select>
                     </div>
-                    <button type="button" onclick="window.addTx()" class="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold mb-3">ثبت تراکنش</button>
+                    <button type="button" onclick="window.addTx()" class="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold mb-3" data-i18n="addTxBtn">ثبت تراکنش</button>
                     <div id="list-tx" class="space-y-2"></div>
                 </div>
             </div>
@@ -414,9 +442,11 @@
 
         <!-- ==================== DEDICATED PAGE 6: WORKOUT ==================== -->
         <div id="screen-workout" class="page-screen space-y-4">
-            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold"><i class="fa-solid fa-arrow-right"></i> صفحه اصلی</button>
-                <h2 class="font-bold text-sm sm:text-base">باشگاه و جزئیات ورزش</h2>
+            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
+                </button>
+                <h2 class="font-bold text-sm sm:text-base" data-i18n="workoutPageHeader">باشگاه و جزئیات ورزش</h2>
             </div>
             <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
@@ -431,13 +461,15 @@
 
         <!-- ==================== DEDICATED PAGE 7: TRAVEL & PLACES ==================== -->
         <div id="screen-travel" class="page-screen space-y-5">
-            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold"><i class="fa-solid fa-arrow-right"></i> صفحه اصلی</button>
-                <h2 class="font-bold text-sm sm:text-base">چک‌لیست سفر و مکان‌های مورد علاقه</h2>
+            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
+                </button>
+                <h2 class="font-bold text-sm sm:text-base" data-i18n="travelPageHeader">چک‌لیست سفر و مکان‌های مورد علاقه</h2>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3">احتیاجات قبل از سفر</h3>
+                    <h3 class="font-bold text-sm mb-3" data-i18n="travelCheckTitle">احتیاجات قبل از سفر</h3>
                     <div class="flex gap-2 mb-3">
                         <input type="text" id="tr-item" placeholder="وسیله یا اقدام قبل سفر..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
                         <button type="button" onclick="window.addTravelItem()" class="px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold">+</button>
@@ -445,7 +477,7 @@
                     <div id="list-travel-items" class="space-y-2"></div>
                 </div>
                 <div class="bg-white dark:bg-[#1e1e1e] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3">مکان‌های مورد علاقه</h3>
+                    <h3 class="font-bold text-sm mb-3" data-i18n="placesTitle">مکان‌های مورد علاقه</h3>
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <input type="text" id="pl-name" placeholder="نام مکان / شهر..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
                         <input type="text" id="pl-note" placeholder="آدرس / یادداشت..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
@@ -458,33 +490,35 @@
 
         <!-- ==================== DEDICATED PAGE 8: SETTINGS ==================== -->
         <div id="screen-settings" class="page-screen space-y-5">
-            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-4 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <button type="button" onclick="window.openPage('home')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold"><i class="fa-solid fa-arrow-right"></i> صفحه اصلی</button>
-                <h2 class="font-bold text-sm sm:text-base">تنظیمات برنامه (تم، زبان، پنجره شناور پیامکی و قفل صفحه)</h2>
+            <div class="flex items-center gap-2.5 bg-white dark:bg-[#1e1e1e] p-3.5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                <button type="button" onclick="window.openPage('home')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-neutral-800 hover:bg-blue-600 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180"></i>
+                </button>
+                <h2 class="font-bold text-sm sm:text-base" data-i18n="settingsPageHeader">تنظیمات برنامه (تم، زبان، پنجره شناور پیامکی و قفل صفحه)</h2>
             </div>
 
             <div class="bg-white dark:bg-[#1e1e1e] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-4">
                 <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
-                    <span class="text-xs sm:text-sm font-bold">تغییر تم روز و شب (Light / Dark)</span>
-                    <button type="button" onclick="window.toggleTheme()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold">تغییر تم</button>
+                    <span class="text-xs sm:text-sm font-bold" data-i18n="setThemeTitle">تغییر تم روز و شب (Light / Dark)</span>
+                    <button type="button" onclick="window.toggleTheme()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs font-bold" data-i18n="toggleThemeBtn">تغییر تم</button>
                 </div>
                 <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
-                    <span class="text-xs sm:text-sm font-bold">تغییر زبان (فارسی / English)</span>
-                    <button type="button" onclick="window.toggleLang()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold">FA / EN</button>
+                    <span class="text-xs sm:text-sm font-bold" data-i18n="setLangTitle">تغییر زبان برنامه (فارسی / English)</span>
+                    <button type="button" onclick="window.toggleLang()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold" id="lang-switch-btn">Switch to English</button>
                 </div>
                 <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
-                    <span class="text-xs sm:text-sm font-bold">پنجره سفید شناور پیامکی (SMS Mode)</span>
+                    <span class="text-xs sm:text-sm font-bold" data-i18n="setFloatTitle">پنجره سفید شناور پیامکی (SMS Mode)</span>
                     <div class="flex gap-2">
-                        <button type="button" onclick="window.openSmsFloatPopup()" class="px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold">باز کردن پنجره پیامکی</button>
+                        <button type="button" onclick="window.openSmsFloatPopup()" class="px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold" data-i18n="openSmsBtn">باز کردن پنجره پیامکی</button>
                         <button type="button" onclick="window.toggleInAppFab()" id="btn-inapp-fab" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs">آیکون شناور: روشن</button>
                     </div>
                 </div>
                 <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
-                    <span class="text-xs sm:text-sm font-bold">ارسال کار جاری به صفحه قفل گوشی (Lock Screen)</span>
-                    <button type="button" onclick="window.sendLockScreenNotif()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">فعال‌سازی قفل صفحه</button>
+                    <span class="text-xs sm:text-sm font-bold" data-i18n="setLockTitle">ارسال کار جاری به صفحه قفل گوشی (Lock Screen)</span>
+                    <button type="button" onclick="window.sendLockScreenNotif()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold" data-i18n="activateLockBtn">فعال‌سازی قفل صفحه</button>
                 </div>
                 <div class="flex justify-end pt-2">
-                    <button type="button" onclick="window.resetAll()" class="px-4 py-2 bg-red-500/10 text-red-600 border border-red-300 rounded-xl text-xs font-bold">پاکسازی کامل حافظه</button>
+                    <button type="button" onclick="window.resetAll()" class="px-4 py-2 bg-red-500/10 text-red-600 border border-red-300 rounded-xl text-xs font-bold" data-i18n="resetBtn">پاکسازی کامل حافظه</button>
                 </div>
             </div>
         </div>
@@ -494,15 +528,15 @@
     <!-- ==================== WHITE SMS-STYLE FLOATING MINI POPUP ==================== -->
     <div id="sms-float-popup" class="fixed bottom-20 end-5 z-50 hidden w-80 bg-white text-slate-800 rounded-2xl border border-slate-200 overflow-hidden">
         <div class="bg-slate-50 px-3.5 py-2.5 border-b border-slate-200 flex items-center justify-between">
-            <span class="font-bold text-xs text-slate-700">💬 پنجره پیامک ثبت سریع</span>
+            <span class="font-bold text-xs text-slate-700" data-i18n="smsPopupTitle">💬 پنجره پیامک ثبت سریع</span>
             <div class="flex items-center gap-1">
-                <button type="button" onclick="window.popOutSmsWindow()" title="پرتاب روی سایر برنامه‌ها" class="text-slate-400 hover:text-blue-600 text-xs px-1"><i class="fa-solid fa-up-right-from-square"></i></button>
+                <button type="button" onclick="window.popOutSmsWindow()" title="Pop out" class="text-slate-400 hover:text-blue-600 text-xs px-1"><i class="fa-solid fa-up-right-from-square"></i></button>
                 <button type="button" onclick="window.closeSmsFloatPopup()" class="w-6 h-6 rounded-full bg-slate-200 hover:bg-red-500 hover:text-white text-slate-700 font-bold text-xs flex items-center justify-center">×</button>
             </div>
         </div>
         <div id="sms-popup-tasks" class="p-3 max-h-36 overflow-y-auto space-y-1.5 bg-white text-xs"></div>
         <div class="p-2.5 bg-slate-50 border-t border-slate-200 flex items-center gap-1.5">
-            <input type="text" id="sms-fast-in" placeholder="نوشتن کار فوری (مثلاً: تماس ساعت ۱۱)..."
+            <input type="text" id="sms-fast-in" placeholder="نوشتن کار فوری (مثلاً: تماس 11:30)..."
                 class="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
                 onkeydown="if(event.key==='Enter') window.sendFromSmsPopup()">
             <button type="button" onclick="window.sendFromSmsPopup()" class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0"><i class="fa-solid fa-paper-plane text-xs"></i></button>
@@ -517,27 +551,27 @@
         <button type="button" onclick="window.toggleInAppFab(false)" class="w-5 h-5 -mt-9 -ms-2 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center shadow">×</button>
     </div>
 
-    <!-- SUBMENU DRAWER FOR TASK DETAILS & PROGRESS SLIDER -->
+    <!-- SUBMENU DRAWER FOR TASK DETAILS (WITH HH:MM TIME & PROGRESS %) -->
     <div id="task-drawer" class="fixed inset-0 bg-black/50 hidden z-50 justify-end">
         <div class="bg-white dark:bg-[#1e1e1e] w-full max-w-md h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
             <div>
                 <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-neutral-800">
-                    <h4 class="font-bold text-sm text-blue-600">زیرمنوی جزئیات، تاریخ، درصد پیشرفت و ریزکارها</h4>
+                    <h4 class="font-bold text-sm text-blue-600" data-i18n="drawerHeader">زیرمنوی جزئیات، ساعت و دقیقه، پیشرفت و ریزکارها</h4>
                     <button type="button" onclick="window.closeDrawer()" class="text-slate-400 hover:text-red-500 text-lg"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="space-y-4 mt-4 text-xs">
                     <div>
-                        <label class="block text-slate-400 mb-1">عنوان کار</label>
+                        <label class="block text-slate-400 mb-1" data-i18n="taskTitleLabel">عنوان کار</label>
                         <input type="text" id="dr-title" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2.5 font-bold text-sm">
                     </div>
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-slate-400 mb-1">تاریخ انجام</label>
+                            <label class="block text-slate-400 mb-1" data-i18n="dateLabel">تاریخ انجام</label>
                             <input type="date" id="dr-date" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-1">پروژه / دسته</label>
+                            <label class="block text-slate-400 mb-1" data-i18n="projLabel">پروژه / دسته</label>
                             <select id="dr-proj" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
                                 <option value="پروژه اصلی">پروژه اصلی / کاری</option>
                                 <option value="تولید محتوا و طراحی">تولید محتوا و طراحی</option>
@@ -547,10 +581,10 @@
                         </div>
                     </div>
 
-                    <!-- Progress % Slider inside Drawer -->
+                    <!-- Progress % Slider -->
                     <div class="bg-blue-50/60 dark:bg-blue-950/30 p-3 rounded-xl border border-blue-200/60 dark:border-blue-800/40">
                         <div class="flex justify-between mb-1">
-                            <span class="font-bold">میزان پیشرفت این کار:</span>
+                            <span class="font-bold" data-i18n="progressLabel">میزان پیشرفت این کار:</span>
                             <span id="dr-prog-label" class="font-mono font-bold text-blue-600">0%</span>
                         </div>
                         <input type="range" id="dr-prog" min="0" max="100" step="5" value="0"
@@ -558,24 +592,25 @@
                             class="w-full accent-blue-600 cursor-pointer">
                     </div>
 
+                    <!-- Exact Hour & Minute Inputs (HH:MM) -->
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-slate-400 mb-1">ساعت شروع (3 تا 24)</label>
-                            <input type="number" id="dr-start" min="3" max="24" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                            <label class="block text-slate-400 mb-1" data-i18n="startTimeLabel">زمان شروع (ساعت و دقیقه)</label>
+                            <input type="time" id="dr-start-time" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2 font-mono">
                         </div>
                         <div>
-                            <label class="block text-slate-400 mb-1">ساعت پایان (4 تا 24)</label>
-                            <input type="number" id="dr-end" min="4" max="24" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2">
+                            <label class="block text-slate-400 mb-1" data-i18n="endTimeLabel">زمان پایان (ساعت و دقیقه)</label>
+                            <input type="time" id="dr-end-time" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2 font-mono">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-slate-400 mb-1">یادداشت و توضیحات کامل کار</label>
+                        <label class="block text-slate-400 mb-1" data-i18n="notesLabel">یادداشت و توضیحات کامل کار</label>
                         <textarea id="dr-notes" rows="3" placeholder="توضیحات، لینک‌ها یا جزئیات..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-2.5"></textarea>
                     </div>
 
                     <div class="bg-slate-50 dark:bg-neutral-900 p-3 rounded-xl border border-slate-200 dark:border-neutral-800">
-                        <label class="block font-bold mb-2">لیست ریزکارها (Sub-tasks)</label>
+                        <label class="block font-bold mb-2" data-i18n="subtasksLabel">لیست ریزکارها (Sub-tasks)</label>
                         <div class="flex gap-2 mb-2">
                             <input type="text" id="dr-sub-in" placeholder="افزودن مرحله جزئی..." class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-lg px-2 py-1.5">
                             <button type="button" onclick="window.addSubtask()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold">+</button>
@@ -585,14 +620,156 @@
                 </div>
             </div>
             <div class="flex justify-between pt-4 border-t border-slate-200 dark:border-neutral-800">
-                <button type="button" onclick="window.deleteDrawerTask()" class="px-4 py-2 text-red-500 font-bold text-xs">حذف کار</button>
-                <button type="button" onclick="window.saveDrawerTask()" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs">ذخیره تغییرات</button>
+                <button type="button" onclick="window.deleteDrawerTask()" class="px-4 py-2 text-red-500 font-bold text-xs" data-i18n="deleteBtn">حذف کار</button>
+                <button type="button" onclick="window.saveDrawerTask()" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs" data-i18n="saveBtn">ذخیره تغییرات</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== HELPERS & DATE CONVERTERS (SOLAR, GREGORIAN, HIJRI) ====================
+        // ==================== BILINGUAL DICTIONARY (FA / EN) ====================
+        const i18nDict = {
+            fa: {
+                appTitle: "پلنر جامع هوشمند",
+                moodLabel: "حالت روحی:",
+                iconCalendar: "تقویم و روتین",
+                iconTodo: "لیست کارها",
+                iconAI: "چت‌بات AI",
+                iconNotes: "یادداشت‌ها",
+                iconShopping: "خرید و مالی",
+                iconWorkout: "ورزش",
+                iconTravel: "سفر و مکان‌ها",
+                iconSettings: "تنظیمات",
+                quickAddPlaceholder: "ثبت سریع کار یا پروژه جدید... (مثلاً: جلسه ساعت 10:30)",
+                addBtn: "+ ثبت کار",
+                projMain: "پروژه اصلی / کاری",
+                projContent: "تولید محتوا و طراحی",
+                projStudy: "آموزش و مطالعه",
+                projPersonal: "امور شخصی و اداری",
+                upcomingHeader: "برنامه‌های پیش‌رو بر اساس تقویم (برای باز کردن زیرمنوی جزئیات کلیک کنید)",
+                alertTimeLabel: "ساعت یادآوری شبانه:",
+                projectsProgressHeader: "نمای کلی از درصد پیشرفت پروژه‌ها",
+                calPageHeader: "تقویم سه‌گانه، مناسبت‌ها و بلوک‌بندی ساعتی",
+                wdSat: "شنبه", wdSun: "یکشنبه", wdMon: "دوشنبه", wdTue: "سه‌شنبه", wdWed: "چهارشنبه", wdThu: "پنجشنبه", wdFri: "جمعه",
+                bufferBtn: "⚡ + ذخیره اتفاقی",
+                autoFillBtn: "چیدمان خودکار روز",
+                occasionsLabel: "مناسبت‌های این روز:",
+                dayTaskPlaceholder: "ثبت کار جدید در این روز...",
+                fromLabel: "از:", toLabel: "تا:",
+                hourlyTableTitle: "جدول بلوک‌بندی ساعتی و دقیقه‌ای (۰۳:۰۰ بامداد تا ۲۴:۰۰ شب)",
+                fixedRoutinesTitle: "مدیریت و ویرایش کارهای ثابت (روتین‌ها) با ساعت، دقیقه و روز هفته",
+                routinePlaceholder: "عنوان کار ثابت (مثلاً: کلاس، ورزش، محل کار)",
+                saveRoutineBtn: "+ ذخیره روتین ثابت",
+                repeatDaysLabel: "روزهای هفته:",
+                todoPageHeader: "مدیریت کارها (بر اساس تاریخ، ساعت دقیق و درصد پیشرفت)",
+                aiPageHeader: "چت‌بات هوشمند برنامه‌ریزی (چندکاره + متد روز دنیا)",
+                aiWelcomeMsg: "سلام! 👋 لیست کارهای خود را با علامت ویرگول «،» یا در چند خط بنویسید. من ۳ سناریوی زمان‌بندی پیشنهاد می‌دهم و هر زمان بگویید «فلان کار رو ببر ساعت ۱۶:۳۰» جای آن را عوض می‌کنم!",
+                aiInputPlaceholder: "کارها را با ویرگول بنویسید... یا دستور دهید: «طراحی سایت رو ببر ساعت ۱۶:۳۰»",
+                sendChatBtn: "ارسال و تحلیل",
+                notesPageHeader: "دفترچه یادداشت‌ها (Notes)",
+                saveNoteBtn: "+ ذخیره یادداشت",
+                shopPageHeader: "لیست خرید و مدیریت مالی",
+                shopListTitle: "لیست خرید",
+                financeTitle: "ثبت تراکنش مالی (درآمد و هزینه)",
+                addTxBtn: "ثبت تراکنش",
+                workoutPageHeader: "باشگاه و جزئیات ورزش",
+                travelPageHeader: "چک‌لیست سفر و مکان‌های مورد علاقه",
+                travelCheckTitle: "احتیاجات قبل از سفر",
+                placesTitle: "مکان‌های مورد علاقه",
+                settingsPageHeader: "تنظیمات برنامه (تم، زبان، پنجره شناور پیامکی و قفل صفحه)",
+                setThemeTitle: "تغییر تم روز و شب (Light / Dark)",
+                toggleThemeBtn: "تغییر تم",
+                setLangTitle: "تغییر زبان برنامه (فارسی / English)",
+                setFloatTitle: "پنجره سفید شناور پیامکی (SMS Mode)",
+                openSmsBtn: "باز کردن پنجره پیامکی",
+                setLockTitle: "ارسال کار جاری به صفحه قفل گوشی (Lock Screen)",
+                activateLockBtn: "فعال‌سازی قفل صفحه",
+                resetBtn: "پاکسازی کامل حافظه",
+                smsPopupTitle: "💬 پنجره پیامک ثبت سریع",
+                drawerHeader: "زیرمنوی جزئیات، ساعت و دقیقه، پیشرفت و ریزکارها",
+                taskTitleLabel: "عنوان کار",
+                dateLabel: "تاریخ انجام",
+                projLabel: "پروژه / دسته",
+                progressLabel: "میزان پیشرفت این کار:",
+                startTimeLabel: "زمان شروع (ساعت و دقیقه)",
+                endTimeLabel: "زمان پایان (ساعت و دقیقه)",
+                notesLabel: "یادداشت و توضیحات کامل کار",
+                subtasksLabel: "لیست ریزکارها (Sub-tasks)",
+                deleteBtn: "حذف کار",
+                saveBtn: "ذخیره تغییرات"
+            },
+            en: {
+                appTitle: "Smart Planner Pro",
+                moodLabel: "Mood:",
+                iconCalendar: "Calendar",
+                iconTodo: "To-Do List",
+                iconAI: "AI Planner",
+                iconNotes: "Notes",
+                iconShopping: "Finance & Shop",
+                iconWorkout: "Workout",
+                iconTravel: "Travel & Places",
+                iconSettings: "Settings",
+                quickAddPlaceholder: "Quick add task or project... (e.g. Meeting at 10:30)",
+                addBtn: "+ Add Task",
+                projMain: "Main / Work Project",
+                projContent: "Content & Design",
+                projStudy: "Study & Research",
+                projPersonal: "Personal & Admin",
+                upcomingHeader: "Upcoming Schedule by Calendar (Click any task for details)",
+                alertTimeLabel: "Night Preview Alert:",
+                projectsProgressHeader: "Projects Progress Overview",
+                calPageHeader: "Triple Calendar, Occasions & Hourly Time-Block",
+                wdSat: "Sat", wdSun: "Sun", wdMon: "Mon", wdTue: "Tue", wdWed: "Wed", wdThu: "Thu", wdFri: "Fri",
+                bufferBtn: "⚡ + Contingency Buffer",
+                autoFillBtn: "Auto-Schedule Day",
+                occasionsLabel: "Day Occasions:",
+                dayTaskPlaceholder: "Add task to this day...",
+                fromLabel: "From:", toLabel: "To:",
+                hourlyTableTitle: "Hourly & Minute Schedule (03:00 AM to 24:00 Midnight)",
+                fixedRoutinesTitle: "Manage & Edit Fixed Routines (with HH:MM & Weekdays)",
+                routinePlaceholder: "Routine Title (e.g. Office, Gym, Class)",
+                saveRoutineBtn: "+ Save Routine",
+                repeatDaysLabel: "Weekdays:",
+                todoPageHeader: "All Tasks (By Date, Exact Time & Progress %)",
+                aiPageHeader: "AI Multi-Task Scheduler (World-Class Methods)",
+                aiWelcomeMsg: "Hello! 👋 Enter multiple tasks separated by commas or lines. I will propose 3 schedule options, and you can tell me 'Move design to 16:30' anytime!",
+                aiInputPlaceholder: "Enter tasks separated by commas... or command: 'Move design to 16:30'",
+                sendChatBtn: "Plan Day",
+                notesPageHeader: "Notes & Ideas",
+                saveNoteBtn: "+ Save Note",
+                shopPageHeader: "Shopping List & Finance Tracker",
+                shopListTitle: "Shopping List",
+                financeTitle: "Income & Expense Ledger",
+                addTxBtn: "Record Transaction",
+                workoutPageHeader: "Workout & Fitness Log",
+                travelPageHeader: "Travel Checklist & Favorite Places",
+                travelCheckTitle: "Pre-Trip Packing Checklist",
+                placesTitle: "Favorite Places",
+                settingsPageHeader: "Settings (Theme, Language, SMS Float & LockScreen)",
+                setThemeTitle: "Day / Night Theme (Light / Dark)",
+                toggleThemeBtn: "Switch Theme",
+                setLangTitle: "Application Language (فارسی / English)",
+                setFloatTitle: "White SMS-Style Floating Window",
+                openSmsBtn: "Open SMS Popup",
+                setLockTitle: "Pin Active Task to Phone Lock Screen",
+                activateLockBtn: "Enable Lock Screen",
+                resetBtn: "Reset All Data",
+                smsPopupTitle: "💬 Quick SMS Capture",
+                drawerHeader: "Task Details, HH:MM Time, Progress & Sub-tasks",
+                taskTitleLabel: "Task Title",
+                dateLabel: "Due Date",
+                projLabel: "Project / Category",
+                progressLabel: "Task Completion Progress:",
+                startTimeLabel: "Start Time (HH:MM)",
+                endTimeLabel: "End Time (HH:MM)",
+                notesLabel: "Detailed Notes & Links",
+                subtasksLabel: "Sub-tasks Checklist",
+                deleteBtn: "Delete Task",
+                saveBtn: "Save Changes"
+            }
+        };
+
+        // ==================== HELPERS & TRIPLE CALENDAR CONVERTERS ====================
         function safeGet(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
         function safeSet(k, val) { try { localStorage.setItem(k, JSON.stringify(val)); } catch(e) {} }
         function toEnDigits(s) { return String(s).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)); }
@@ -604,6 +781,22 @@
             return `${yr}-${mo}-${da}`;
         }
 
+        // Parse "HH:MM" into { h, m, totalMinutes }
+        function parseTimeStr(timeStr, fallbackH = null) {
+            if (!timeStr) {
+                if (fallbackH !== null && !isNaN(fallbackH)) {
+                    return { h: fallbackH, m: 0, str: `${String(fallbackH).padStart(2,'0')}:00` };
+                }
+                return null;
+            }
+            const clean = toEnDigits(String(timeStr)).trim();
+            const match = clean.match(/^(\d{1,2})(?::(\d{1,2}))?$/);
+            if (!match) return null;
+            const h = Math.min(24, Math.max(0, parseInt(match[1])));
+            const m = match[2] ? Math.min(59, Math.max(0, parseInt(match[2]))) : 0;
+            return { h, m, str: `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` };
+        }
+
         function getTripleDateParts(dateObj) {
             const jDay = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric' }).format(dateObj);
             const jMonth = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { month: 'long' }).format(dateObj);
@@ -611,6 +804,7 @@
             const jDayNum = parseInt(toEnDigits(jDay));
 
             const gDay = dateObj.getDate();
+            const gMonthNum = dateObj.getMonth() + 1;
             const gMonth = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(dateObj);
 
             const hDay = new Intl.DateTimeFormat('fa-IR-u-ca-islamic-umalqura', { day: 'numeric' }).format(dateObj);
@@ -618,58 +812,94 @@
             const hMonthNum = parseInt(toEnDigits(new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', { month: 'numeric' }).format(dateObj)));
             const hDayNum = parseInt(toEnDigits(hDay));
 
-            return { jDay, jMonth, jMonthNum, jDayNum, gDay, gMonth, hDay, hMonth, hMonthNum, hDayNum };
+            return { jDay, jMonth, jMonthNum, jDayNum, gDay, gMonth, gMonthNum, hDay, hMonth, hMonthNum, hDayNum };
         }
 
-        // Solar & Lunar Occasions Database
+        // ==================== COMPREHENSIVE CALENDAR OCCASIONS (SOLAR, LUNAR, GREGORIAN) ====================
         const solarOccasions = {
-            "1-1": "جشن نوروز و آغاز سال نو خورشیدی",
-            "1-2": "عید نوروز",
-            "1-12": "روز جمهوری اسلامی",
-            "1-13": "جشن سیزده‌بدر (روز طبیعت)",
+            "1-1": "جشن نوروز و آغاز سال نو خورشیدی (تعطیل)",
+            "1-2": "عید نوروز (تعطیل)",
+            "1-3": "عید نوروز (تعطیل)",
+            "1-4": "عید نوروز (تعطیل)",
+            "1-12": "روز جمهوری اسلامی (تعطیل)",
+            "1-13": "جشن سیزده‌بدر و روز طبیعت (تعطیل)",
+            "1-25": "روز بزرگداشت عطار نیشابوری",
             "2-1": "روز بزرگداشت سعدی",
+            "2-3": "روز بزرگداشت شیخ بهایی و روز معمار",
+            "2-10": "روز ملی خلیج فارس",
             "2-12": "روز معلم و بزرگداشت استاد مطهری",
-            "2-25": "روز پاسداشت زبان فارسی و بزرگداشت فردوسی",
-            "3-14": "رحلت امام خمینی",
-            "3-15": "قیام ۱۵ خرداد",
-            "6-1": "روز بزرگداشت بوعلی سینا و روز پزشک",
-            "7-1": "آغاز سال تحصیلی و مهرگان",
-            "7-20": "روز بزرگداشت حافظ",
+            "2-25": "روز پاسداشت زبان فارسی و بزرگداشت حکیم فردوسی",
+            "2-28": "روز بزرگداشت حکیم عمر خیام",
+            "3-14": "رحلت امام خمینی (تعطیل)",
+            "3-15": "قیام ۱۵ خرداد (تعطیل)",
+            "4-1": "جشن آب‌پاشونک و آغاز تابستان",
+            "4-10": "روز صنعت و معدن",
+            "4-14": "روز قلم",
+            "5-6": "روز ترویج آموزش‌های فنی و حرفه‌ای",
+            "5-17": "روز خبرنگار",
+            "6-1": "روز بزرگداشت ابوعلی سینا و روز پزشک",
+            "6-4": "روز کارمند",
+            "6-5": "روز بزرگداشت محمد بن زکریای رازی و روز داروساز",
+            "6-13": "روز بزرگداشت ابوریحان بیرونی",
+            "6-27": "روز شعر و ادب فارسی و بزرگداشت شهریار",
+            "7-1": "آغاز سال تحصیلی و جشن مهرگان",
+            "7-8": "روز بزرگداشت مولوی",
+            "7-20": "روز بزرگداشت حافظ شیرازی",
+            "7-26": "روز تربیت بدنی و ورزش",
             "8-7": "روز بزرگداشت کوروش",
+            "8-13": "روز دانش‌آموز",
+            "8-24": "روز کتاب و کتاب‌خوانی",
+            "9-7": "روز نیروی دریایی",
+            "9-16": "روز دانشجو",
+            "9-25": "روز پژوهش و فناوری",
             "9-30": "جشن شب یلدا (شب چله)",
-            "11-22": "پیروزی انقلاب اسلامی",
-            "12-29": "روز ملی شدن صنعت نفت"
+            "10-5": "روز ملی ایمنی در برابر زلزله",
+            "11-22": "پیروزی انقلاب اسلامی (تعطیل)",
+            "12-5": "روز بزرگداشت خواجه نصیرالدین طوسی و روز مهندس",
+            "12-15": "روز درختکاری",
+            "12-29": "روز ملی شدن صنعت نفت (تعطیل)"
         };
 
         const lunarOccasions = {
-            "1-9": "تاسوعای حسینی",
-            "1-10": "عاشورای حسینی",
-            "2-20": "اربعین حسینی",
-            "2-28": "رحلت پیامبر اکرم و شهادت امام حسن مجتبی",
-            "3-17": "میلاد پیامبر اکرم و امام جعفر صادق",
-            "7-13": "ولادت امام علی و روز پدر",
-            "7-27": "عید مبعث",
-            "8-15": "نیمه شعبان و ولادت حضرت مهدی",
+            "1-1": "آغاز سال نو هجری قمری",
+            "1-9": "تاسوعای حسینی (تعطیل)",
+            "1-10": "عاشورای حسینی (تعطیل)",
+            "2-20": "اربعین حسینی (تعطیل)",
+            "2-28": "رحلت پیامبر اکرم و شهادت امام حسن مجتبی (تعطیل)",
+            "2-30": "شهادت امام رضا (تعطیل)",
+            "3-8": "شهادت امام حسن عسکری (تعطیل)",
+            "3-17": "میلاد پیامبر اکرم و امام جعفر صادق (تعطیل)",
+            "6-3": "شهادت حضرت فاطمه زهرا (تعطیل)",
+            "7-1": "ولادت امام محمد باقر",
+            "7-13": "ولادت امام علی و روز پدر (تعطیل)",
+            "7-27": "عید سعید مبعث (تعطیل)",
+            "8-3": "ولادت امام حسین و روز پاسدار",
+            "8-4": "ولادت حضرت ابوالفضل و روز جانباز",
+            "8-15": "نیمه شعبان و ولادت حضرت مهدی (تعطیل)",
             "9-1": "آغاز ماه مبارک رمضان",
-            "9-21": "شهادت امام علی",
-            "10-1": "عید سعید فطر",
-            "12-10": "عید سعید قربان",
-            "12-18": "عید سعید غدیر خم"
+            "9-15": "ولادت امام حسن مجتبی",
+            "9-19": "ضربت خوردن امام علی",
+            "9-21": "شهادت امام علی (تعطیل)",
+            "10-1": "عید سعید فطر (تعطیل)",
+            "10-2": "تعطیلی عید سعید فطر (تعطیل)",
+            "10-25": "شهادت امام جعفر صادق (تعطیل)",
+            "11-11": "ولادت امام رضا",
+            "12-10": "عید سعید قربان (تعطیل)",
+            "12-18": "عید سعید غدیر خم (تعطیل)"
         };
 
-        function getDayOccasionsText(parts, jsDayOfWeek) {
-            const list = [];
-            const sKey = `${parts.jMonthNum}-${parts.jDayNum}`;
-            const lKey = `${parts.hMonthNum}-${parts.hDayNum}`;
-            if (solarOccasions[sKey]) list.push(`☀️ شمسی: ${solarOccasions[sKey]}`);
-            if (lunarOccasions[lKey]) list.push(`🌙 قمری: ${lunarOccasions[lKey]}`);
-            if (jsDayOfWeek === 5) list.push(`تعطیل رسمی آخر هفته (جمعه)`);
-            return list.length ? list.join(' | ') : `مناسبت رسمی خاصی ثبت نشده است (${parts.jDay} ${parts.jMonth} / ${parts.hDay} ${parts.hMonth})`;
-        }
+        const gregorianOccasions = {
+            "1-1": "آغاز سال نو میلادی (New Year's Day)",
+            "3-8": "روز جهانی زنان (International Women's Day)",
+            "4-22": "روز جهانی زمین (Earth Day)",
+            "5-1": "روز جهانی کارگر (Labour Day)",
+            "10-5": "روز جهانی معلم (World Teachers' Day)",
+            "12-25": "جشن کریسمس (Christmas Day)"
+        };
 
         // ==================== STATE MANAGEMENT ====================
         const todayISO = toISODate(new Date());
-        let cfg = safeGet('pl_cfg_v6', {
+        let cfg = safeGet('pl_cfg_v7', {
             lang: 'fa',
             theme: 'light',
             fab: true,
@@ -681,6 +911,7 @@
 
         let tasks = safeGet('pl_tasks', []);
         let routines = safeGet('pl_routines', []);
+        let customOccasions = safeGet('pl_custom_occasions', {});
         let notes = safeGet('pl_notes', []);
         let shops = safeGet('pl_shops', []);
         let txs = safeGet('pl_txs', []);
@@ -691,9 +922,10 @@
         let lastAIScenarios = [];
 
         function saveAll() {
-            safeSet('pl_cfg_v6', cfg);
+            safeSet('pl_cfg_v7', cfg);
             safeSet('pl_tasks', tasks);
             safeSet('pl_routines', routines);
+            safeSet('pl_custom_occasions', customOccasions);
             safeSet('pl_notes', notes);
             safeSet('pl_shops', shops);
             safeSet('pl_txs', txs);
@@ -702,7 +934,47 @@
             safeSet('pl_places', places);
         }
 
-        // ==================== PAGE LAUNCHER NAVIGATION ====================
+        function getOccasionDetails(parts, isoStr, jsDayOfWeek) {
+            const list = [];
+            let isHoliday = (jsDayOfWeek === 5);
+            const sKey = `${parts.jMonthNum}-${parts.jDayNum}`;
+            const lKey = `${parts.hMonthNum}-${parts.hDayNum}`;
+            const gKey = `${parts.gMonthNum}-${parts.gDay}`;
+
+            if (customOccasions[isoStr]) list.push(`📌 ${customOccasions[isoStr]}`);
+            if (solarOccasions[sKey]) {
+                list.push(`☀️ ${solarOccasions[sKey]}`);
+                if (solarOccasions[sKey].includes('تعطیل')) isHoliday = true;
+            }
+            if (lunarOccasions[lKey]) {
+                list.push(`🌙 ${lunarOccasions[lKey]}`);
+                if (lunarOccasions[lKey].includes('تعطیل')) isHoliday = true;
+            }
+            if (gregorianOccasions[gKey]) list.push(`🌍 ${gregorianOccasions[gKey]}`);
+
+            const hasEvent = list.length > 0;
+            if (!hasEvent && jsDayOfWeek === 5) list.push(cfg.lang === 'en' ? 'Friday Weekend' : 'جمعه (تعطیل آخر هفته)');
+
+            return {
+                hasEvent,
+                isHoliday,
+                text: list.length ? list.join(' | ') : (cfg.lang === 'en' ? `No official occasion (${parts.jDay} ${parts.jMonth})` : `مناسبت رسمی خاصی ثبت نشده است (${parts.jDay} ${parts.jMonth} / ${parts.hDay} ${parts.hMonth})`)
+            };
+        }
+
+        window.addCustomOccasionPrompt = function() {
+            const iso = cfg.selectedISO || todayISO;
+            const current = customOccasions[iso] || '';
+            const val = prompt(cfg.lang === 'en' ? "Enter personal occasion/birthday for this date:" : "مناسبت شخصی، تولد یا رویداد این تاریخ را وارد کنید:", current);
+            if (val !== null) {
+                if (val.trim() === '') delete customOccasions[iso];
+                else customOccasions[iso] = val.trim();
+                saveAll();
+                window.renderAll();
+            }
+        };
+
+        // ==================== PAGE LAUNCHER ====================
         window.openPage = function(pageName) {
             ['home', 'calendar', 'todo', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'].forEach(p => {
                 const el = document.getElementById('screen-' + p);
@@ -714,20 +986,41 @@
             window.renderAll();
         };
 
-        // ==================== SETTINGS, THEME & LANG ====================
+        // ==================== FULL BILINGUAL & THEME ENGINE ====================
         window.applySettings = function() {
             const html = document.documentElement;
             if (cfg.theme === 'dark') html.classList.add('dark');
             else html.classList.remove('dark');
+
             html.lang = cfg.lang;
             html.dir = cfg.lang === 'fa' ? 'rtl' : 'ltr';
 
+            const d = i18nDict[cfg.lang] || i18nDict.fa;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if (d[k]) el.innerText = d[k];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const k = el.getAttribute('data-i18n-placeholder');
+                if (d[k]) el.placeholder = d[k];
+            });
+
+            const langSwitchBtn = document.getElementById('lang-switch-btn');
+            if (langSwitchBtn) langSwitchBtn.innerText = cfg.lang === 'fa' ? 'Switch to English' : 'تغییر به زبان فارسی';
+
             const fabBox = document.getElementById('fab-container');
             if (fabBox) fabBox.style.display = cfg.fab ? 'flex' : 'none';
+            const inAppBtn = document.getElementById('btn-inapp-fab');
+            if (inAppBtn) inAppBtn.innerText = cfg.fab ? (cfg.lang === 'fa' ? 'آیکون شناور: روشن' : 'Float Icon: ON') : (cfg.lang === 'fa' ? 'آیکون شناور: خاموش' : 'Float Icon: OFF');
 
             const now = new Date();
             const p = getTripleDateParts(now);
-            document.getElementById('live-header-dates').innerText = `شمسی: ${p.jDay} ${p.jMonth} | میلادی: ${p.gDay} ${p.gMonth} | قمری: ${p.hDay} ${p.hMonth}`;
+            document.getElementById('live-header-dates').innerText = cfg.lang === 'fa'
+                ? `شمسی: ${p.jDay} ${p.jMonth} | میلادی: ${p.gDay} ${p.gMonth} | قمری: ${p.hDay} ${p.hMonth}`
+                : `Solar: ${p.jDay} ${p.jMonth} | Gregorian: ${p.gDay} ${p.gMonth} | Hijri: ${p.hDay} ${p.hMonth}`;
+
+            const todayOcc = getOccasionDetails(p, todayISO, now.getDay());
+            document.getElementById('home-today-occasion').innerText = (cfg.lang === 'fa' ? 'مناسبت امروز: ' : 'Today Occasion: ') + todayOcc.text;
 
             const tomIn = document.getElementById('home-tom-time');
             if (tomIn) tomIn.value = cfg.tomTime || '20:00';
@@ -752,7 +1045,7 @@
             saveAll(); window.applySettings(); window.renderAll();
         };
 
-        // ==================== QUICK ADD & TASKS WITH DATE + PROGRESS % ====================
+        // ==================== QUICK ADD & TASKS WITH MINUTE PRECISION (HH:MM) ====================
         window.addQuickTask = function() {
             const inp = document.getElementById('quick-task-in');
             const title = inp.value.trim();
@@ -762,9 +1055,20 @@
             const prioVal = document.getElementById('quick-prio-in').value || 'p2';
             const progVal = parseInt(document.getElementById('quick-prog-in').value) || 0;
 
+            let startT = document.getElementById('quick-start-time').value;
+            let endT = document.getElementById('quick-end-time').value;
+
+            // Also parse time from text if user wrote "ساعت 10:30"
             const norm = toEnDigits(title);
-            const hMatch = norm.match(/(?:ساعت|at)\s*(\d{1,2})/i);
-            const sh = hMatch ? parseInt(hMatch[1]) : null;
+            const tMatch = norm.match(/(?:ساعت|at)\s*(\d{1,2})(?::(\d{1,2}))?/i);
+            if (!startT && tMatch) {
+                const hh = String(tMatch[1]).padStart(2, '0');
+                const mm = tMatch[2] ? String(tMatch[2]).padStart(2, '0') : '00';
+                startT = `${hh}:${mm}`;
+            }
+
+            const parsedStart = parseTimeStr(startT);
+            const parsedEnd = parseTimeStr(endT) || (parsedStart ? { h: Math.min(24, parsedStart.h + 1), m: parsedStart.m, str: `${String(Math.min(24, parsedStart.h + 1)).padStart(2,'0')}:${String(parsedStart.m).padStart(2,'0')}` } : null);
 
             tasks.unshift({
                 id: Date.now(),
@@ -774,12 +1078,16 @@
                 prio: prioVal,
                 progress: progVal,
                 done: progVal === 100,
-                startHour: sh,
-                endHour: sh ? sh + 1 : null,
+                startTime: parsedStart ? parsedStart.str : null,
+                endTime: parsedEnd ? parsedEnd.str : null,
+                startHour: parsedStart ? parsedStart.h : null,
+                endHour: parsedEnd ? parsedEnd.h : null,
                 notes: '',
                 subtasks: []
             });
             inp.value = '';
+            document.getElementById('quick-start-time').value = '';
+            document.getElementById('quick-end-time').value = '';
             document.getElementById('quick-prog-in').value = 0;
             document.getElementById('quick-prog-val').innerText = '0%';
             saveAll();
@@ -808,7 +1116,7 @@
             }
         };
 
-        // ==================== SUBMENU DRAWER ====================
+        // ==================== SUBMENU DRAWER (WITH HH:MM) ====================
         window.openDrawer = function(id) {
             currentTaskId = id;
             const t = tasks.find(x => x.id === id);
@@ -818,8 +1126,12 @@
             document.getElementById('dr-proj').value = t.project || 'پروژه اصلی';
             document.getElementById('dr-prog').value = t.progress || 0;
             document.getElementById('dr-prog-label').innerText = (t.progress || 0) + '%';
-            document.getElementById('dr-start').value = t.startHour || '';
-            document.getElementById('dr-end').value = t.endHour || '';
+
+            const st = parseTimeStr(t.startTime, t.startHour);
+            const et = parseTimeStr(t.endTime, t.endHour);
+            document.getElementById('dr-start-time').value = st ? st.str : '';
+            document.getElementById('dr-end-time').value = et ? et.str : '';
+
             document.getElementById('dr-notes').value = t.notes || '';
             window.renderSubtasks();
             const dr = document.getElementById('task-drawer');
@@ -863,7 +1175,6 @@
             const t = tasks.find(x => x.id === currentTaskId);
             if (t && t.subtasks[i]) {
                 t.subtasks[i].done = !t.subtasks[i].done;
-                // Auto calculate task progress from subtasks
                 const doneCount = t.subtasks.filter(s => s.done).length;
                 t.progress = Math.round((doneCount / t.subtasks.length) * 100);
                 t.done = t.progress === 100;
@@ -886,10 +1197,14 @@
             t.project = document.getElementById('dr-proj').value;
             t.progress = parseInt(document.getElementById('dr-prog').value) || 0;
             t.done = t.progress === 100;
-            const sh = parseInt(document.getElementById('dr-start').value);
-            const eh = parseInt(document.getElementById('dr-end').value);
-            t.startHour = !isNaN(sh) ? sh : null;
-            t.endHour = !isNaN(eh) ? eh : (!isNaN(sh) ? sh + 1 : null);
+
+            const st = parseTimeStr(document.getElementById('dr-start-time').value);
+            const et = parseTimeStr(document.getElementById('dr-end-time').value) || (st ? { h: Math.min(24, st.h + 1), m: st.m, str: `${String(Math.min(24, st.h + 1)).padStart(2,'0')}:${String(st.m).padStart(2,'0')}` } : null);
+
+            t.startTime = st ? st.str : null;
+            t.endTime = et ? et.str : null;
+            t.startHour = st ? st.h : null;
+            t.endHour = et ? et.h : null;
             t.notes = document.getElementById('dr-notes').value;
             saveAll(); window.closeDrawer(); window.renderAll();
         };
@@ -899,29 +1214,42 @@
             saveAll(); window.closeDrawer(); window.renderAll();
         };
 
-        // ==================== ROUTINES WITH DAYS OF WEEK ====================
+        // ==================== ROUTINES WITH HH:MM & WEEKDAYS ====================
         const weekDayNamesFA = { 6: 'ش', 0: 'ی', 1: 'د', 2: 'س', 3: 'چ', 4: 'پ', 5: 'ج' };
 
         window.saveOrUpdateRoutine = function() {
             const editId = document.getElementById('rt-edit-id').value;
             const title = document.getElementById('rt-title').value.trim();
-            const s = parseInt(document.getElementById('rt-start').value);
-            const e = parseInt(document.getElementById('rt-end').value);
-            if (!title || isNaN(s) || isNaN(e) || e <= s) return alert("لطفاً عنوان و بازه ساعت (۳ تا ۲۴) را به درستی وارد کنید.");
+            const st = parseTimeStr(document.getElementById('rt-start').value);
+            const et = parseTimeStr(document.getElementById('rt-end').value);
+            if (!title || !st || !et) return alert("لطفاً عنوان و زمان شروع و پایان را وارد کنید.");
 
             const selectedDays = Array.from(document.querySelectorAll('.rt-day-chk:checked')).map(cb => parseInt(cb.value));
 
             if (editId) {
                 const r = routines.find(x => String(x.id) === String(editId));
-                if (r) { r.title = title; r.startHour = s; r.endHour = e; r.daysOfWeek = selectedDays; }
+                if (r) {
+                    r.title = title;
+                    r.startTime = st.str;
+                    r.endTime = et.str;
+                    r.startHour = st.h;
+                    r.endHour = et.h + (et.m > 0 ? 1 : 0);
+                    r.daysOfWeek = selectedDays;
+                }
                 document.getElementById('rt-edit-id').value = '';
-                document.getElementById('btn-save-routine').innerText = '+ ذخیره روتین ثابت';
+                document.getElementById('btn-save-routine').innerText = cfg.lang === 'en' ? '+ Save Routine' : '+ ذخیره روتین ثابت';
             } else {
-                routines.push({ id: Date.now(), title, startHour: s, endHour: e, daysOfWeek: selectedDays });
+                routines.push({
+                    id: Date.now(),
+                    title,
+                    startTime: st.str,
+                    endTime: et.str,
+                    startHour: st.h,
+                    endHour: et.h + (et.m > 0 ? 1 : 0),
+                    daysOfWeek: selectedDays
+                });
             }
             document.getElementById('rt-title').value = '';
-            document.getElementById('rt-start').value = '';
-            document.getElementById('rt-end').value = '';
             saveAll();
             window.renderAll();
         };
@@ -931,8 +1259,10 @@
             if (!r) return;
             document.getElementById('rt-edit-id').value = r.id;
             document.getElementById('rt-title').value = r.title;
-            document.getElementById('rt-start').value = r.startHour;
-            document.getElementById('rt-end').value = r.endHour;
+            const st = parseTimeStr(r.startTime, r.startHour);
+            const et = parseTimeStr(r.endTime, r.endHour);
+            document.getElementById('rt-start').value = st ? st.str : '08:00';
+            document.getElementById('rt-end').value = et ? et.str : '14:00';
             const rDays = r.daysOfWeek || [6,0,1,2,3,4];
             document.querySelectorAll('.rt-day-chk').forEach(cb => {
                 cb.checked = rDays.includes(parseInt(cb.value));
@@ -946,7 +1276,7 @@
             saveAll(); window.renderAll();
         };
 
-        // ==================== TRIPLE CALENDAR & 3:00-24:00 SCHEDULE ====================
+        // ==================== CALENDAR & DAY ACTIONS ====================
         window.changeCalMonth = function(delta) {
             cfg.calMonthOffset = (cfg.calMonthOffset || 0) + delta;
             saveAll();
@@ -962,10 +1292,10 @@
 
         window.addTaskToSelectedDay = function() {
             const tIn = document.getElementById('day-specific-task-in');
-            const hIn = document.getElementById('day-specific-hour-in');
+            const st = parseTimeStr(document.getElementById('day-specific-start-in').value);
+            const et = parseTimeStr(document.getElementById('day-specific-end-in').value);
             const title = tIn.value.trim();
             if (!title) return;
-            const sh = parseInt(hIn.value);
             tasks.unshift({
                 id: Date.now(),
                 title,
@@ -974,13 +1304,14 @@
                 prio: 'p1',
                 progress: 0,
                 done: false,
-                startHour: (!isNaN(sh) && sh >= 3 && sh <= 24) ? sh : null,
-                endHour: (!isNaN(sh) && sh >= 3 && sh <= 24) ? Math.min(24, sh + 1) : null,
+                startTime: st ? st.str : null,
+                endTime: et ? et.str : null,
+                startHour: st ? st.h : null,
+                endHour: et ? (et.h + (et.m > 0 ? 1 : 0)) : (st ? st.h + 1 : null),
                 notes: '',
                 subtasks: []
             });
             tIn.value = '';
-            hIn.value = '';
             saveAll();
             window.renderAll();
         };
@@ -989,13 +1320,15 @@
             const iso = cfg.selectedISO || todayISO;
             tasks.unshift({
                 id: Date.now(),
-                title: '⚡ ذخیره کارهای اتفاقی و پیش‌بینی‌نشده',
+                title: cfg.lang === 'en' ? '⚡ Contingency Buffer (Unexpected Tasks)' : '⚡ ذخیره کارهای اتفاقی و پیش‌بینی‌نشده',
                 dateISO: iso,
                 project: 'مدیریت ریسک',
                 prio: 'p2',
                 progress: 0,
                 isBuffer: true,
                 done: false,
+                startTime: '12:30',
+                endTime: '13:30',
                 startHour: 12,
                 endHour: 13,
                 notes: 'رزرو شده برای اتفاقات غیرمنتظره',
@@ -1024,6 +1357,8 @@
                 if (cursor < 24) {
                     t.startHour = cursor;
                     t.endHour = Math.min(24, cursor + 1);
+                    t.startTime = `${String(cursor).padStart(2,'0')}:00`;
+                    t.endTime = `${String(Math.min(24, cursor + 1)).padStart(2,'0')}:00`;
                     busy.add(cursor);
                 }
             });
@@ -1031,24 +1366,7 @@
             window.renderAll();
         };
 
-        // ==================== AI CHATBOT & EMERGENCY MODE ====================
-        window.triggerEmergencyMode = function() {
-            const tomorrowObj = new Date();
-            tomorrowObj.setDate(tomorrowObj.getDate() + 1);
-            const tomISO = toISODate(tomorrowObj);
-
-            tasks.forEach(t => {
-                if (!t.done && t.dateISO === todayISO && t.prio !== 'p1') {
-                    t.dateISO = tomISO;
-                    t.startHour = null;
-                    t.endHour = null;
-                }
-            });
-            saveAll();
-            window.renderAll();
-            alert("🚨 حالت اضطراری فعال شد! کارهای غیرفوری امروز به فردا منتقل شدند و فقط اولویت‌های حیاتی (P1) باقی ماندند.");
-        };
-
+        // ==================== AI CHATBOT (WITH HH:MM MOVE SUPPORT) ====================
         window.sendAIChat = function() {
             const inp = document.getElementById('ai-chat-in');
             const rawText = inp.value.trim();
@@ -1059,28 +1377,30 @@
             stream.innerHTML += `<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">${rawText}</div></div>`;
             inp.value = '';
 
-            // Command to move task hour: "طراحی سایت رو ببر ساعت 16"
-            const moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(?:ساعت|at)?\s*(\d{1,2})/i);
-            if (moveMatch && (norm.includes('ببر') || norm.includes('بذار') || norm.includes('ساعت'))) {
+            // Command to move task to exact hour & minute: "طراحی سایت رو ببر ساعت 16:30"
+            const moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
+            if (moveMatch && (norm.includes('ببر') || norm.includes('بذار') || norm.includes('ساعت') || norm.toLowerCase().includes('move'))) {
                 const kw = moveMatch[1].trim();
                 const newH = parseInt(moveMatch[2]);
+                const newM = moveMatch[3] ? parseInt(moveMatch[3]) : 0;
                 const found = tasks.find(t => t.title.includes(kw));
                 if (found && newH >= 3 && newH <= 24) {
                     found.startHour = newH;
                     found.endHour = Math.min(24, newH + 1);
+                    found.startTime = `${String(newH).padStart(2,'0')}:${String(newM).padStart(2,'0')}`;
+                    found.endTime = `${String(Math.min(24, newH + 1)).padStart(2,'0')}:${String(newM).padStart(2,'0')}`;
                     saveAll(); window.renderAll();
-                    stream.innerHTML += `<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«${found.title}»</strong> به ساعت ${found.startHour}:00 منتقل شد.</div>`;
+                    stream.innerHTML += `<div class="bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 p-3 rounded-2xl text-xs">✅ کار <strong>«${found.title}»</strong> به ساعت <strong>${found.startTime}</strong> منتقل شد.</div>`;
                     stream.scrollTop = stream.scrollHeight;
                     return;
                 }
             }
 
-            // Multi-task extraction
             const items = norm.split(/[\n،؛,]+|\s+و\s+/).map(s => s.trim()).filter(s => s.length > 2);
-            const s1 = items.map((title, i) => ({ title, startHour: 8 + i, endHour: 9 + i }));
-            const s2 = items.map((title, i) => ({ title, startHour: 9 + (i * 2), endHour: 10 + (i * 2) }));
-            s2.push({ title: '⚡ ذخیره کارهای اتفاقی', startHour: 14, endHour: 15, isBuffer: true });
-            const s3 = items.map((title, i) => ({ title, startHour: 15 + i, endHour: 16 + i }));
+            const s1 = items.map((title, i) => ({ title, startHour: 8 + i, endHour: 9 + i, startTime: `${String(8+i).padStart(2,'0')}:00`, endTime: `${String(9+i).padStart(2,'0')}:00` }));
+            const s2 = items.map((title, i) => ({ title, startHour: 9 + (i * 2), endHour: 10 + (i * 2), startTime: `${String(9+i*2).padStart(2,'0')}:30`, endTime: `${String(10+i*2).padStart(2,'0')}:30` }));
+            s2.push({ title: '⚡ ذخیره کارهای اتفاقی', startHour: 14, endHour: 15, startTime: '14:15', endTime: '15:00', isBuffer: true });
+            const s3 = items.map((title, i) => ({ title, startHour: 15 + i, endHour: 16 + i, startTime: `${String(15+i).padStart(2,'0')}:00`, endTime: `${String(16+i).padStart(2,'0')}:00` }));
 
             lastAIScenarios = [s1, s2, s3];
 
@@ -1088,7 +1408,7 @@
                 return `
                     <div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2">
                         <div class="font-bold text-xs text-purple-600">${name}</div>
-                        <div class="space-y-1">${list.map(x => `<div class="flex justify-between text-[11px]"><span>• ${x.title}</span><span class="font-mono">${x.startHour}:00</span></div>`).join('')}</div>
+                        <div class="space-y-1">${list.map(x => `<div class="flex justify-between text-[11px]"><span>• ${x.title}</span><span class="font-mono">${x.startTime}</span></div>`).join('')}</div>
                         <button type="button" onclick="window.applyAIScenario(${idx})" class="w-full py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold">✓ انتخاب این برنامه</button>
                     </div>
                 `;
@@ -1119,6 +1439,8 @@
                     progress: 0,
                     isBuffer: item.isBuffer || false,
                     done: false,
+                    startTime: item.startTime,
+                    endTime: item.endTime,
                     startHour: item.startHour,
                     endHour: item.endHour,
                     notes: '',
@@ -1140,16 +1462,42 @@
             document.getElementById('sms-popup-tasks').innerHTML = list.slice(0, 4).map(t => `
                 <div class="flex justify-between bg-slate-50 p-1.5 rounded border border-slate-200">
                     <span>• ${t.title}</span>
-                    <span class="text-[10px] font-mono text-blue-600">${t.progress || 0}%</span>
+                    <span class="text-[10px] font-mono text-blue-600">${t.startTime || (t.progress || 0) + '%'}</span>
                 </div>
-            `).join('') || `<p class="text-center text-slate-400">کار بازی نیست ✨</p>`;
+            `).join('') || `<p class="text-center text-slate-400">✨</p>`;
         };
         window.sendFromSmsPopup = function() {
             const inp = document.getElementById('sms-fast-in');
-            if (!inp.value.trim()) return;
-            tasks.unshift({ id: Date.now(), title: inp.value.trim(), dateISO: todayISO, project: 'پروژه اصلی', prio: 'p1', progress: 0, done: false, startHour: null, endHour: null, notes: '', subtasks: [] });
+            const raw = inp.value.trim();
+            if (!raw) return;
+            const norm = toEnDigits(raw);
+            const tMatch = norm.match(/(\d{1,2}):(\d{1,2})/);
+            const st = tMatch ? parseTimeStr(`${tMatch[1]}:${tMatch[2]}`) : null;
+            tasks.unshift({
+                id: Date.now(),
+                title: raw,
+                dateISO: todayISO,
+                project: 'پروژه اصلی',
+                prio: 'p1',
+                progress: 0,
+                done: false,
+                startTime: st ? st.str : null,
+                endTime: st ? `${String(Math.min(24, st.h + 1)).padStart(2,'0')}:${String(st.m).padStart(2,'0')}` : null,
+                startHour: st ? st.h : null,
+                endHour: st ? Math.min(24, st.h + 1) : null,
+                notes: '',
+                subtasks: []
+            });
             inp.value = '';
             saveAll(); window.renderSmsPopupTasks(); window.renderAll();
+        };
+
+        window.popOutSmsWindow = async function() {
+            const pop = window.open('', 'SmsPlannerPopup', 'width=310,height=260');
+            if (pop) {
+                pop.document.write(`<!DOCTYPE html><html dir="rtl"><body style="font-family:Tahoma;padding:12px;background:#fff;"><h4>💬 ثبت سریع</h4><input id="i" style="width:100%;padding:8px;box-sizing:border-box;" placeholder="عنوان کار..."><button onclick="window.close()" style="margin-top:8px;background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;">بستن ×</button></body></html>`);
+                pop.document.close();
+            }
         };
 
         window.addNote = function() {
@@ -1199,12 +1547,19 @@
             if (!("Notification" in window)) return;
             if (await Notification.requestPermission() === "granted") {
                 const open = tasks.filter(t => !t.done);
-                new Notification("پلنر هوشمند", { body: open[0] ? `کار پیش‌رو: ${open[0].title} (${open[0].progress || 0}%)` : "همه کارها تکمیل شد!" });
+                new Notification("Smart Planner", { body: open[0] ? `${open[0].title} (${open[0].startTime || (open[0].progress||0)+'%'})` : "All tasks done!" });
             }
         };
-        window.resetAll = function() { if (confirm("پاکسازی کامل؟")) { localStorage.clear(); location.reload(); } };
+        window.resetAll = function() { if (confirm("Reset all data?")) { localStorage.clear(); location.reload(); } };
 
         // ==================== MASTER RENDER ENGINE ====================
+        function formatTaskTimeBadge(t) {
+            const st = parseTimeStr(t.startTime, t.startHour);
+            const et = parseTimeStr(t.endTime, t.endHour);
+            if (!st) return '';
+            return `<span class="text-blue-600 dark:text-blue-400 font-mono font-bold">⏰ ${st.str}${et ? ' - ' + et.str : ''}</span>`;
+        }
+
         function taskCardHTML(t) {
             const prog = t.progress || 0;
             const dObj = new Date((t.dateISO || todayISO) + 'T12:00:00');
@@ -1219,13 +1574,12 @@
                                 <div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 mt-0.5">
                                     <span class="text-indigo-600 dark:text-indigo-400 font-semibold">📅 ${p.jDay} ${p.jMonth} (${t.dateISO})</span>
                                     <span>📁 ${t.project || 'پروژه اصلی'}</span>
-                                    ${t.startHour ? `<span class="text-blue-600 font-bold">⏰ ساعت ${t.startHour} تا ${t.endHour}</span>` : ''}
+                                    ${formatTaskTimeBadge(t)}
                                 </div>
                             </div>
                         </div>
                         <span class="text-xs font-mono font-bold text-blue-600 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-lg">${prog}%</span>
                     </div>
-                    <!-- Inline Progress Bar & Slider -->
                     <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                         <div class="flex-1 bg-slate-200 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden">
                             <div class="bg-blue-600 h-full rounded-full transition-all" style="width: ${prog}%"></div>
@@ -1239,7 +1593,6 @@
         }
 
         window.renderAll = function() {
-            // 1. Render Upcoming Schedule on Home (Sorted by Date & Hour)
             const sortedUpcoming = [...tasks].sort((a, b) => {
                 const dA = a.dateISO || todayISO;
                 const dB = b.dateISO || todayISO;
@@ -1249,19 +1602,20 @@
 
             document.getElementById('home-upcoming-list').innerHTML = sortedUpcoming.length
                 ? sortedUpcoming.map(taskCardHTML).join('')
-                : `<p class="text-xs text-slate-400 text-center py-6">هنوز برنامه‌ای در تقویم ثبت نشده است. از کادر «ثبت سریع» بالا استفاده کنید.</p>`;
+                : `<p class="text-xs text-slate-400 text-center py-6">${cfg.lang==='en'?'No upcoming tasks scheduled.':'هنوز برنامه‌ای در تقویم ثبت نشده است.'}</p>`;
 
             document.getElementById('list-all-todo').innerHTML = sortedUpcoming.length
                 ? sortedUpcoming.map(taskCardHTML).join('')
-                : `<p class="text-xs text-slate-400 text-center py-6">لیست کارها خالی است.</p>`;
+                : `<p class="text-xs text-slate-400 text-center py-6">${cfg.lang==='en'?'Task list is empty.':'لیست کارها خالی است.'}</p>`;
 
-            // Tomorrow summary text
             const tomObj = new Date(); tomObj.setDate(tomObj.getDate() + 1);
             const tomISO = toISODate(tomObj);
             const tomCount = tasks.filter(t => t.dateISO === tomISO).length;
-            document.getElementById('home-tomorrow-summary').innerText = `پیش‌نمایش فردا (${tomISO}): ${tomCount} کار ثبت‌شده (نمایش خودکار ساعت ${cfg.tomTime})`;
+            document.getElementById('home-tomorrow-summary').innerText = cfg.lang === 'en'
+                ? `Tomorrow Preview (${tomISO}): ${tomCount} tasks (Alert at ${cfg.tomTime})`
+                : `پیش‌نمایش فردا (${tomISO}): ${tomCount} کار ثبت‌شده (نمایش خودکار ساعت ${cfg.tomTime})`;
 
-            // 2. Render Projects Progress Overview on Home
+            // Projects Progress Overview
             const projectGroups = {};
             tasks.forEach(t => {
                 const pName = t.project || 'پروژه اصلی';
@@ -1271,7 +1625,7 @@
 
             const projKeys = Object.keys(projectGroups);
             const totalAvg = tasks.length ? Math.round(tasks.reduce((a, b) => a + (b.progress || 0), 0) / tasks.length) : 0;
-            document.getElementById('overall-progress-badge').innerText = `${totalAvg}% پیشرفت کل`;
+            document.getElementById('overall-progress-badge').innerText = `${totalAvg}%`;
 
             document.getElementById('home-projects-progress').innerHTML = projKeys.length ? projKeys.map(pk => {
                 const arr = projectGroups[pk];
@@ -1279,7 +1633,7 @@
                 return `
                     <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-neutral-900 border border-slate-200/70 dark:border-neutral-800 space-y-2">
                         <div class="flex justify-between text-xs font-bold">
-                            <span>📁 ${pk} (${arr.length} کار)</span>
+                            <span>📁 ${pk} (${arr.length})</span>
                             <span class="font-mono text-emerald-600">${avg}%</span>
                         </div>
                         <div class="w-full bg-slate-200 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
@@ -1287,9 +1641,9 @@
                         </div>
                     </div>
                 `;
-            }).join('') : `<p class="text-xs text-slate-400 col-span-2 text-center py-3">با ثبت اولین کار، نمودار پیشرفت پروژه‌ها در اینجا نمایش داده می‌شود.</p>`;
+            }).join('') : `<p class="text-xs text-slate-400 col-span-2 text-center py-3">---</p>`;
 
-            // 3. Render 7-Day Triple Calendar (Solar Large + Gregorian & Hijri Small)
+            // Render 7-Day Triple Calendar with Occasion Markers
             const baseDate = new Date();
             baseDate.setMonth(baseDate.getMonth() + (cfg.calMonthOffset || 0));
             baseDate.setDate(1);
@@ -1297,8 +1651,7 @@
             const monthSampleParts = getTripleDateParts(new Date(baseDate.getFullYear(), baseDate.getMonth(), 15));
             document.getElementById('cal-month-title').innerText = `${monthSampleParts.jMonth} | ${monthSampleParts.gMonth} | ${monthSampleParts.hMonth}`;
 
-            // Align first day to Saturday-first grid (Saturday = 0 offset, Sunday = 1, ..., Friday = 6)
-            const firstJsDay = baseDate.getDay(); // 0=Sun..6=Sat
+            const firstJsDay = baseDate.getDay();
             const satOffset = (firstJsDay + 1) % 7;
             const daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate();
 
@@ -1313,37 +1666,37 @@
                 const cellDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), d, 12, 0, 0);
                 const cellISO = toISODate(cellDate);
                 const parts = getTripleDateParts(cellDate);
+                const occ = getOccasionDetails(parts, cellISO, cellDate.getDay());
                 const isSelected = cellISO === selISO;
                 const isToday = cellISO === todayISO;
                 const dayTasksCount = tasks.filter(t => t.dateISO === cellISO).length;
 
                 calCellsHTML += `
                     <button type="button" onclick="window.selectCalendarDate('${cellISO}')"
-                        class="p-1.5 sm:p-2 rounded-2xl border transition flex flex-col justify-between min-h-[68px] sm:min-h-[78px] ${isSelected ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 dark:bg-blue-950/50 border-blue-400' : 'bg-slate-50 dark:bg-neutral-900 border-slate-200/80 dark:border-neutral-800 hover:border-blue-400')}">
-                        <!-- Top Row: Small Gregorian & Small Hijri -->
+                        class="p-1.5 sm:p-2 rounded-2xl border transition flex flex-col justify-between min-h-[70px] sm:min-h-[80px] ${isSelected ? 'bg-blue-600 text-white border-blue-600 shadow-md' : (isToday ? 'bg-blue-50 dark:bg-blue-950/50 border-blue-400' : 'bg-slate-50 dark:bg-neutral-900 border-slate-200/80 dark:border-neutral-800 hover:border-blue-400')}">
                         <div class="w-full flex justify-between items-center text-[9px] sm:text-[10px] ${isSelected ? 'text-blue-100' : 'text-slate-400'} font-mono px-0.5">
                             <span>${parts.gDay}</span>
                             <span>${parts.hDay}</span>
                         </div>
-                        <!-- Center: LARGE SOLAR (SHAMSI) DAY -->
-                        <div class="text-base sm:text-xl font-extrabold my-0.5 leading-none">${parts.jDay}</div>
-                        <!-- Bottom: Task count indicator -->
-                        <div class="w-full flex justify-center">
-                            ${dayTasksCount > 0 ? `<span class="text-[9px] px-1.5 rounded-full ${isSelected ? 'bg-white text-blue-600 font-bold' : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300'}">${dayTasksCount} کار</span>` : `<span class="text-[8px] opacity-30">•</span>`}
+                        <div class="text-base sm:text-xl font-extrabold my-0.5 leading-none ${(!isSelected && occ.isHoliday) ? 'text-red-500' : ''}">${parts.jDay}</div>
+                        <div class="w-full flex items-center justify-center gap-1">
+                            ${occ.hasEvent ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-amber-300' : 'bg-amber-500'}" title="${occ.text}"></span>` : ''}
+                            ${dayTasksCount > 0 ? `<span class="text-[9px] px-1.5 rounded-full ${isSelected ? 'bg-white text-blue-600 font-bold' : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300'}">${dayTasksCount}</span>` : `<span class="text-[8px] opacity-30">•</span>`}
                         </div>
                     </button>
                 `;
             }
             document.getElementById('triple-calendar-grid').innerHTML = calCellsHTML;
 
-            // 4. Render Selected Day Occasions + Hourly Table (03:00 to 24:00)
+            // Render Selected Day Occasions + Hourly Table (03:00 to 24:00 with HH:MM display)
             const selDateObj = new Date(selISO + 'T12:00:00');
             const selParts = getTripleDateParts(selDateObj);
             const selJsDay = selDateObj.getDay();
-            const weekdayFA = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' }).format(selDateObj);
+            const weekdayStr = new Intl.DateTimeFormat(cfg.lang === 'en' ? 'en-US' : 'fa-IR', { weekday: 'long' }).format(selDateObj);
+            const selOcc = getOccasionDetails(selParts, selISO, selJsDay);
 
-            document.getElementById('sel-day-full-dates').innerText = `${weekdayFA} ${selParts.jDay} ${selParts.jMonth} (میلادی: ${selParts.gDay} ${selParts.gMonth} | قمری: ${selParts.hDay} ${selParts.hMonth})`;
-            document.getElementById('sel-day-occasions').innerText = getDayOccasionsText(selParts, selJsDay);
+            document.getElementById('sel-day-full-dates').innerText = `${weekdayStr} ${selParts.jDay} ${selParts.jMonth} (${selParts.gDay} ${selParts.gMonth} | ${selParts.hDay} ${selParts.hMonth})`;
+            document.getElementById('sel-day-occasions').innerText = selOcc.text;
 
             const dayRoutines = routines.filter(r => (r.daysOfWeek || [6,0,1,2,3,4]).includes(selJsDay));
             const dayTasks = tasks.filter(t => t.dateISO === selISO);
@@ -1356,25 +1709,38 @@
                     <div class="flex items-center gap-3 py-2 text-xs">
                         <div class="w-14 font-mono text-slate-400 shrink-0">${String(h).padStart(2, '0')}:00</div>
                         <div class="flex-1 flex flex-wrap gap-2">
-                            ${rIn.map(r => `<span onclick="window.editRoutine(${r.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">🔒 ${r.title} ✏️</span>`).join('')}
-                            ${tIn.map(t => `<span onclick="window.openDrawer(${t.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">${t.title} (${t.progress || 0}%)</span>`).join('')}
+                            ${rIn.map(r => `
+                                <span onclick="window.editRoutine(${r.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
+                                    🔒 ${r.title} (${r.startTime \vert{}\vert{} r.startHour + ':00'} -${r.endTime || r.endHour + ':00'}) ✏️
+                                </span>
+                            `).join('')}
+                            ${tIn.map(t => {
+                                const st = parseTimeStr(t.startTime, t.startHour);
+                                const et = parseTimeStr(t.endTime, t.endHour);
+                                const timeLabel = st ? `${st.str}${et ? '-' + et.str : ''}` : '';
+                                return `
+                                    <span onclick="window.openDrawer(${t.id})" class="cursor-pointer px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">
+                                        ${t.title}${timeLabel ? `<strong class="font-mono text-[10px] underline">(${timeLabel})</strong>` : ''} (${t.progress || 0}%)
+                                    </span>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
             }
             document.getElementById('hourly-grid-3to24').innerHTML = hoursHTML;
 
-            // Render Routines List with Days Badges
+            // Render Routines List
             document.getElementById('list-routines').innerHTML = routines.map(r => {
                 const dBadges = (r.daysOfWeek || [6,0,1,2,3,4]).map(d => weekDayNamesFA[d]).join('، ');
                 return `
                     <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between text-xs">
                         <div>
-                            <div class="font-bold text-amber-900 dark:text-amber-200">🔒 ${r.title} (${r.startHour}:00 - ${r.endHour}:00)</div>
-                            <div class="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">روزها: ${dBadges}</div>
+                            <div class="font-bold text-amber-900 dark:text-amber-200">🔒 ${r.title} (${r.startTime || r.startHour+':00'} - ${r.endTime || r.endHour+':00'})</div>
+                            <div class="text-[11px] text-amber-700 dark:text-amber-400 mt-0.5">${dBadges}</div>
                         </div>
                         <div class="flex gap-1.5">
-                            <button type="button" onclick="window.editRoutine(${r.id})" class="px-2 py-1 rounded bg-amber-200/80 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-bold">✏️ ویرایش</button>
+                            <button type="button" onclick="window.editRoutine(${r.id})" class="px-2 py-1 rounded bg-amber-200/80 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-bold">✏️</button>
                             <button type="button" onclick="window.delRoutine(${r.id})" class="text-red-500 font-bold px-1.5">×</button>
                         </div>
                     </div>
@@ -1384,7 +1750,7 @@
             // Other Lists
             const inc = txs.filter(x => x.type === 'income').reduce((a, b) => a + b.amount, 0);
             const exp = txs.filter(x => x.type === 'expense').reduce((a, b) => a + b.amount, 0) + shops.reduce((a, b) => a + b.price, 0);
-            document.getElementById('fin-net-badge').innerText = `تراز مالی: ${(inc - exp).toLocaleString()}`;
+            document.getElementById('fin-net-badge').innerText = `${(inc - exp).toLocaleString()}`;
 
             document.getElementById('list-notes').innerHTML = notes.map(n => `<div class="bg-white dark:bg-[#1e1e1e] p-4 rounded-xl border border-slate-200 dark:border-neutral-800"><h4 class="font-bold text-sm mb-1">${n.title}</h4><p class="text-xs text-slate-500 whitespace-pre-line">${n.body}</p></div>`).join('');
             document.getElementById('list-shop').innerHTML = shops.map(s => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${s.title}</span><span class="font-mono text-emerald-600">${s.price.toLocaleString()}</span></div>`).join('');
