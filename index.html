@@ -27,298 +27,420 @@
         .tab-section { display: none; }
         .tab-section.active { display: block; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.45); border-radius: 4px; }
+        
+        /* Menu Layout Modes */
+        body.menu-top #app-wrapper { flex-direction: column !important; }
+        body.menu-top #main-nav-aside { width: 100% !important; border-left: none !important; border-bottom: 1px solid rgba(148,163,184,0.2); }
+        body.menu-top #main-nav-list { flex-direction: row !important; overflow-x: auto; }
+
+        body.menu-bottom #main-nav-aside {
+            position: fixed; bottom: 0; left: 0; right: 0; width: 100% !important;
+            z-index: 40; border-top: 1px solid rgba(148,163,184,0.25); padding: 0.4rem 0.75rem;
+        }
+        body.menu-bottom #nav-brand-box { display: none !important; }
+        body.menu-bottom #main-nav-list { flex-direction: row !important; justify-content: space-around; overflow-x: auto; }
+
+        /* Menu Style Modes (Icon/Text) */
+        body.nav-style-icons .nav-label { display: none !important; }
+        body.nav-style-text .nav-icon { display: none !important; }
     </style>
 </head>
-<body class="bg-[#fbfbfa] dark:bg-[#191919] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col lg:flex-row font-sans pb-20 lg:pb-0">
+<body class="bg-[#fbfbfa] dark:bg-[#191919] text-slate-800 dark:text-slate-100 min-h-screen font-sans pb-20 lg:pb-0">
 
-    <!-- SIDEBAR NAVIGATION -->
-    <aside class="w-full lg:w-64 bg-[#f3f2ef] dark:bg-[#202020] border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-neutral-800 p-3.5 shrink-0 z-20">
-        <div class="flex items-center justify-between px-2 py-2 mb-3">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-layer-group text-sm"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm" id="txt-app-title">پلنر جامع هوشمند</h1>
-                    <span class="text-[10px] text-slate-500 dark:text-neutral-400">Notion + Todoist UI</span>
-                </div>
-            </div>
-        </div>
+    <div id="app-wrapper" class="min-h-screen flex flex-col lg:flex-row">
 
-        <nav class="flex lg:flex-col gap-1 overflow-x-auto pb-1 lg:pb-0 text-xs sm:text-[13px]">
-            <button type="button" onclick="window.switchTab('overview')" id="btn-overview" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
-                <i class="fa-solid fa-house w-4 text-center"></i> <span id="nav-overview">پیش‌نمایش و صفحه اول</span>
-            </button>
-            <button type="button" onclick="window.switchTab('todo')" id="btn-todo" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-solid fa-circle-check text-red-500 w-4 text-center"></i> <span id="nav-todo">لیست کارها (To-Do)</span>
-            </button>
-            <button type="button" onclick="window.switchTab('timeblock')" id="btn-timeblock" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-regular fa-calendar-days text-indigo-500 w-4 text-center"></i> <span id="nav-timeblock">تقویم و کارهای ثابت</span>
-            </button>
-            <button type="button" onclick="window.switchTab('ai')" id="btn-ai" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-solid fa-wand-magic-sparkles text-purple-500 w-4 text-center"></i> <span id="nav-ai">برنامه‌ریز خودکار AI</span>
-            </button>
-            <button type="button" onclick="window.switchTab('notes')" id="btn-notes" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-regular fa-file-lines text-amber-500 w-4 text-center"></i> <span id="nav-notes">یادداشت‌ها (Notes)</span>
-            </button>
-            <button type="button" onclick="window.switchTab('shopping')" id="btn-shopping" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-solid fa-cart-shopping text-emerald-500 w-4 text-center"></i> <span id="nav-shopping">لیست خرید و مالی</span>
-            </button>
-            <button type="button" onclick="window.switchTab('workout')" id="btn-workout" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-solid fa-dumbbell text-orange-500 w-4 text-center"></i> <span id="nav-workout">باشگاه و ورزش</span>
-            </button>
-            <button type="button" onclick="window.switchTab('travel')" id="btn-travel" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-solid fa-earth-americas text-cyan-500 w-4 text-center"></i> <span id="nav-travel">سفر و مکان‌های منتخب</span>
-            </button>
-            <button type="button" onclick="window.switchTab('settings')" id="btn-settings" class="nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
-                <i class="fa-solid fa-sliders text-slate-500 w-4 text-center"></i> <span id="nav-settings">تنظیمات</span>
-            </button>
-        </nav>
-    </aside>
-
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 max-w-6xl mx-auto w-full p-4 lg:p-8">
-
-        <!-- TOP BAR -->
-        <header class="flex flex-col gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-neutral-800">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-lg sm:text-xl font-bold" id="txt-welcome">نمای کلی و برنامه‌ریزی روزانه</h2>
-                    <p class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5" id="live-date">...</p>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" onclick="window.toggleLang()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-bold shadow-sm">
-                        <i class="fa-solid fa-language text-blue-600"></i> EN / فارسی
-                    </button>
-                    <button type="button" onclick="window.toggleTheme()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-medium shadow-sm flex items-center gap-1.5">
-                        <i id="theme-icon" class="fa-solid fa-moon"></i> <span id="txt-theme">تم تاریک/روشن</span>
-                    </button>
-                    <button type="button" onclick="window.toggleFab()" id="btn-fab-state" class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-medium">
-                        <i class="fa-solid fa-circle-plus"></i> <span id="txt-fab-btn">شناور: روشن</span>
-                    </button>
-                    <button type="button" onclick="window.sendLockScreenNotif()" class="px-3 py-1.5 rounded-lg bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 text-xs font-medium shadow-sm">
-                        <i class="fa-solid fa-mobile-screen text-indigo-500"></i> <span id="txt-lock">قفل صفحه</span>
-                    </button>
+        <!-- NAVIGATION CONTAINER (Customizable Position & Style via Settings) -->
+        <aside id="main-nav-aside" class="w-full lg:w-64 bg-[#f3f2ef] dark:bg-[#202020] border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-neutral-800 p-3 shrink-0 z-20">
+            <div id="nav-brand-box" class="flex items-center justify-between px-2 py-1.5 mb-2">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
+                        <i class="fa-solid fa-layer-group text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm" id="txt-app-title">پلنر جامع هوشمند</h1>
+                        <span class="text-[10px] text-slate-500 dark:text-neutral-400" id="active-mood-badge">حالت فعلی: 😊 متمرکز</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- QUICK ADD TASK BAR -->
-            <div class="bg-white dark:bg-[#202020] rounded-xl p-2.5 border border-slate-200 dark:border-neutral-800 shadow-sm flex flex-wrap sm:flex-nowrap items-center gap-2">
-                <input type="text" id="quick-task-in" placeholder="ثبت سریع کار جدید... (مثلاً: جلسه ساعت ۱۰)" 
-                    class="flex-1 min-w-[200px] bg-transparent text-sm px-2 focus:outline-none"
-                    onkeydown="if(event.key==='Enter') window.addQuickTask()">
-                <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
-                    <select id="quick-day-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2.5 py-1.5">
-                        <option value="today">امروز / Today</option>
-                        <option value="tomorrow">فردا / Tomorrow</option>
-                    </select>
-                    <select id="quick-prio-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2 py-1.5">
-                        <option value="p1">🔴 P1</option>
-                        <option value="p2" selected>🟡 P2</option>
-                        <option value="p3">🔵 P3</option>
-                    </select>
-                    <button type="button" onclick="window.addQuickTask()" class="px-4 py-1.5 bg-[#db4c3f] hover:bg-red-600 text-white text-xs font-bold rounded-lg">+ ثبت</button>
-                </div>
-            </div>
-        </header>
+            <nav id="main-nav-list" class="flex lg:flex-col gap-1 overflow-x-auto pb-1 lg:pb-0 text-xs sm:text-[13px]">
+                <button type="button" onclick="window.switchTab('overview')" id="btn-overview" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0">
+                    <i class="nav-icon fa-solid fa-house w-4 text-center"></i> <span class="nav-label" id="nav-overview">صفحه اول (پیش‌نمایش)</span>
+                </button>
+                <button type="button" onclick="window.switchTab('ai')" id="btn-ai" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-comments text-purple-500 w-4 text-center"></i> <span class="nav-label" id="nav-ai">چت‌بات برنامه‌ریز AI</span>
+                </button>
+                <button type="button" onclick="window.switchTab('todo')" id="btn-todo" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-circle-check text-red-500 w-4 text-center"></i> <span class="nav-label" id="nav-todo">لیست کارها (To-Do)</span>
+                </button>
+                <button type="button" onclick="window.switchTab('timeblock')" id="btn-timeblock" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-regular fa-calendar-days text-indigo-500 w-4 text-center"></i> <span class="nav-label" id="nav-timeblock">تقویم و کارهای ثابت</span>
+                </button>
+                <button type="button" onclick="window.switchTab('notes')" id="btn-notes" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-regular fa-file-lines text-amber-500 w-4 text-center"></i> <span class="nav-label" id="nav-notes">یادداشت‌ها (Notes)</span>
+                </button>
+                <button type="button" onclick="window.switchTab('shopping')" id="btn-shopping" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-cart-shopping text-emerald-500 w-4 text-center"></i> <span class="nav-label" id="nav-shopping">لیست خرید و مالی</span>
+                </button>
+                <button type="button" onclick="window.switchTab('workout')" id="btn-workout" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-dumbbell text-orange-500 w-4 text-center"></i> <span class="nav-label" id="nav-workout">باشگاه و ورزش</span>
+                </button>
+                <button type="button" onclick="window.switchTab('travel')" id="btn-travel" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-earth-americas text-cyan-500 w-4 text-center"></i> <span class="nav-label" id="nav-travel">سفر و مکان‌ها</span>
+                </button>
+                <button type="button" onclick="window.switchTab('settings')" id="btn-settings" class="nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0">
+                    <i class="nav-icon fa-solid fa-sliders text-slate-500 w-4 text-center"></i> <span class="nav-label" id="nav-settings">تنظیمات</span>
+                </button>
+            </nav>
+        </aside>
 
-        <!-- TAB 1: OVERVIEW (HOME PREVIEW) -->
-        <section id="sec-overview" class="tab-section active space-y-6">
-            <!-- Night-Before Tomorrow Preview -->
-            <div class="bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl p-4">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-moon text-indigo-600 dark:text-indigo-400 text-lg"></i>
-                        <div>
-                            <h3 class="font-bold text-sm text-indigo-950 dark:text-indigo-200" id="txt-tom-title">پیش‌نمایش شبانه کارهای فردا</h3>
-                            <p class="text-[11px] text-indigo-700 dark:text-indigo-300" id="txt-tom-sub">نمایش خودکار در ساعت تنظیم‌شده</p>
+        <!-- MAIN WORKSPACE -->
+        <main class="flex-1 max-w-6xl mx-auto w-full p-4 lg:p-8">
+
+            <!-- CLEAN HEADER (Settings moved to Settings Tab) -->
+            <header class="flex flex-col gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-neutral-800">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-bold" id="txt-welcome">پیش‌نمایش جامع و برنامه روزانه</h2>
+                        <p class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5" id="live-date">...</p>
+                    </div>
+
+                    <!-- Mood & Energy Selector Bar -->
+                    <div class="flex items-center gap-1.5 bg-white dark:bg-[#202020] px-3 py-1.5 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-xs">
+                        <span class="text-[11px] text-slate-500 ml-1" id="txt-mood-label">حالت روحی و انرژی امروز:</span>
+                        <button type="button" onclick="window.setMood('energetic')" id="mood-energetic" title="پرانرژی" class="mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800">🔥 پرانرژی</button>
+                        <button type="button" onclick="window.setMood('focused')" id="mood-focused" title="متمرکز" class="mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800">😊 متمرکز</button>
+                        <button type="button" onclick="window.setMood('calm')" id="mood-calm" title="آرام/عادی" class="mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800">😐 عادی</button>
+                        <button type="button" onclick="window.setMood('tired')" id="mood-tired" title="خسته/کم‌انرژی" class="mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800">😴 خسته</button>
+                        <button type="button" onclick="window.setMood('stressed')" id="mood-stressed" title="پرمشغله/مضطرب" class="mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800">🤯 استرسی</button>
+                    </div>
+                </div>
+
+                <!-- QUICK ADD TASK BAR -->
+                <div class="bg-white dark:bg-[#202020] rounded-xl p-2.5 border border-slate-200 dark:border-neutral-800 shadow-sm flex flex-wrap sm:flex-nowrap items-center gap-2">
+                    <input type="text" id="quick-task-in" placeholder="ثبت سریع کار جدید... (مثلاً: جلسه ساعت ۱۰)" 
+                        class="flex-1 min-w-[200px] bg-transparent text-sm px-2 focus:outline-none"
+                        onkeydown="if(event.key==='Enter') window.addQuickTask()">
+                    <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end">
+                        <select id="quick-day-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2.5 py-1.5">
+                            <option value="today">امروز / Today</option>
+                            <option value="tomorrow">فردا / Tomorrow</option>
+                        </select>
+                        <select id="quick-prio-in" class="bg-slate-100 dark:bg-neutral-800 text-xs rounded-lg px-2 py-1.5">
+                            <option value="p1">🔴 P1</option>
+                            <option value="p2" selected>🟡 P2</option>
+                            <option value="p3">🔵 P3</option>
+                        </select>
+                        <button type="button" onclick="window.addQuickTask()" class="px-4 py-1.5 bg-[#db4c3f] hover:bg-red-600 text-white text-xs font-bold rounded-lg">+ ثبت</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ==================== TAB 1: OVERVIEW (HOME PREVIEW) ==================== -->
+            <section id="sec-overview" class="tab-section active space-y-6">
+                <!-- Night-Before Tomorrow Preview -->
+                <div class="bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-2xl p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-moon text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                            <div>
+                                <h3 class="font-bold text-sm text-indigo-950 dark:text-indigo-200">پیش‌نمایش شبانه کارهای فردا</h3>
+                                <p class="text-[11px] text-indigo-700 dark:text-indigo-300" id="txt-tom-sub">نمایش خودکار در ساعت تنظیم‌شده</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-mono bg-white dark:bg-neutral-900 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-indigo-800" id="badge-tom-time">20:00</span>
+                    </div>
+                    <div id="list-tomorrow-preview" class="space-y-2"></div>
+                </div>
+
+                <!-- 4 Summary Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div onclick="window.switchTab('todo')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500">کارهای امروز</span>
+                        <div class="text-2xl font-bold mt-1" id="stat-tasks">0</div>
+                    </div>
+                    <div onclick="window.switchTab('shopping')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500">تراز مالی</span>
+                        <div class="text-2xl font-bold mt-1 text-emerald-600" id="stat-net">0</div>
+                    </div>
+                    <div onclick="window.switchTab('workout')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500">تمرینات ورزشی</span>
+                        <div class="text-2xl font-bold mt-1 text-orange-500" id="stat-wo">0</div>
+                    </div>
+                    <div onclick="window.switchTab('travel')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
+                        <span class="text-xs text-slate-500">مکان‌ها و سفر</span>
+                        <div class="text-2xl font-bold mt-1 text-cyan-600" id="stat-tr">0</div>
+                    </div>
+                </div>
+
+                <!-- Today Tasks & Scratchpad -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-list-check text-red-500 ml-1"></i> کارهای امروز (برای باز کردن زیرمنوی جزئیات روی کار کلیک کنید)</h3>
+                        <div id="list-today-overview" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-2"><i class="fa-regular fa-note-sticky text-amber-500 ml-1"></i> یادداشت سریع</h3>
+                        <textarea id="quick-scratch" rows="5" oninput="window.saveScratch()" placeholder="یادداشت فوری..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs focus:outline-none"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 2: AI CHAT AUTO-PLANNER (MULTI-OPTION + MOOD AWARE) ==================== -->
+            <section id="sec-ai" class="tab-section space-y-4">
+                <div class="bg-white dark:bg-[#202020] rounded-2xl border border-purple-200 dark:border-purple-900/50 flex flex-col h-[560px] shadow-sm overflow-hidden">
+                    <!-- Chat Header -->
+                    <div class="p-4 bg-purple-50/70 dark:bg-purple-950/30 border-b border-purple-100 dark:border-purple-900/40 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm">چت‌بات هوشمند برنامه‌ریزی (حساس به حالت روحی شما)</h3>
+                                <p class="text-[11px] text-slate-500 dark:text-neutral-400" id="chat-mood-status">در حال برنامه‌ریزی بر اساس حالت روحی فعلی شما</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="window.clearChatHistory()" class="text-xs text-slate-400 hover:text-red-500">پاک کردن چت</button>
+                    </div>
+
+                    <!-- Chat Messages Stream -->
+                    <div id="ai-chat-stream" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs sm:text-sm">
+                        <div class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl rounded-tr-none max-w-xl leading-relaxed">
+                            سلام! 👋 کارهایی که امروز یا فردا باید انجام بدهید را بنویسید (با علامت ویرگول «،» یا خط جدید جدا کنید) و بگویید چه حسی دارید. من با توجه به **کارهای ثابت شما** و **حالت روحی‌تان**، **۳ سناریوی مختلف زمان‌بندی** پیشنهاد می‌دهم تا هر کدام را دوست داشتید با یک کلیک انتخاب کنید!
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span>ساعت یادآوری:</span>
-                        <input type="time" id="tom-time-in" value="20:00" onchange="window.setTomorrowTime(this.value)" class="bg-white dark:bg-neutral-900 border border-indigo-300 rounded px-2 py-1 font-mono text-xs">
+
+                    <!-- Chat Input Box -->
+                    <div class="p-3 bg-slate-50 dark:bg-neutral-900 border-t border-slate-200 dark:border-neutral-800 flex items-center gap-2">
+                        <input type="text" id="ai-chat-in" placeholder="مثلاً: امروز کمی خسته‌ام، باید طراحی سایت، تدوین ویدیو و بررسی ایمیل‌ها رو انجام بدم..."
+                            class="flex-1 bg-white dark:bg-neutral-800 border border-slate-200 dark:border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none"
+                            onkeydown="if(event.key==='Enter') window.sendAIChat()">
+                        <button type="button" onclick="window.sendAIChat()" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold shrink-0">
+                            ارسال و دریافت ۳ پیشنهاد
+                        </button>
                     </div>
                 </div>
-                <div id="list-tomorrow-preview" class="space-y-2"></div>
-            </div>
+            </section>
 
-            <!-- 4 Quick Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div onclick="window.switchTab('todo')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
-                    <span class="text-xs text-slate-500">کارهای امروز</span>
-                    <div class="text-2xl font-bold mt-1" id="stat-tasks">0</div>
+            <!-- ==================== TAB 3: TO-DO LIST ==================== -->
+            <section id="sec-todo" class="tab-section space-y-4">
+                <div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 flex justify-between items-center">
+                    <h3 class="font-bold text-sm">لیست کل کارها (برای باز کردن زیرمنوی جزئیات و ریزکارها روی هر کار کلیک کنید)</h3>
                 </div>
-                <div onclick="window.switchTab('shopping')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
-                    <span class="text-xs text-slate-500">تراز مالی</span>
-                    <div class="text-2xl font-bold mt-1 text-emerald-600" id="stat-net">0</div>
-                </div>
-                <div onclick="window.switchTab('workout')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
-                    <span class="text-xs text-slate-500">تمرینات ورزشی</span>
-                    <div class="text-2xl font-bold mt-1 text-orange-500" id="stat-wo">0</div>
-                </div>
-                <div onclick="window.switchTab('travel')" class="cursor-pointer bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm">
-                    <span class="text-xs text-slate-500">مکان‌ها و سفر</span>
-                    <div class="text-2xl font-bold mt-1 text-cyan-600" id="stat-tr">0</div>
-                </div>
-            </div>
+                <div id="list-all-todo" class="space-y-2"></div>
+            </section>
 
-            <!-- Today Tasks & Scratchpad -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-list-check text-red-500 ml-1"></i> کارهای امروز (برای باز کردن زیرمنوی جزئیات روی کار کلیک کنید)</h3>
-                    <div id="list-today-overview" class="space-y-2"></div>
-                </div>
+            <!-- ==================== TAB 4: TIMEBLOCK & FIXED ROUTINES ==================== -->
+            <section id="sec-timeblock" class="tab-section space-y-6">
                 <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-2"><i class="fa-regular fa-note-sticky text-amber-500 ml-1"></i> یادداشت سریع</h3>
-                    <textarea id="quick-scratch" rows="5" oninput="window.saveScratch()" placeholder="یادداشت فوری..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs focus:outline-none"></textarea>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: TO-DO LIST -->
-        <section id="sec-todo" class="tab-section space-y-4">
-            <div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800 flex justify-between items-center">
-                <h3 class="font-bold text-sm">همه کارها (برای نوشتن ریزکارها و توضیحات روی هر کار کلیک کنید)</h3>
-            </div>
-            <div id="list-all-todo" class="space-y-2"></div>
-        </section>
-
-        <!-- TAB 3: TIMEBLOCK & FIXED ROUTINES -->
-        <section id="sec-timeblock" class="tab-section space-y-6">
-            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-lock text-amber-500 ml-1"></i> افزودن کار ثابت روزانه (روتین قفل‌شده در تقویم)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                    <input type="text" id="rt-title" placeholder="عنوان کار ثابت (مثلاً: محل کار)" class="sm:col-span-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                    <div class="flex gap-2">
-                        <input type="number" id="rt-start" placeholder="از ساعت (8)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
-                        <input type="number" id="rt-end" placeholder="تا (14)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-lock text-amber-500 ml-1"></i> تعریف کارهای ثابت روزانه (روتین‌های غیرقابل تغییر)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                        <input type="text" id="rt-title" placeholder="عنوان کار ثابت (مثلاً: حضور در محل کار)" class="sm:col-span-2 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <div class="flex gap-2">
+                            <input type="number" id="rt-start" placeholder="از ساعت (8)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <input type="number" id="rt-end" placeholder="تا (14)" class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                        </div>
+                        <button type="button" onclick="window.addRoutine()" class="bg-amber-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت کار ثابت</button>
                     </div>
-                    <button type="button" onclick="window.addRoutine()" class="bg-amber-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت کار ثابت</button>
-                </div>
-                <div id="list-routines" class="flex flex-wrap gap-2 mt-3"></div>
-            </div>
-
-            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-sm">جدول بلوک‌بندی ساعتی (۷ تا ۲۲)</h3>
-                    <button type="button" onclick="window.autoSchedule()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">چیدمان خودکار در ساعت‌های خالی</button>
-                </div>
-                <div id="grid-hours" class="divide-y divide-slate-100 dark:divide-neutral-800"></div>
-            </div>
-        </section>
-
-        <!-- TAB 4: AI AUTO PLANNER -->
-        <section id="sec-ai" class="tab-section space-y-4">
-            <div class="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-purple-200 dark:border-purple-900/50">
-                <h3 class="font-bold text-base mb-2"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 ml-1"></i> برنامه‌ریزی خودکار با توضیح متنی</h3>
-                <p class="text-xs text-slate-500 mb-3">کارهای خود را با علامت ویرگول (،) یا خط جدید جدا کنید تا سیستم به صورت خودکار در ساعت‌های خالی (بدون تداخل با کارهای ثابت) بچیند.</p>
-                <textarea id="ai-text" rows="4" placeholder="مثلاً: طراحی سایت، تدوین ویدیو، مطالعه..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-sm mb-3"></textarea>
-                <button type="button" onclick="window.runAIPlanner()" class="px-5 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-bold">تولید و چیدمان خودکار برنامه</button>
-            </div>
-        </section>
-
-        <!-- TAB 5: NOTES -->
-        <section id="sec-notes" class="tab-section space-y-4">
-            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <h3 class="font-bold text-sm mb-2">یادداشت جدید</h3>
-                <input type="text" id="nt-title" placeholder="عنوان یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs font-bold mb-2">
-                <textarea id="nt-body" rows="3" placeholder="متن یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs mb-2"></textarea>
-                <button type="button" onclick="window.addNote()" class="px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold">+ ذخیره یادداشت</button>
-            </div>
-            <div id="list-notes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </section>
-
-        <!-- TAB 6: SHOPPING & FINANCE -->
-        <section id="sec-shopping" class="tab-section space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-cart-shopping text-emerald-500 ml-1"></i> لیست خرید</h3>
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="sh-title" placeholder="نام کالا..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                        <input type="number" id="sh-price" placeholder="قیمت" class="w-28 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
-                        <button type="button" onclick="window.addShop()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">+</button>
-                    </div>
-                    <div id="list-shop" class="space-y-2"></div>
+                    <div id="list-routines" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
 
                 <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-wallet text-blue-500 ml-1"></i> ثبت درآمد و هزینه</h3>
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-                        <input type="text" id="tx-title" placeholder="شرح..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
-                        <input type="number" id="tx-amount" placeholder="مبلغ" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
-                        <select id="tx-type" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
-                            <option value="expense">هزینه (-)</option>
-                            <option value="income">درآمد (+)</option>
-                        </select>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-sm">جدول بلوک‌بندی ساعتی (۷ صبح تا ۲۲ شب)</h3>
+                        <button type="button" onclick="window.autoSchedule()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">چیدمان خودکار در ساعت‌های خالی</button>
                     </div>
-                    <button type="button" onclick="window.addTx()" class="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold mb-3">ثبت تراکنش</button>
-                    <div id="list-tx" class="space-y-2"></div>
+                    <div id="grid-hours" class="divide-y divide-slate-100 dark:divide-neutral-800"></div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- TAB 7: WORKOUT -->
-        <section id="sec-workout" class="tab-section space-y-4">
-            <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-dumbbell text-orange-500 ml-1"></i> ثبت جزئیات ورزش</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
-                    <input type="text" id="wo-name" placeholder="نام حرکت ورزشی..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                    <input type="text" id="wo-sets" placeholder="ست و تکرار (مثلاً 3x12)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                    <input type="text" id="wo-time" placeholder="وزنه یا زمان (مثلاً ۳۰ دقیقه)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                    <button type="button" onclick="window.addWorkout()" class="bg-orange-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت حرکت</button>
-                </div>
-                <div id="list-workout" class="space-y-2"></div>
-            </div>
-        </section>
-
-        <!-- TAB 8: TRAVEL & PLACES -->
-        <section id="sec-travel" class="tab-section space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- ==================== TAB 5: NOTES ==================== -->
+            <section id="sec-notes" class="tab-section space-y-4">
                 <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-suitcase text-cyan-500 ml-1"></i> احتیاجات و چک‌لیست قبل از سفر</h3>
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="tr-item" placeholder="وسیله یا اقدام قبل سفر..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                        <button type="button" onclick="window.addTravelItem()" class="px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold">+</button>
-                    </div>
-                    <div id="list-travel-items" class="space-y-2"></div>
+                    <h3 class="font-bold text-sm mb-2">یادداشت جدید</h3>
+                    <input type="text" id="nt-title" placeholder="عنوان یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs font-bold mb-2">
+                    <textarea id="nt-body" rows="3" placeholder="متن یادداشت..." class="w-full bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl p-3 text-xs mb-2"></textarea>
+                    <button type="button" onclick="window.addNote()" class="px-4 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold">+ ذخیره یادداشت</button>
                 </div>
+                <div id="list-notes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
 
+            <!-- ==================== TAB 6: SHOPPING & FINANCE ==================== -->
+            <section id="sec-shopping" class="tab-section space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-cart-shopping text-emerald-500 ml-1"></i> لیست خرید</h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="sh-title" placeholder="نام کالا..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                            <input type="number" id="sh-price" placeholder="قیمت" class="w-28 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <button type="button" onclick="window.addShop()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">+</button>
+                        </div>
+                        <div id="list-shop" class="space-y-2"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-wallet text-blue-500 ml-1"></i> ثبت درآمد و هزینه</h3>
+                        <div class="grid grid-cols-3 gap-2 mb-3">
+                            <input type="text" id="tx-title" placeholder="شرح..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <input type="number" id="tx-amount" placeholder="مبلغ" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                            <select id="tx-type" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-2 py-2 text-xs">
+                                <option value="expense">هزینه (-)</option>
+                                <option value="income">درآمد (+)</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="window.addTx()" class="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold mb-3">ثبت تراکنش</button>
+                        <div id="list-tx" class="space-y-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 7: WORKOUT ==================== -->
+            <section id="sec-workout" class="tab-section space-y-4">
                 <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
-                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-location-dot text-rose-500 ml-1"></i> مکان‌های مورد علاقه</h3>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <input type="text" id="pl-name" placeholder="نام مکان / شهر..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
-                        <input type="text" id="pl-note" placeholder="آدرس / یادداشت..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                    <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-dumbbell text-orange-500 ml-1"></i> ثبت جزئیات ورزش</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-4">
+                        <input type="text" id="wo-name" placeholder="نام حرکت ورزشی..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <input type="text" id="wo-sets" placeholder="ست و تکرار (مثلاً 3x12)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <input type="text" id="wo-time" placeholder="وزنه یا زمان (مثلاً ۳۰ دقیقه)" class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        <button type="button" onclick="window.addWorkout()" class="bg-orange-500 text-white rounded-xl text-xs font-bold py-2">+ ثبت حرکت</button>
                     </div>
-                    <button type="button" onclick="window.addPlace()" class="w-full py-2 bg-rose-500 text-white rounded-xl text-xs font-bold mb-3">+ افزودن مکان</button>
-                    <div id="list-places" class="space-y-2"></div>
+                    <div id="list-workout" class="space-y-2"></div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- TAB 9: SETTINGS -->
-        <section id="sec-settings" class="tab-section space-y-4">
-            <div class="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-4">
-                <h3 class="font-bold text-base">تنظیمات برنامه</h3>
-                <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
-                    <span class="text-xs font-medium">فعال بودن دکمه شناور (Floating Button)</span>
-                    <button type="button" onclick="window.toggleFab()" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs">تغییر وضعیت</button>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="window.resetAll()" class="px-4 py-2 bg-red-500 text-white rounded-xl text-xs font-bold">پاکسازی و ریست کامل حافظه</button>
-                </div>
-            </div>
-        </section>
+            <!-- ==================== TAB 8: TRAVEL & PLACES ==================== -->
+            <section id="sec-travel" class="tab-section space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-suitcase text-cyan-500 ml-1"></i> احتیاجات و چک‌لیست قبل از سفر</h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="tr-item" placeholder="وسیله یا اقدام قبل سفر..." class="flex-1 bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                            <button type="button" onclick="window.addTravelItem()" class="px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold">+</button>
+                        </div>
+                        <div id="list-travel-items" class="space-y-2"></div>
+                    </div>
 
-    </main>
+                    <div class="bg-white dark:bg-[#202020] p-5 rounded-2xl border border-slate-200 dark:border-neutral-800">
+                        <h3 class="font-bold text-sm mb-3"><i class="fa-solid fa-location-dot text-rose-500 ml-1"></i> مکان‌های مورد علاقه</h3>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <input type="text" id="pl-name" placeholder="نام مکان / شهر..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                            <input type="text" id="pl-note" placeholder="آدرس / یادداشت..." class="bg-slate-50 dark:bg-neutral-900 border border-slate-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs">
+                        </div>
+                        <button type="button" onclick="window.addPlace()" class="w-full py-2 bg-rose-500 text-white rounded-xl text-xs font-bold mb-3">+ افزودن مکان</button>
+                        <div id="list-places" class="space-y-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== TAB 9: CENTRALIZED SETTINGS ==================== -->
+            <section id="sec-settings" class="tab-section space-y-6">
+                <div class="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-slate-200 dark:border-neutral-800 space-y-5 shadow-sm">
+                    <h3 class="font-bold text-base border-b border-slate-100 dark:border-neutral-800 pb-3">
+                        <i class="fa-solid fa-sliders text-blue-600 ml-1"></i> مرکز تنظیمات ظاهر، زبان، ویجت شناور روی برنامه‌ها و چیدمان منو
+                    </h3>
+
+                    <!-- 1. Theme (Day / Night) -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm">حالت نمایش روز و شب (Light / Dark Mode)</div>
+                            <div class="text-[11px] text-slate-500">پیش‌فرض روی حالت روشن قرار دارد</div>
+                        </div>
+                        <button type="button" onclick="window.toggleTheme()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 font-bold text-xs flex items-center gap-2">
+                            <i id="theme-icon" class="fa-solid fa-moon"></i> <span id="txt-theme-state">تغییر تم (روز / شب)</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. Bilingual Switch (FA / EN) -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm">زبان نرم‌افزار (Language: فارسی / English)</div>
+                            <div class="text-[11px] text-slate-500">تغییر دوطرفه زبان و جهت چیدمان صفحه</div>
+                        </div>
+                        <button type="button" onclick="window.toggleLang()" class="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 font-bold text-xs">
+                            <i class="fa-solid fa-language ml-1"></i> فارسی / English
+                        </button>
+                    </div>
+
+                    <!-- 3. External Always-On-Top Floating Mini Window (PiP / Overlay with X button) -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm text-blue-600 dark:text-blue-400">ویجت شناور روی صفحه اصلی و سایر برنامه‌ها (Always-on-Top Overlay)</div>
+                            <div class="text-[11px] text-slate-500">باز کردن پنجره شناور مستقل خارج از محیط برنامه (دارای دکمه ضربدر × برای بستن سریع در هر محیطی)</div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="window.launchExternalFloatWindow()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow">
+                                <i class="fa-solid fa-up-right-from-square ml-1"></i> پرتاب ویجت شناور روی صفحه
+                            </button>
+                            <button type="button" onclick="window.toggleInAppFab()" id="btn-inapp-fab" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-neutral-800 text-xs">
+                                دکمه شناور داخلی: روشن
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Lock Screen Persistent Notification -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm">دسترسی از صفحه قفل گوشی (Lock Screen Live Bar)</div>
+                            <div class="text-[11px] text-slate-500">سنجاق کردن کار جاری و دسترسی سریع روی Lock Screen و نوار اعلان بالای گوشی</div>
+                        </div>
+                        <button type="button" onclick="window.sendLockScreenNotif()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">
+                            <i class="fa-solid fa-mobile-screen ml-1"></i> فعال‌سازی روی قفل صفحه
+                        </button>
+                    </div>
+
+                    <!-- 5. Top Menu / Navigation Layout Customizer -->
+                    <div class="py-2 border-b border-slate-100 dark:border-neutral-800 space-y-3">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm">نحوه نمایش و محل قرارگیری منوهای برنامه</div>
+                            <div class="text-[11px] text-slate-500">انتخاب کنید منوی اصلی در بالای صفحه، کنار صفحه یا پایین صفحه باشد</div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block text-slate-400 mb-1">محل قرارگیری منو:</label>
+                                <select id="cfg-menu-pos" onchange="window.updateMenuDisplay()" class="w-full bg-slate-100 dark:bg-neutral-800 rounded-xl p-2.5 font-medium">
+                                    <option value="side">منوی کناری (Sidebar - سبک Notion)</option>
+                                    <option value="top">منوی تب بالای صفحه (Top Bar)</option>
+                                    <option value="bottom">داک شناور پایین صفحه (Bottom Dock)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">حالت نمایش دکمه‌های منو:</label>
+                                <select id="cfg-menu-style" onchange="window.updateMenuDisplay()" class="w-full bg-slate-100 dark:bg-neutral-800 rounded-xl p-2.5 font-medium">
+                                    <option value="both">نمایش آیکون + متن عنوان</option>
+                                    <option value="icons">فقط آیکون (فشرده و خلوت)</option>
+                                    <option value="text">فقط متن عنوان</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Night-Before Tomorrow Preview Time -->
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-neutral-800">
+                        <div>
+                            <div class="font-bold text-xs sm:text-sm">ساعت نمایش خودکار پیش‌نمایش کارهای فردا (شب قبل)</div>
+                            <div class="text-[11px] text-slate-500">زمان یادآوری و برجسته‌سازی لیست کارهای فردا در صفحه اول</div>
+                        </div>
+                        <input type="time" id="tom-time-in" value="20:00" onchange="window.setTomorrowTime(this.value)" class="bg-slate-100 dark:bg-neutral-800 rounded-xl px-3 py-1.5 font-mono text-xs">
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="button" onclick="window.resetAll()" class="px-4 py-2 bg-red-500/10 text-red-600 border border-red-300 rounded-xl text-xs font-bold">
+                            پاکسازی و ریست کامل حافظه
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
 
     <!-- SUBMENU DRAWER FOR TASK DETAILS -->
     <div id="task-drawer" class="fixed inset-0 bg-black/50 hidden z-50 justify-end">
         <div class="bg-white dark:bg-[#202020] w-full max-w-md h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl">
             <div>
                 <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-neutral-800">
-                    <h4 class="font-bold text-sm text-blue-600">جزئیات، یادداشت و ریزکارها</h4>
+                    <h4 class="font-bold text-sm text-blue-600">پرونده جزئیات، یادداشت و ریزکارها</h4>
                     <button type="button" onclick="window.closeDrawer()" class="text-slate-400 hover:text-red-500 text-lg"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="space-y-4 mt-4 text-xs">
@@ -357,26 +479,35 @@
         </div>
     </div>
 
-    <!-- FLOATING BUTTON -->
-    <button type="button" id="fab-btn" onclick="document.getElementById('quick-task-in').focus()" 
-        class="fixed bottom-6 left-6 z-40 w-13 h-13 p-4 rounded-full bg-blue-600 text-white shadow-xl flex items-center justify-center">
-        <i class="fa-solid fa-plus text-lg"></i>
-    </button>
+    <!-- FLOATING WIDGET WITH CLOSE (X) BUTTON -->
+    <div id="fab-container" class="fixed bottom-6 left-6 z-40 flex items-center gap-1">
+        <button type="button" onclick="window.launchExternalFloatWindow()" title="باز کردن ویجت شناور روی صفحه"
+            class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-xl flex items-center justify-center">
+            <i class="fa-solid fa-up-right-from-square text-sm"></i>
+        </button>
+        <button type="button" onclick="window.toggleInAppFab(false)" title="بستن دکمه شناور"
+            class="w-6 h-6 -mt-8 -mr-2 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center shadow">
+            ×
+        </button>
+    </div>
 
     <script>
-        // SAFE STORAGE HELPER
         function safeGet(key, fallback) {
-            try {
-                const val = localStorage.getItem(key);
-                return val ? JSON.parse(val) : fallback;
-            } catch (e) { return fallback; }
+            try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
         }
         function safeSet(key, val) {
             try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
         }
 
-        // STATE
-        let cfg = safeGet('pl_cfg', { lang: 'fa', theme: 'light', fab: true, tomTime: '20:00' });
+        let cfg = safeGet('pl_cfg_v4', {
+            lang: 'fa',
+            theme: 'light',
+            fab: true,
+            tomTime: '20:00',
+            mood: 'focused',
+            menuPos: 'side',
+            menuStyle: 'both'
+        });
         let tasks = safeGet('pl_tasks', []);
         let routines = safeGet('pl_routines', []);
         let notes = safeGet('pl_notes', []);
@@ -386,9 +517,18 @@
         let travelItems = safeGet('pl_tr_items', []);
         let places = safeGet('pl_places', []);
         let currentTaskId = null;
+        let lastAIScenarios = [];
+
+        const moodMeta = {
+            energetic: { label: '🔥 پرانرژی', startOffset: 8, gap: 0, advice: 'چون پرانرژی هستید، کارهای سنگین و مهم بلافاصله در ابتدای صبح بدون وقفه چیده شدند.' },
+            focused:   { label: '😊 متمرکز', startOffset: 9, gap: 0, advice: 'با توجه به تمرکز خوب شما، بلوک‌های عمیق کاری در ساعات طلایی روز قرار گرفتند.' },
+            calm:      { label: '😐 عادی', startOffset: 9, gap: 1, advice: 'برنامه با ریتم متعادل و یک ساعت تنفس بین کارها تنظیم شد.' },
+            tired:     { label: '😴 خسته', startOffset: 11, gap: 1, advice: 'چون خسته هستید، شروع کارهای اصلی با تاخیر و استراحت بیشتر تنظیم شد تا فشار نیاید.' },
+            stressed:  { label: '🤯 استرسی', startOffset: 10, gap: 1, advice: 'برای کاهش استرس، کارها خرد شده و با فاصله استراحت چیده شدند.' }
+        };
 
         function saveAll() {
-            safeSet('pl_cfg', cfg);
+            safeSet('pl_cfg_v4', cfg);
             safeSet('pl_tasks', tasks);
             safeSet('pl_routines', routines);
             safeSet('pl_notes', notes);
@@ -399,78 +539,275 @@
             safeSet('pl_places', places);
         }
 
-        // NAVIGATION (ATTACHED TO WINDOW)
+        // TAB SWITCHER
         window.switchTab = function(tabName) {
-            const allTabs = ['overview', 'todo', 'timeblock', 'ai', 'notes', 'shopping', 'workout', 'travel', 'settings'];
+            const allTabs = ['overview', 'ai', 'todo', 'timeblock', 'notes', 'shopping', 'workout', 'travel', 'settings'];
             allTabs.forEach(t => {
                 const sec = document.getElementById('sec-' + t);
                 const btn = document.getElementById('btn-' + t);
                 if (sec) sec.classList.remove('active');
-                if (btn) btn.className = "nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0";
+                if (btn) btn.className = "nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium text-slate-600 dark:text-neutral-400 shrink-0";
             });
             const targetSec = document.getElementById('sec-' + tabName);
             const targetBtn = document.getElementById('btn-' + tabName);
             if (targetSec) targetSec.classList.add('active');
-            if (targetBtn) targetBtn.className = "nav-btn flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0";
+            if (targetBtn) targetBtn.className = "nav-btn flex items-center gap-2.5 px-3 py-2 rounded-lg font-bold bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 shadow-sm shrink-0";
             window.renderAll();
         };
 
-        // THEME, LANG, FAB
+        // MOOD TRACKER
+        window.setMood = function(m) {
+            cfg.mood = m;
+            saveAll();
+            window.applySettings();
+        };
+
+        // MENU CUSTOMIZER (TOP / SIDE / BOTTOM + ICON/TEXT)
+        window.updateMenuDisplay = function() {
+            cfg.menuPos = document.getElementById('cfg-menu-pos').value;
+            cfg.menuStyle = document.getElementById('cfg-menu-style').value;
+            saveAll();
+            window.applySettings();
+        };
+
+        // APPLY SETTINGS
         window.applySettings = function() {
             const html = document.documentElement;
+            const body = document.body;
             if (cfg.theme === 'dark') html.classList.add('dark');
             else html.classList.remove('dark');
 
             html.lang = cfg.lang;
             html.dir = cfg.lang === 'fa' ? 'rtl' : 'ltr';
 
-            const fab = document.getElementById('fab-btn');
-            if (fab) fab.style.display = cfg.fab ? 'flex' : 'none';
-            const fabTxt = document.getElementById('txt-fab-btn');
-            if (fabTxt) fabTxt.innerText = cfg.fab ? (cfg.lang === 'fa' ? 'شناور: روشن' : 'Float: ON') : (cfg.lang === 'fa' ? 'شناور: خاموش' : 'Float: OFF');
+            // Menu Position & Style Classes
+            body.classList.remove('menu-top', 'menu-bottom', 'nav-style-icons', 'nav-style-text');
+            if (cfg.menuPos === 'top') body.classList.add('menu-top');
+            if (cfg.menuPos === 'bottom') body.classList.add('menu-bottom');
+            if (cfg.menuStyle === 'icons') body.classList.add('nav-style-icons');
+            if (cfg.menuStyle === 'text') body.classList.add('nav-style-text');
+
+            document.getElementById('cfg-menu-pos').value = cfg.menuPos || 'side';
+            document.getElementById('cfg-menu-style').value = cfg.menuStyle || 'both';
+
+            // FAB visibility
+            const fabBox = document.getElementById('fab-container');
+            if (fabBox) fabBox.style.display = cfg.fab ? 'flex' : 'none';
+            const inAppBtn = document.getElementById('btn-inapp-fab');
+            if (inAppBtn) inAppBtn.innerText = cfg.fab ? 'دکمه شناور: روشن' : 'دکمه شناور: خاموش';
+
+            // Mood UI highlight
+            ['energetic', 'focused', 'calm', 'tired', 'stressed'].forEach(k => {
+                const b = document.getElementById('mood-' + k);
+                if (b) b.className = (cfg.mood === k)
+                    ? "mood-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs"
+                    : "mood-btn px-2 py-1 rounded-lg text-xs hover:bg-slate-100 dark:hover:bg-neutral-800";
+            });
+            const mInfo = moodMeta[cfg.mood] || moodMeta.focused;
+            document.getElementById('active-mood-badge').innerText = `حالت فعلی: ${mInfo.label}`;
+            document.getElementById('chat-mood-status').innerText = `تنظیم هوشمند بر اساس حالت روحی شما: ${mInfo.label}`;
+            document.getElementById('badge-tom-time').innerText = cfg.tomTime || '20:00';
 
             const isEn = cfg.lang === 'en';
             document.getElementById('txt-app-title').innerText = isEn ? 'Smart Planner Pro' : 'پلنر جامع هوشمند';
-            document.getElementById('nav-overview').innerText = isEn ? 'Home Preview' : 'پیش‌نمایش و صفحه اول';
+            document.getElementById('nav-overview').innerText = isEn ? 'Home Preview' : 'صفحه اول (پیش‌نمایش)';
+            document.getElementById('nav-ai').innerText = isEn ? 'AI Chat Planner' : 'چت‌بات برنامه‌ریز AI';
             document.getElementById('nav-todo').innerText = isEn ? 'To-Do List' : 'لیست کارها (To-Do)';
             document.getElementById('nav-timeblock').innerText = isEn ? 'Calendar & Routines' : 'تقویم و کارهای ثابت';
-            document.getElementById('nav-ai').innerText = isEn ? 'AI Auto-Planner' : 'برنامه‌ریز خودکار AI';
             document.getElementById('nav-notes').innerText = isEn ? 'Notes' : 'یادداشت‌ها (Notes)';
             document.getElementById('nav-shopping').innerText = isEn ? 'Shopping & Finance' : 'لیست خرید و مالی';
             document.getElementById('nav-workout').innerText = isEn ? 'Workout' : 'باشگاه و ورزش';
-            document.getElementById('nav-travel').innerText = isEn ? 'Travel & Places' : 'سفر و مکان‌های منتخب';
+            document.getElementById('nav-travel').innerText = isEn ? 'Travel & Places' : 'سفر و مکان‌ها';
             document.getElementById('nav-settings').innerText = isEn ? 'Settings' : 'تنظیمات';
 
             const now = new Date();
             document.getElementById('live-date').innerText = new Intl.DateTimeFormat(isEn ? 'en-US' : 'fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(now);
         };
 
-        window.toggleTheme = function() {
-            cfg.theme = cfg.theme === 'light' ? 'dark' : 'light';
+        window.toggleTheme = function() { cfg.theme = cfg.theme === 'light' ? 'dark' : 'light'; saveAll(); window.applySettings(); };
+        window.toggleLang = function() { cfg.lang = cfg.lang === 'fa' ? 'en' : 'fa'; saveAll(); window.applySettings(); window.renderAll(); };
+        window.toggleInAppFab = function(forceVal) {
+            cfg.fab = typeof forceVal === 'boolean' ? forceVal : !cfg.fab;
             saveAll();
             window.applySettings();
         };
+        window.setTomorrowTime = function(val) { cfg.tomTime = val || '20:00'; saveAll(); window.applySettings(); window.renderAll(); };
 
-        window.toggleLang = function() {
-            cfg.lang = cfg.lang === 'fa' ? 'en' : 'fa';
-            saveAll();
-            window.applySettings();
+        // ==================== EXTERNAL ALWAYS-ON-TOP FLOATING WINDOW (PiP / POPUP WITH X BUTTON) ====================
+        window.launchExternalFloatWindow = async function() {
+            const floatHTML = `
+                <!DOCTYPE html>
+                <html lang="fa" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>ویجت شناور پلنر</title>
+                    <style>
+                        body { margin:0; font-family: Tahoma, sans-serif; background:#0f172a; color:#fff; padding:12px; display:flex; flex-direction:column; gap:8px; }
+                        .top { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; padding-bottom:6px; }
+                        .close-btn { background:#ef4444; color:#fff; border:none; border-radius:50%; width:24px; height:24px; font-weight:bold; cursor:pointer; }
+                        input { padding:8px; border-radius:8px; border:1px solid #3b82f6; background:#1e293b; color:#fff; width:100%; box-sizing:border-box; }
+                        .add-btn { background:#2563eb; color:#fff; border:none; padding:7px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%; }
+                        .task-item { font-size:12px; background:#1e293b; padding:6px 8px; border-radius:6px; display:flex; justify-content:space-between; }
+                    </style>
+                </head>
+                <body>
+                    <div class="top">
+                        <strong style="font-size:12px; color:#38bdf8;">⚡ پلنر شناور روی صفحه</strong>
+                        <button class="close-btn" onclick="window.close()" title="بستن کامل ویجت شناور">×</button>
+                    </div>
+                    <input type="text" id="ext-in" placeholder="ثبت فوری کار و Enter..." onkeydown="if(event.key==='Enter') addExt()" />
+                    <button class="add-btn" onclick="addExt()">+ ثبت فوری در پلنر</button>
+                    <div id="ext-list" style="display:flex; flex-direction:column; gap:4px; max-height:110px; overflow-y:auto;"></div>
+                    <script>
+                        function renderExt() {
+                            const list = JSON.parse(localStorage.getItem('pl_tasks') || '[]').filter(t => !t.done);
+                            document.getElementById('ext-list').innerHTML = list.slice(0,4).map(t => '<div class="task-item"><span>• ' + t.title + '</span></div>').join('');
+                        }
+                        function addExt() {
+                            const inp = document.getElementById('ext-in');
+                            const val = inp.value.trim();
+                            if(!val) return;
+                            const list = JSON.parse(localStorage.getItem('pl_tasks') || '[]');
+                            list.unshift({ id: Date.now(), title: val, day: 'today', prio: 'p1', done: false, startHour: null, endHour: null, notes: '', subtasks: [] });
+                            localStorage.setItem('pl_tasks', JSON.stringify(list));
+                            inp.value = '';
+                            renderExt();
+                            if (window.opener && window.opener.syncFromExternal) window.opener.syncFromExternal();
+                        }
+                        renderExt();
+                    <\/script>
+                </body>
+                </html>
+            `;
+
+            // Try Document Picture-in-Picture API (Always on top over other apps on Chrome)
+            if ('documentPictureInPicture' in window) {
+                try {
+                    const pipWin = await window.documentPictureInPicture.requestWindow({ width: 300, height: 260 });
+                    pipWin.document.write(floatHTML);
+                    pipWin.document.close();
+                    return;
+                } catch (e) {}
+            }
+            // Fallback to compact floating popup window
+            const pop = window.open('', 'PlannerFloatWidget', 'width=300,height=260,menubar=no,toolbar=no,location=no,status=no,resizable=yes');
+            if (pop) {
+                pop.document.write(floatHTML);
+                pop.document.close();
+            } else {
+                alert("لطفاً مجوز باز شدن پنجره شناور (Pop-up) را در مرورگر تایید کنید.");
+            }
+        };
+
+        window.syncFromExternal = function() {
+            tasks = safeGet('pl_tasks', []);
             window.renderAll();
         };
 
-        window.toggleFab = function() {
-            cfg.fab = !cfg.fab;
-            saveAll();
-            window.applySettings();
+        // ==================== AI CHATBOT WITH 3 MULTI-SCENARIO OPTIONS ====================
+        window.sendAIChat = function() {
+            const inp = document.getElementById('ai-chat-in');
+            const text = inp.value.trim();
+            if (!text) return;
+
+            const stream = document.getElementById('ai-chat-stream');
+            stream.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">${text}</div>
+                </div>
+            `;
+            inp.value = '';
+
+            // Auto-detect mood from user's message if mentioned
+            if (text.includes('خسته') || text.includes('بی‌حال')) window.setMood('tired');
+            else if (text.includes('پرانرژی') || text.includes('عالی')) window.setMood('energetic');
+            else if (text.includes('استرس') || text.includes('شلوغ')) window.setMood('stressed');
+
+            // Extract tasks from user message
+            const rawParts = text.split(/[\n،؛,]+|\s+و\s+/).map(s => s.trim())
+                .filter(s => s.length > 2 && !s.includes('خسته') && !s.includes('امروز'));
+            const items = rawParts.length ? rawParts : [text];
+
+            // Build occupied hours from Fixed Routines
+            const routineBusy = new Set();
+            routines.forEach(r => { for (let h = r.startHour; h < r.endHour; h++) routineBusy.add(h); });
+
+            function buildPlan(startH, gapH) {
+                let cursor = startH;
+                const scheduled = [];
+                items.forEach(title => {
+                    while (routineBusy.has(cursor) && cursor < 22) cursor++;
+                    if (cursor < 22) {
+                        scheduled.push({ title, startHour: cursor, endHour: cursor + 1 });
+                        cursor += (1 + gapH);
+                    }
+                });
+                return scheduled;
+            }
+
+            const mInfo = moodMeta[cfg.mood] || moodMeta.focused;
+            const opt1 = buildPlan(8, 0);  // Intensive Morning
+            const opt2 = buildPlan(10, 1); // Balanced with 1h breaks
+            const opt3 = buildPlan(14, 1); // Light Afternoon / Low-Energy friendly
+
+            lastAIScenarios = [opt1, opt2, opt3];
+
+            function renderScenarioBox(idx, title, badge, list) {
+                const rows = list.map(i => `<div class="text-[11px] flex justify-between border-b border-slate-200/50 dark:border-neutral-700 py-1"><span>• ${i.title}</span><span class="font-mono text-purple-600 dark:text-purple-300">ساعت ${i.startHour} تا ${i.endHour}</span></div>`).join('');
+                return `
+                    <div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800/60 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-xs text-purple-700 dark:text-purple-300">${title}</span>
+                            <span class="text-[10px] bg-purple-100 dark:bg-purple-950 px-2 py-0.5 rounded">${badge}</span>
+                        </div>
+                        <div>${rows}</div>
+                        <button type="button" onclick="window.applyAIScenario(${idx})" class="w-full py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold transition">
+                            ✓ انتخاب و اعمال این برنامه
+                        </button>
+                    </div>
+                `;
+            }
+
+            stream.innerHTML += `
+                <div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl rounded-tr-none max-w-2xl space-y-3">
+                    <p class="text-xs font-medium text-purple-700 dark:text-purple-300">${mInfo.advice}</p>
+                    <p class="text-xs">بر اساس کارهای ثابت شما، این **۳ حالت پیشنهادی** آماده شده است. هر کدام را ترجیح می‌دهید انتخاب کنید:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                        ${renderScenarioBox(0, 'پیشنهاد ۱: فشرده صبحگاهی', 'پرانرژی', opt1)}
+                        ${renderScenarioBox(1, 'پیشنهاد ۲: متعادل با استراحت', 'پیشنهاد ویژه', opt2)}
+                        ${renderScenarioBox(2, 'پیشنهاد ۳: عصرگاهی و سبک', 'کم‌فشار', opt3)}
+                    </div>
+                </div>
+            `;
+            stream.scrollTop = stream.scrollHeight;
         };
 
-        window.setTomorrowTime = function(val) {
-            cfg.tomTime = val || '20:00';
+        window.applyAIScenario = function(idx) {
+            const chosen = lastAIScenarios[idx];
+            if (!chosen) return;
+            chosen.forEach(item => {
+                tasks.unshift({
+                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    title: item.title,
+                    day: 'today',
+                    prio: 'p1',
+                    done: false,
+                    startHour: item.startHour,
+                    endHour: item.endHour,
+                    notes: `چیده‌شده توسط هوش مصنوعی (حالت روحی: ${moodMeta[cfg.mood].label})`,
+                    subtasks: []
+                });
+            });
             saveAll();
             window.renderAll();
+            window.switchTab('timeblock');
         };
 
-        // TASKS & SUBMENU DRAWER
+        window.clearChatHistory = function() {
+            document.getElementById('ai-chat-stream').innerHTML = `<div class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl max-w-xl text-xs">چت پاک شد. کارهای جدید خود را بنویسید تا ۳ سناریوی زمان‌بندی پیشنهاد دهم.</div>`;
+        };
+
+        // ==================== TASKS & SUBMENU DRAWER ====================
         window.addQuickTask = function() {
             const inp = document.getElementById('quick-task-in');
             const title = inp.value.trim();
@@ -521,8 +858,7 @@
         window.renderSubtasks = function() {
             const t = tasks.find(x => x.id === currentTaskId);
             if (!t) return;
-            const box = document.getElementById('dr-sub-list');
-            box.innerHTML = (t.subtasks || []).map((s, i) => `
+            document.getElementById('dr-sub-list').innerHTML = (t.subtasks || []).map((s, i) => `
                 <div class="flex items-center justify-between bg-white dark:bg-neutral-800 p-2 rounded border border-slate-200 dark:border-neutral-700">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" ${s.done ? 'checked' : ''} onchange="window.toggleSubtask(${i})">
@@ -577,7 +913,7 @@
             window.renderAll();
         };
 
-        // ROUTINES & AI
+        // ROUTINES & MOOD-AWARE AUTO SCHEDULE
         window.addRoutine = function() {
             const title = document.getElementById('rt-title').value.trim();
             const s = parseInt(document.getElementById('rt-start').value);
@@ -589,11 +925,7 @@
             window.renderAll();
         };
 
-        window.delRoutine = function(id) {
-            routines = routines.filter(r => r.id !== id);
-            saveAll();
-            window.renderAll();
-        };
+        window.delRoutine = function(id) { routines = routines.filter(r => r.id !== id); saveAll(); window.renderAll(); };
 
         window.autoSchedule = function() {
             const busy = new Set();
@@ -601,24 +933,19 @@
             tasks.filter(t => t.day === 'today' && !t.done && t.startHour).forEach(t => {
                 for (let h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
             });
-            let cur = 8;
+            const mInfo = moodMeta[cfg.mood] || moodMeta.focused;
+            let cur = mInfo.startOffset;
             tasks.filter(t => t.day === 'today' && !t.done && !t.startHour).forEach(t => {
                 while (busy.has(cur) && cur < 22) cur++;
-                if (cur < 22) { t.startHour = cur; t.endHour = cur + 1; busy.add(cur); }
+                if (cur < 22) {
+                    t.startHour = cur;
+                    t.endHour = cur + 1;
+                    busy.add(cur);
+                    cur += (1 + mInfo.gap);
+                }
             });
             saveAll();
             window.renderAll();
-        };
-
-        window.runAIPlanner = function() {
-            const raw = document.getElementById('ai-text').value.trim();
-            if (!raw) return;
-            raw.split(/[\n،,]+/).map(s => s.trim()).filter(Boolean).forEach(part => {
-                tasks.unshift({ id: Date.now() + Math.random(), title: part, day: 'today', prio: 'p1', done: false, startHour: null, endHour: null, notes: '', subtasks: [] });
-            });
-            document.getElementById('ai-text').value = '';
-            window.autoSchedule();
-            window.switchTab('timeblock');
         };
 
         // OTHER MODULES
@@ -632,7 +959,6 @@
             saveAll();
             window.renderAll();
         };
-
         window.addShop = function() {
             const title = document.getElementById('sh-title').value.trim();
             const price = parseFloat(document.getElementById('sh-price').value) || 0;
@@ -643,7 +969,6 @@
             saveAll();
             window.renderAll();
         };
-
         window.addTx = function() {
             const title = document.getElementById('tx-title').value.trim();
             const amount = parseFloat(document.getElementById('tx-amount').value) || 0;
@@ -655,7 +980,6 @@
             saveAll();
             window.renderAll();
         };
-
         window.addWorkout = function() {
             const name = document.getElementById('wo-name').value.trim();
             const sets = document.getElementById('wo-sets').value.trim();
@@ -668,7 +992,6 @@
             saveAll();
             window.renderAll();
         };
-
         window.addTravelItem = function() {
             const txt = document.getElementById('tr-item').value.trim();
             if (!txt) return;
@@ -677,7 +1000,6 @@
             saveAll();
             window.renderAll();
         };
-
         window.addPlace = function() {
             const name = document.getElementById('pl-name').value.trim();
             const note = document.getElementById('pl-note').value.trim();
@@ -688,25 +1010,23 @@
             saveAll();
             window.renderAll();
         };
-
-        window.saveScratch = function() {
-            localStorage.setItem('pl_scratch', document.getElementById('quick-scratch').value);
-        };
+        window.saveScratch = function() { localStorage.setItem('pl_scratch', document.getElementById('quick-scratch').value); };
 
         window.sendLockScreenNotif = async function() {
             if (!("Notification" in window)) return alert("پشتیبانی نمی‌شود");
             const p = await Notification.requestPermission();
             if (p === "granted") {
                 const open = tasks.filter(t => !t.done && t.day === 'today');
-                new Notification("پلنر هوشمند", { body: open[0] ? `کار جاری: ${open[0].title}` : "کارهای امروز تکمیل است!" });
+                new Notification("پلنر هوشمند | Lock Screen", {
+                    body: open[0] ? `کار جاری: ${open[0].title} (${open.length} کار باقی‌مانده)` : "همه کارهای امروز تکمیل است!",
+                    requireInteraction: true
+                });
             }
         };
 
-        window.resetAll = function() {
-            if (confirm("پاکسازی کامل حافظه؟")) { localStorage.clear(); location.reload(); }
-        };
+        window.resetAll = function() { if (confirm("پاکسازی کامل حافظه؟")) { localStorage.clear(); location.reload(); } };
 
-        // RENDER ENGINE
+        // RENDER ALL
         function taskRowHTML(t) {
             const subCount = (t.subtasks || []).length;
             return `
@@ -718,12 +1038,12 @@
                             <div class="text-[11px] text-slate-500 flex gap-2 mt-0.5">
                                 <span>${t.day === 'tomorrow' ? '🌙 فردا' : '☀️ امروز'}</span>
                                 ${t.startHour ? `<span class="text-blue-600">ساعت ${t.startHour} تا ${t.endHour}</span>` : ''}
-                                ${subCount ? `<span>(${subCount} زیرکار)</span>` : ''}
-                                ${t.notes ? `<span class="text-amber-600">📝 دارای توضیحات</span>` : ''}
+                                ${subCount ? `<span>(${subCount} ریزکار)</span>` : ''}
+                                ${t.notes ? `<span class="text-amber-600">📝 جزئیات</span>` : ''}
                             </div>
                         </div>
                     </div>
-                    <span class="text-xs text-blue-500">جزئیات ❮</span>
+                    <span class="text-xs text-blue-500">زیرمنو ❮</span>
                 </div>
             `;
         }
@@ -731,7 +1051,6 @@
         window.renderAll = function() {
             const todayList = tasks.filter(t => t.day !== 'tomorrow');
             const tomList = tasks.filter(t => t.day === 'tomorrow');
-
             const inc = txs.filter(x => x.type === 'income').reduce((a, b) => a + b.amount, 0);
             const exp = txs.filter(x => x.type === 'expense').reduce((a, b) => a + b.amount, 0) + shops.reduce((a, b) => a + b.price, 0);
 
@@ -767,44 +1086,12 @@
             }
             document.getElementById('grid-hours').innerHTML = hoursHTML;
 
-            document.getElementById('list-notes').innerHTML = notes.map(n => `
-                <div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800">
-                    <h4 class="font-bold text-sm mb-1">${n.title}</h4>
-                    <p class="text-xs text-slate-500 whitespace-pre-line">${n.body}</p>
-                </div>
-            `).join('');
-
-            document.getElementById('list-shop').innerHTML = shops.map(s => `
-                <div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
-                    <span>${s.title}</span>
-                    <span class="font-mono text-emerald-600">${s.price.toLocaleString()}</span>
-                </div>
-            `).join('');
-
-            document.getElementById('list-tx').innerHTML = txs.map(x => `
-                <div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
-                    <span>${x.title}</span>
-                    <span class="font-mono font-bold ${x.type==='income'?'text-emerald-600':'text-red-500'}">${x.type==='income'?'+':'-'}${x.amount.toLocaleString()}</span>
-                </div>
-            `).join('');
-
-            document.getElementById('list-workout').innerHTML = workouts.map(w => `
-                <div class="flex justify-between p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
-                    <span class="font-bold">${w.name}</span>
-                    <span>ست: ${w.sets} | زمان/وزنه: ${w.time}</span>
-                </div>
-            `).join('');
-
-            document.getElementById('list-travel-items').innerHTML = travelItems.map(tr => `
-                <div class="p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">${tr.txt}</div>
-            `).join('');
-
-            document.getElementById('list-places').innerHTML = places.map(p => `
-                <div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs">
-                    <div class="font-bold text-rose-500">📍 ${p.name}</div>
-                    <div class="text-slate-500">${p.note}</div>
-                </div>
-            `).join('');
+            document.getElementById('list-notes').innerHTML = notes.map(n => `<div class="bg-white dark:bg-[#202020] p-4 rounded-xl border border-slate-200 dark:border-neutral-800"><h4 class="font-bold text-sm mb-1">${n.title}</h4><p class="text-xs text-slate-500 whitespace-pre-line">${n.body}</p></div>`).join('');
+            document.getElementById('list-shop').innerHTML = shops.map(s => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${s.title}</span><span class="font-mono text-emerald-600">${s.price.toLocaleString()}</span></div>`).join('');
+            document.getElementById('list-tx').innerHTML = txs.map(x => `<div class="flex justify-between p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span>${x.title}</span><span class="font-mono font-bold ${x.type==='income'?'text-emerald-600':'text-red-500'}">${x.type==='income'?'+':'-'}${x.amount.toLocaleString()}</span></div>`).join('');
+            document.getElementById('list-workout').innerHTML = workouts.map(w => `<div class="flex justify-between p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><span class="font-bold">${w.name}</span><span>ست: ${w.sets} | زمان/وزنه: ${w.time}</span></div>`).join('');
+            document.getElementById('list-travel-items').innerHTML = travelItems.map(tr => `<div class="p-2 rounded bg-slate-50 dark:bg-neutral-900 text-xs">${tr.txt}</div>`).join('');
+            document.getElementById('list-places').innerHTML = places.map(p => `<div class="p-2.5 rounded bg-slate-50 dark:bg-neutral-900 text-xs"><div class="font-bold text-rose-500">📍 ${p.name}</div><div class="text-slate-500">${p.note}</div></div>`).join('');
         };
 
         document.addEventListener('DOMContentLoaded', function() {
