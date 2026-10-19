@@ -1696,21 +1696,22 @@
         };
 
         // ==================== 10. ADVANCED WEEKLY & DAILY AI SCHEDULER (SUPPORTS EVERY DAY, SPECIFIC DAYS & N-DAYS/WEEK) ====================
-        window.sendAIChat = function() {
+          // ==================== 10. REAL GEMINI API + OFFLINE AI + LOCAL SCHEDULER ====================
+        window.sendAIChat = async function() {
             var inp = document.getElementById('ai-chat-in');
             var rawText = inp.value.trim();
             if (!rawText) return;
             var norm = toEnDigits(rawText);
             var stream = document.getElementById('ai-chat-stream');
 
-            stream.innerHTML += '<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md">' + rawText + '</div></div>';
+            // نمایش پیام کاربر در صفحه چت
+            stream.innerHTML += '<div class="flex justify-end"><div class="bg-purple-600 text-white p-3 rounded-2xl rounded-tl-none max-w-md whitespace-pre-line">' + rawText + '</div></div>';
             inp.value = '';
+            stream.scrollTop = stream.scrollHeight;
 
-            var weekMap = {
-                'شنبه': 6, 'یکشنبه': 0, 'دوشنبه': 1, 'سه شنبه': 2, 'سه‌شنبه': 2, 'چهارشنبه': 3, 'پنجشنبه': 4, 'جمعه': 5
-            };
+            var weekMap = { 'شنبه': 6, 'یکشنبه': 0, 'دوشنبه': 1, 'سه شنبه': 2, 'سه‌شنبه': 2, 'چهارشنبه': 3, 'پنجشنبه': 4, 'جمعه': 5 };
 
-            // 1. Direct command to move an existing task
+            // ۱. بررسی دستور جابه‌جایی سریع ساعت یا روز یک کار موجود
             var moveMatch = norm.match(/(.+?)\s+(?:رو|را|to)?\s*(?:ببر|بذار|بگذار|انتقال بده|move to)\s*(شنبه|یکشنبه|دوشنبه|سه‌شنبه|سه شنبه|چهارشنبه|پنجشنبه|جمعه)?\s*(?:ساعت|at)?\s*(\d{1,2})(?::(\d{1,2}))?/i);
             if (moveMatch) {
                 var kw = moveMatch[1].trim();
@@ -1737,7 +1738,7 @@
                 }
             }
 
-            // Build 7 days of the upcoming week with Shamsi labels
+            // ساخت لیست ۷ روز آینده با تاریخ شمسی برای دادن به هوش مصنوعی
             var next7Days = [];
             for (var d = 0; d < 7; d++) {
                 var dt = new Date();
@@ -1748,7 +1749,87 @@
                 next7Days.push({ idx: d, jsDay: dt.getDay(), iso: iso, label: wdName + ' ' + p.jDay + ' ' + p.jMonth });
             }
 
-            // Clean introductory phrases
+            // ۲. اگر توکن جمینای وارد شده باشد (یا حالت آنلاین انتخاب شده باشد) -> اتصال مستقیم به Google Gemini
+            var apiKey = (cfg.cloudAiKey || '').trim();
+            if (apiKey.length > 10) {
+                var loadingId = 'ai-loading-' + Date.now();
+                stream.innerHTML += '<div id="' + loadingId + '" class="bg-slate-100 dark:bg-neutral-800 p-3.5 rounded-2xl max-w-md text-xs text-purple-600 dark:text-purple-400 animate-pulse">🤖 جمینای در حال تفکر و بررسی تقویم شماست...</div>';
+                stream.scrollTop = stream.scrollHeight;
+
+                var routinesSummary = routines.map(function(r) {
+                    return r.title + ' (' + (r.startTime || r.startHour + ':00') + ' تا ' + (r.endTime || r.endHour + ':00') + ')';
+                }).join('، ') || 'ندارد';
+
+                var daysContext = next7Days.map(function(x) { return x.label + ' (کد تاریخ: ' + x.iso + ')'; }).join(' | ');
+
+                var systemPrompt =
+                    "تو دستیار هوشمند برنامه‌ریزی داخل یک نرم‌افزار تقویم شمسی هستی. " +
+                    "حالت روحی فعلی کاربر: " + (cfg.mood || 'focused') + ". " +
+                    "کارهای ثابت (روتین‌های قفل‌شده) کاربر که نباید با آن‌ها تداخل داشته باشی: " + routinesSummary + ". " +
+                    "تاریخ ۷ روز آینده از امروز: " + daysContext + ". " +
+                    "قانون پاسخگویی:\n" +
+                    "۱. اگر کاربر سوال عمومی پرسید یا درد و دل و مشورت خواست، خیلی صمیمی، دقیق و حرفه‌ای به فارسی جواب بده و آرایه scenarios را خالی بگذار [].\n" +
+                    "۲. اگر کاربر لیست کارهایی داد تا برنامه‌ریزی کنی (روزانه یا هفتگی، شامل کارهای هر روز یا روزهای خاص)، علاوه بر توضیحات و راهنمایی در فیلد reply، حتماً ۳ سناریوی مختلف زمان‌بندی در فیلد scenarios بساز (مثلاً سناریو ۱: اولویت صبح/قورباغه، سناریو ۲: متوازن، سناریو ۳: عصرگاهی/سبک). اگر کاری «هر روز» است، آن را در هر ۷ روز قرار بده!\n" +
+                    "خروجی تو باید *فقط و فقط* یک JSON معتبر با این ساختار دقیق باشد:\n" +
+                    '{"reply": "پاسخ صمیمی و توضیحات تو به کاربر", "scenarios": [ {"name": "عنوان سناریو ۱", "tasks": [ {"title": "نام کار", "dateISO": "YYYY-MM-DD", "dayLabel": "مثلا شنبه ۲۸ مهر", "startTime": "09:00", "endTime": "10:30", "startHour": 9, "endHour": 11} ]} ]}';
+
+                try {
+                    var resp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(apiKey), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ role: 'user', parts: [{ text: systemPrompt + "\n\nپیام کاربر: " + rawText }] }],
+                            generationConfig: { responseMimeType: "application/json" }
+                        })
+                    });
+
+                    var data = await resp.json();
+                    var loadEl = document.getElementById(loadingId);
+                    if (loadEl) loadEl.remove();
+
+                    if (data.error) {
+                        stream.innerHTML += '<div class="bg-red-50 dark:bg-red-950/50 border border-red-300 p-3 rounded-2xl text-xs text-red-600">⚠️ خطای کلید Gemini: ' + data.error.message + ' (در حال استفاده از موتور آفلاین...)</div>';
+                    } else if (data.candidates && data.candidates[0]) {
+                        var rawJsonText = data.candidates[0].content.parts[0].text;
+                        var parsed = JSON.parse(rawJsonText);
+
+                        var replyHTML = '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
+                            '<div class="text-xs sm:text-sm leading-relaxed whitespace-pre-line">' + (parsed.reply || 'بررسی انجام شد.') + '</div>';
+
+                        if (parsed.scenarios && parsed.scenarios.length > 0) {
+                            lastAIScenarios = parsed.scenarios.map(function(sc) { return sc.tasks || []; });
+                            replyHTML += '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-2">';
+                            parsed.scenarios.forEach(function(sc, idx) {
+                                var tList = sc.tasks || [];
+                                replyHTML += '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2 flex flex-col justify-between">' +
+                                    '<div><div class="font-bold text-xs text-purple-600 mb-2">' + (sc.name || ('پیشنهاد ' + (idx + 1))) + ' (' + tList.length + ' نوبت)</div>' +
+                                    '<div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">' +
+                                    tList.map(function(x) {
+                                        return '<div class="text-[11px] border-b border-slate-100 dark:border-neutral-800 pb-1">' +
+                                            '<div class="font-bold">• ' + x.title + '</div>' +
+                                            '<div class="flex justify-between text-slate-500 mt-0.5"><span>📅 ' + (x.dayLabel || formatShamsiFull(x.dateISO)) + '</span><span class="font-mono text-purple-600 font-bold">⏰ ' + (x.startTime || '09:00') + '</span></div>' +
+                                            '</div>';
+                                    }).join('') +
+                                    '</div></div>' +
+                                    '<button type="button" onclick="window.applyAIScenario(' + idx + ')" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold mt-2">✓ ثبت این برنامه در تقویم</button>' +
+                                    '</div>';
+                            });
+                            replyHTML += '</div>';
+                        }
+
+                        replyHTML += '</div>';
+                        stream.innerHTML += replyHTML;
+                        stream.scrollTop = stream.scrollHeight;
+                        return;
+                    }
+                } catch (err) {
+                    var loadEl2 = document.getElementById(loadingId);
+                    if (loadEl2) loadEl2.remove();
+                    stream.innerHTML += '<div class="bg-amber-50 dark:bg-amber-950/50 border border-amber-300 p-2.5 rounded-xl text-[11px] text-amber-700">⚠️ عدم دسترسی به اینترنت یا سرور Gemini؛ زمان‌بندی با موتور هوشمند آفلاین انجام شد:</div>';
+                }
+            }
+
+            // ۳. موتور پشتیبان آفلاین (اگر اینترنت قطع باشد یا کلید وارد نشده باشد)
             var cleanListText = norm
                 .replace(/من این کارها رو باید در یک هفته انجام بدم:?/g, '')
                 .replace(/در این هفته:?/g, '')
@@ -1756,7 +1837,6 @@
                 .replace(/بر اساس زمان های خالی برام زمان بندی کن/g, '')
                 .replace(/برام برنامه ریزی کن/g, '');
 
-            // Split by comma or newline (NOT by "و" inside weekday names like "شنبه و دوشنبه")
             var rawItems = cleanListText.split(/[\n،؛,]+/).map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 2; });
             if (!rawItems.length) return;
 
@@ -1764,15 +1844,13 @@
                 var dObj = new Date(isoDate + 'T12:00:00');
                 var jsDay = dObj.getDay();
                 var busy = new Set();
-
                 routines.filter(function(r) { return (r.daysOfWeek || [6,0,1,2,3,4]).indexOf(jsDay) !== -1; }).forEach(function(r) {
                     for (var h = r.startHour; h < r.endHour; h++) busy.add(h);
                 });
                 tasks.filter(function(t) { return (t.dateISO || todayISO) === isoDate && !t.done && t.startHour; }).forEach(function(t) {
                     for (var h = t.startHour; h < (t.endHour || t.startHour + 1); h++) busy.add(h);
                 });
-                var alreadyInScenario = tempBookedMap[isoDate] || [];
-                alreadyInScenario.forEach(function(h) { busy.add(h); });
+                (tempBookedMap[isoDate] || []).forEach(function(h) { busy.add(h); });
 
                 for (var h = preferredStartH; h <= 23; h++) {
                     if (!busy.has(h)) {
@@ -1784,12 +1862,6 @@
                 return null;
             }
 
-            // Analyze each task's frequency rule:
-            // - "هر روز" / "روزانه" / "every day" -> all 7 days
-            // - Specific weekdays mentioned ("شنبه", "دوشنبه", ...) -> those exact days
-            // - "روزهای زوج" (Sat, Mon, Wed -> 6, 1, 3) / "روزهای فرد" (Sun, Tue, Thu -> 0, 2, 4)
-            // - "X روز در هفته" / "X بار" -> X spaced days in the week
-            // - Otherwise -> single task placed on next balanced day
             function buildWeeklyScenario(baseStartHour) {
                 var bookedMap = {};
                 var generated = [];
@@ -1801,44 +1873,30 @@
                     var isOddDays  = /روزهای\s*فرد|فرد/i.test(itemStr);
                     var nDaysMatch = itemStr.match(/(\d)\s*(?:روز|بار|جلسه)/);
 
-                    // Find any explicit weekday names in itemStr
                     var matchedJsDays = [];
                     Object.keys(weekMap).forEach(function(dayName) {
-                        var regex = new RegExp('(^|\\s|و)' + dayName + '(\\s|ها|$|و)', 'g');
-                        if (regex.test(itemStr) || itemStr.indexOf(dayName) !== -1) {
-                            if (matchedJsDays.indexOf(weekMap[dayName]) === -1) {
-                                matchedJsDays.push(weekMap[dayName]);
-                            }
+                        if (itemStr.indexOf(dayName) !== -1 && matchedJsDays.indexOf(weekMap[dayName]) === -1) {
+                            matchedJsDays.push(weekMap[dayName]);
                         }
                     });
 
-                    // Extract explicit hour if user wrote "ساعت 18"
                     var explicitTimeMatch = itemStr.match(/(?:ساعت|at)\s*(\d{1,2})(?::(\d{1,2}))?/i);
                     var expH = explicitTimeMatch ? parseInt(explicitTimeMatch[1], 10) : null;
 
-                    // Clean title for display
                     var cleanTitle = itemStr
                         .replace(/هر\s*روز|روزانه|همه\s*روز|روزهای\s*زوج|روزهای\s*فرد/g, '')
                         .replace(/(\d)\s*(?:روز|بار|جلسه)\s*(?:در\s*هفته)?/g, '')
-                        .trim();
-                    if (!cleanTitle) cleanTitle = itemStr;
+                        .trim() || itemStr;
 
                     var targetDaysList = [];
-
-                    if (isEveryDay) {
-                        targetDaysList = next7Days.slice(); // All 7 days!
-                    } else if (matchedJsDays.length > 0) {
-                        targetDaysList = next7Days.filter(function(dObj) { return matchedJsDays.indexOf(dObj.jsDay) !== -1; });
-                    } else if (isEvenDays) {
-                        targetDaysList = next7Days.filter(function(dObj) { return [6, 1, 3].indexOf(dObj.jsDay) !== -1; });
-                    } else if (isOddDays) {
-                        targetDaysList = next7Days.filter(function(dObj) { return [0, 2, 4].indexOf(dObj.jsDay) !== -1; });
-                    } else if (nDaysMatch) {
+                    if (isEveryDay) targetDaysList = next7Days.slice();
+                    else if (matchedJsDays.length > 0) targetDaysList = next7Days.filter(function(dObj) { return matchedJsDays.indexOf(dObj.jsDay) !== -1; });
+                    else if (isEvenDays) targetDaysList = next7Days.filter(function(dObj) { return [6, 1, 3].indexOf(dObj.jsDay) !== -1; });
+                    else if (isOddDays) targetDaysList = next7Days.filter(function(dObj) { return [0, 2, 4].indexOf(dObj.jsDay) !== -1; });
+                    else if (nDaysMatch) {
                         var count = Math.min(7, Math.max(1, parseInt(nDaysMatch[1], 10)));
                         var step = Math.max(1, Math.floor(7 / count));
-                        for (var c = 0; c < count; c++) {
-                            targetDaysList.push(next7Days[(c * step) % 7]);
-                        }
+                        for (var c = 0; c < count; c++) targetDaysList.push(next7Days[(c * step) % 7]);
                     } else {
                         targetDaysList = [next7Days[singleTaskCounter % 7]];
                         singleTaskCounter++;
@@ -1864,15 +1922,14 @@
                 });
             }
 
-            var wScenario1 = buildWeeklyScenario(8);   // Morning priority
-            var wScenario2 = buildWeeklyScenario(11);  // Mid-day balanced
-            var wScenario3 = buildWeeklyScenario(16);  // Afternoon/Evening free slots
-
+            var wScenario1 = buildWeeklyScenario(8);
+            var wScenario2 = buildWeeklyScenario(11);
+            var wScenario3 = buildWeeklyScenario(16);
             lastAIScenarios = [wScenario1, wScenario2, wScenario3];
 
             function weekBoxHTML(idx, name, list) {
                 return '<div class="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-purple-200 dark:border-purple-800 space-y-2 flex flex-col justify-between">' +
-                    '<div><div class="font-bold text-xs text-purple-600 mb-2">' + name + ' (' + list.length + ' نوبت در هفته)</div>' +
+                    '<div><div class="font-bold text-xs text-purple-600 mb-2">' + name + ' (' + list.length + ' نوبت)</div>' +
                     '<div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">' + list.map(function(x) {
                         return '<div class="text-[11px] border-b border-slate-100 dark:border-neutral-800 pb-1">' +
                             '<div class="font-bold">• ' + x.title + '</div>' +
@@ -1884,7 +1941,6 @@
             }
 
             stream.innerHTML += '<div class="bg-slate-100 dark:bg-neutral-800 p-4 rounded-2xl max-w-3xl space-y-3">' +
-                '<div class="text-xs font-bold text-purple-700 dark:text-purple-300">✨ کارهای «هر روز»، «روزهای مشخص‌شده» و «تکرار در هفته» تفکیک شدند و در ساعت‌های خالی شما چیده شدند:</div>' +
                 '<div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">' +
                 weekBoxHTML(0, '۱. اولویت تایم‌های آزاد صبح', wScenario1) +
                 weekBoxHTML(1, '۲. اولویت تایم‌های میانه روز', wScenario2) +
