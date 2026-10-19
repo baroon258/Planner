@@ -1774,7 +1774,7 @@
                     '{"reply": "پاسخ صمیمی و توضیحات تو به کاربر", "scenarios": [ {"name": "عنوان سناریو ۱", "tasks": [ {"title": "نام کار", "dateISO": "YYYY-MM-DD", "dayLabel": "مثلا شنبه ۲۸ مهر", "startTime": "09:00", "endTime": "10:30", "startHour": 9, "endHour": 11} ]} ]}';
 
                 try {
-                    var resp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(apiKey), {
+                    var resp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=' + encodeURIComponent(apiKey), {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
